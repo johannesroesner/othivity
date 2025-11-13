@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/layout :: head('test')}"></head>
+<head th:insert="~{layout/head :: head('test')}"></head>
 <body>
+<nav th:insert="~{layout/nav :: nav}"></nav>
+
+<!-- content start -->
 <div class="hero bg-base-200 min-h-screen">
     <div class="hero-content text-center">
         <div class="max-w-md">
@@ -14,5 +17,8 @@
         </div>
     </div>
 </div>
+<!-- content end -->
+
+<footer th:insert="~{layout/footer :: footer}"></footer>
 </body>
 </html>
