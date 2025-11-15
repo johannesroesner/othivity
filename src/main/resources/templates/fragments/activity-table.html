@@ -1,0 +1,35 @@
+<div th:fragment="activityTable(title, activities)">
+
+    <h2 class="text-xl font-semibold mb-3" th:text="${title}"></h2>
+
+    <div class="overflow-x-auto rounded-xl shadow">
+        <table class="table w-full">
+            <thead>
+            <tr class="bg-base-200">
+                <th th:text="#{activityTable.title}"></th>
+                <th th:text="#{activityTable.tags}"></th>
+                <th th:text="#{activityTable.date}"></th>
+                <th th:text="#{activityTable.time}"></th>
+                <th th:text="#{activityTable.capacity}"></th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="a : ${activities}">
+                <td th:text="${a.title}"></td>
+                <td th:text="${a.tags}"></td>
+                <td th:text="${a.date}"></td>
+                <td th:text="${a.time}"></td>
+                <th th:text="${a.capacity}"></th>
+                <td>
+                    <a class="btn btn-primary btn-xs"
+                       th:href="@{'/activities/' + ${a.id}}">
+                        Details
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
