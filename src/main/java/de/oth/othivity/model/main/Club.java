@@ -31,7 +31,7 @@ public class Club {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AccessLevel joinLevel;
+    private AccessLevel accessLevel;
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClubImage> images = new ArrayList<>();

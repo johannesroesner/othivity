@@ -7,8 +7,8 @@ import de.oth.othivity.model.image.ActivityImage;
 import de.oth.othivity.model.report.ActivityReport;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ public class Activity {
     private String description;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private Date date;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
