@@ -1,4 +1,4 @@
-<nav th:fragment="nav" class="navbar bg-base-100 shadow-xl fixed top-0 left-0 w-full z-50">
+<nav th:fragment="nav" class="navbar bg-base-100 shadow-xl">
     <div class="navbar-start">
         <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -7,7 +7,7 @@
                 </svg>
             </div>
             <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                <li><a th:text="#{nav.activities}"></a></li>
+                <li><a href="/activities" th:text="#{nav.activities}"></a></li>
                 <li><a th:text="#{nav.clubs}"></a></li>
                 <li><a th:text="#{nav.explorer}"></a></li>
             </ul>
@@ -15,13 +15,12 @@
         <a class="btn btn-ghost text-xl" href="/">OTHivity</a>
     </div>
 
+
     <div class="navbar-end">
-        <div class="hidden lg:flex">
-            <ul class="menu menu-horizontal px-1">
-                <li><a th:text="#{nav.activities}"></a></li>
-                <li><a th:text="#{nav.clubs}"></a></li>
-                <li><a th:text="#{nav.explorer}"></a></li>
-            </ul>
+        <div role="tablist" class="hidden lg:flex tabs tabs-border">
+            <a role="tab" th:class="'tab ' + (${activeTab} == 'activities' ? 'tab-active' : '')" href="/activities" th:text="#{nav.activities}"></a>
+            <a role="tab" th:class="'tab ' + (${activeTab} == 'clubs' ? 'tab-active' : '')" href="/clubs" th:text="#{nav.clubs}"></a>
+            <a role="tab" th:class="'tab ' + (${activeTab} == 'explorer' ? 'tab-active' : '')" href="/explorer" th:text="#{nav.explorer}"></a>
         </div>
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
