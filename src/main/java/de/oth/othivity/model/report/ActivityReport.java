@@ -13,7 +13,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ActivityReport extends BaseReport {
 
     @ManyToOne(optional = false)

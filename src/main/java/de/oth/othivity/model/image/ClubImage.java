@@ -13,7 +13,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ClubImage extends BaseImage {
 
     @ManyToOne(optional = false)

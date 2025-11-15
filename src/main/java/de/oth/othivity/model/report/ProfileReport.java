@@ -13,7 +13,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ProfileReport extends BaseReport {
 
     @ManyToOne(optional = false)

@@ -11,7 +11,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Address {
 
     @Id
@@ -33,5 +32,4 @@ public class Address {
     private String addition;
 
     private String country;
-
 }
