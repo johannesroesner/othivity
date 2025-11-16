@@ -1,5 +1,6 @@
 package de.oth.othivity.model.main;
 
+import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.report.ProfileReport;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.image.ProfileImage;
@@ -21,6 +22,9 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(nullable = false)
     private String firstName;

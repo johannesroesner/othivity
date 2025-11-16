@@ -1,6 +1,5 @@
 package de.oth.othivity.model.security;
 
-import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Profile;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,9 +16,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @Column(nullable = false, unique = true)
     private String email;
