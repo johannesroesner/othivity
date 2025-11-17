@@ -5,26 +5,27 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/dist/vanilla-calendar.min.css">
     </th:block>
 </head>
-<body>
+<body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav}"></nav>
-<!-- content start -->
-
-<div class="container mx-auto px-6 py-8">
-
-    <h1 class="text-3xl font-bold mb-6" th:text="#{ activityOverview.sectionTitle}"></h1>
-
-    <div role="tablist" class="tabs tabs-border mb-6">
-        <a role="tab" class="tab tab-active" id="myTab" th:text="#{activityOverview.myTab}"></a>
-        <a role="tab" class="tab" id="createdTab" th:text="#{activityOverview.createdTab}"></a>
-        <a role="tab" class="tab" id="allTab" th:text="#{activityOverview.allTab}"></a>
-    </div>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+    <h1 class="text-3xl font-bold mb-6" th:text="#{activityOverview.pageTitle}"></h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
 
         <div class="lg:col-span-2 mb-8 lg:mb-0">
-            <div id="myTable" th:insert="fragments/activity-table :: activityTable(#{activityOverview.myTab},null)"></div>
-            <div id="createdTable" class="hidden" th:insert="fragments/activity-table :: activityTable(#{activityOverview.createdTab},null)"></div>
-            <div id="allTable" class="hidden" th:insert="fragments/activity-table :: activityTable(#{activityOverview.allTab},null)"></div>
+            <div class="flex justify-between items-center mb-6">
+                <div role="tablist" class="tabs tabs-border flex space-x-2">
+                    <a role="tab" class="tab tab-active" id="myTab" th:text="#{activityOverview.myTab}"></a>
+                    <a role="tab" class="tab" id="createdTab" th:text="#{activityOverview.createdTab}"></a>
+                    <a role="tab" class="tab" id="allTab" th:text="#{activityOverview.allTab}"></a>
+                </div>
+                <button class="btn btn-primary" onclick="window.location.href='/activities/create'">+ Create</button>
+            </div>
+
+            <div id="myTable" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.myTab}, activities=${profileActivities})"></div>
+            <div id="createdTable" class="hidden" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.createdTab}, activities=${createdActivities})"></div>
+            <div id="allTable" class="hidden" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.allTab}, activities=${allActivities})"></div>
         </div>
 
         <div class="card bg-base-200 shadow-md h-fit">
@@ -38,8 +39,9 @@
 
             </div>
         </div>
-
     </div>
+
+    <!-- content end -->
 </div>
 
 <script th:inline="javascript">
@@ -84,16 +86,14 @@
     const options = {
         selectionDatesMode: 'multiple',
         selectedDates: daysToMark,
-        selectedMonth: 10,
-        selectedYear: 2025,
+        selectedMonth: new Date().getMonth(),
+        selectedYear: new Date().getFullYear(),
     };
 
     const calendarElement = document.getElementById("calendar");
     const calendar = new Calendar(calendarElement, options)
     calendar.init();
 </script>
-
-<!-- content end -->
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>
 </html>
