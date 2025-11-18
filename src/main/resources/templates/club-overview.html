@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{ clubOverview.pageTitle})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+<!-- content start -->
+<h1 class="text-3xl font-bold mb-6" th:text="#{clubOverview.pageTitle}"></h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
+
+        <div class="lg:col-span-2 mb-8 lg:mb-0">
+            <div class="flex justify-between items-center mb-6">
+                <div role="tablist" class="tabs tabs-border flex space-x-2">
+                    <a role="tab" class="tab tab-active" id="myTab" th:text="#{clubOverview.myTab}"></a>
+                    <a role="tab" class="tab" id="allTab" th:text="#{clubOverview.allTab}"></a>
+                </div>
+                <button class="btn btn-primary" onclick="window.location.href='/activities/create'">+ Create</button>
+            </div>
+            
+            <div id="myTable" th:insert="fragments/club-table :: clubTable(title=#{clubOverview.myTab}, clubs=${joinedClubs})"></div>
+            <div id="allTable" class="hidden" th:insert="fragments/club-table :: clubTable(title=#{clubOverview.allTab}, clubs=${allClubs})"></div>
+        </div>
+    </div>
+</div>
+
+<!-- content end -->
+</div>
+<script th:inline="javascript">
+    const myTab = document.getElementById("myTab");
+    const allTab = document.getElementById("allTab");
+    const myTable = document.getElementById("myTable");
+    const allTable = document.getElementById("allTable");
+
+    myTab.onclick = () => {
+        myTab.classList.add("tab-active");
+        allTab.classList.remove("tab-active");
+        myTable.classList.remove("hidden");
+        allTable.classList.add("hidden");
+    };
+
+    allTab.onclick = () => {
+        allTab.classList.add("tab-active");
+        myTab.classList.remove("tab-active");
+        allTable.classList.remove("hidden");
+        myTable.classList.add("hidden");
+    };
+</script>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>
