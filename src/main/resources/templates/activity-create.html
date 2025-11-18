@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{ activityOverview.pageTitle})}">
+    <th:block>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/dist/vanilla-calendar.min.css">
+    </th:block>
+</head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+
+    <form th:action="@{/activities/create}" th:object="${activity}" method="post" enctype="multipart/form-data" class="space-y-6">
+
+        <div class="flex items-center mb-6 space-x-2">
+            <a href="/activities" class="btn btn-ghost btn-xl">←</a>
+            <h1 class="text-3xl font-bold">Create Activity</h1>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="card bg-base-200 shadow-md p-6 space-y-4 h-full">
+                    <h2 class="text-xl font-bold">Activity Details</h2>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Title</span></label>
+                        <input type="text" th:field="*{title}" placeholder="Title" class="input input-bordered w-full">
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Description</span></label>
+                        <textarea th:field="*{description}" placeholder="Description" class="textarea textarea-bordered w-full"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="label"><span class="label-text text-sm">Date</span></label>
+                            <input type="date" th:field="*{date}" class="input input-bordered w-full">
+                        </div>
+                        <div>
+                            <label class="label"><span class="label-text text-sm">Time</span></label>
+                            <input type="time" th:field="*{date}" class="input input-bordered w-full">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Language</span></label>
+                        <select th:field="*{language}" class="select select-bordered w-full">
+                            <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}"></option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Group Size</span></label>
+                        <input type="number" min="2" th:field="*{groupSize}" value="2" class="input input-bordered w-full">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-base-200 shadow-md p-6 space-y-2 h-full">
+                <h2 class="text-xl font-bold">Images</h2>
+                <label class="label"><span class="label-text text-sm">Upload Images</span></label>
+                <input type="file" id="imageUpload" name="images" class="file-input file-input-bordered w-full" multiple>
+
+                <div id="imagePreview" class="grid grid-cols-2 gap-3 mt-3"></div>
+            </div>
+
+            <div class="space-y-6 lg:col-span-1 flex flex-col">
+                <div class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
+                    <h2 class="text-xl font-bold">Address</h2>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Additional Info</span></label>
+                        <input type="text" th:field="*{address.addition}" placeholder="Additional Info" class="input input-bordered w-full">
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Street</span></label>
+                        <input type="text" th:field="*{address.street}" placeholder="Street" class="input input-bordered w-full">
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">House Number</span></label>
+                        <input type="text" th:field="*{address.houseNumber}" placeholder="House Number" class="input input-bordered w-full">
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Postal Code</span></label>
+                        <input type="text" th:field="*{address.postalCode}" placeholder="Postal Code" class="input input-bordered w-full">
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">City</span></label>
+                        <input type="text" th:field="*{address.city}" placeholder="City" class="input input-bordered w-full">
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Country</span></label>
+                        <input type="text" th:field="*{address.country}" placeholder="Country" class="input input-bordered w-full">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6 lg:col-span-2 flex flex-col">
+                <div class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
+                    <h2 class="text-xl font-bold">Organizer & Tags</h2>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Organizer</span></label>
+                        <select th:field="*{organizer}" class="select select-bordered w-full">
+                            <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}"></option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm">Tags</span></label>
+                        <select multiple th:field="*{tags}" class="select select-bordered w-full">
+                            <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="flex justify-end mt-4">
+            <button type="submit" class="btn btn-primary">Create Activity</button>
+        </div>
+    </form>
+
+    <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+<script>
+    const uploadInput = document.getElementById("imageUpload");
+    const preview = document.getElementById("imagePreview");
+
+    uploadInput.addEventListener("change", () => {
+        preview.innerHTML = "";
+
+        Array.from(uploadInput.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = document.createElement("img");
+                img.src = event.target.result;
+                preview.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
+</body>
+</html>

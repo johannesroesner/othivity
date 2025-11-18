@@ -7,6 +7,8 @@ import de.oth.othivity.model.image.ActivityImage;
 import de.oth.othivity.model.report.ActivityReport;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,4 +75,25 @@ public class Activity {
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ActivityReport> reports = new ArrayList<>();
+
+    // view helper
+    public String getParticipantStatus() {
+        return takePart.size() + "/" + groupSize;
+    }
+
+    public String getTagNames() {
+        return tags.stream()
+                .map(Tag::getName)
+                .collect(java.util.stream.Collectors.joining(", "));
+    }
+
+    public String getDateString() {
+        if (date == null) return "";
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
+    public String getTimeString() {
+        if (date == null) return "";
+        return new SimpleDateFormat("HH:mm").format(date);
+    }
 }
