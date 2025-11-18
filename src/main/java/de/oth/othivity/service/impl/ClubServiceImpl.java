@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor 
@@ -38,8 +39,16 @@ public class ClubServiceImpl implements ClubService {
     public List<Club> getClubsNotJoinedByProfileNotPrivate(HttpSession session) {
         var profile = sessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
-        var allClubs = new java.util.ArrayList<>(clubRepository.findByAccessLevelNot(AccessLevel.CLOSED));
+        var allClubs = new ArrayList<>(clubRepository.findByAccessLevelNot(AccessLevel.CLOSED));
         allClubs.removeAll(profile.getClubs());
         return allClubs;
+    }
+    @Override
+    public Club createClubForUser(Club club, HttpSession session) {
+        var profile = sessionService.getProfileFromSession(session);
+        if (profile == null) { return null; }
+        club.getMembers().add(profile);
+        club.getAdmins().add(profile);
+        return clubRepository.save(club);
     }
 }

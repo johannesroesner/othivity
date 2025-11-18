@@ -4,6 +4,7 @@ import de.oth.othivity.model.main.Club;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
 
 @Service
@@ -17,4 +18,5 @@ public interface ClubService {
 
     List<Club> getClubsNotJoinedByProfileNotPrivate(HttpSession session);
 
+    Club createClubForUser(Club club, HttpSession session);
 }
