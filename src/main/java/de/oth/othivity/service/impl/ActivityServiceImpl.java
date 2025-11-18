@@ -6,20 +6,17 @@ import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class ActivityServiceImpl implements ActivityService {
     private final SessionService sessionService;
     private final ActivityRepository activityRepository;
-
-    public ActivityServiceImpl(SessionService sessionService,ActivityRepository activityRepository) {
-        this.sessionService = sessionService;
-        this.activityRepository = activityRepository;
-    }
 
     @Override
     public List<Activity> getAllActivities() {

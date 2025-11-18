@@ -22,14 +22,6 @@ public class SessionServiceImpl implements SessionService {
     }
 
     public Profile getProfileFromSession(HttpSession session) {
-        //UUID profileId = (UUID) session.getAttribute(PROFILE_ID_KEY);
-        //UUID  profileId = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
-        /*
-        if (profileId == null) {
-            return null;
-        }
-
-         */
         return profileRepository.findById(profileId).orElse(null);
     }
 
