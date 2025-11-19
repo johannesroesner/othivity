@@ -63,6 +63,8 @@ public class ActivityController {
             return "activity-create";
         }
 
+        activityService.createActivity(activityCreateRequest, uploadedImages,session);
+
         return "redirect:/activities";
     }
 

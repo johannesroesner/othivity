@@ -1,13 +1,16 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.dto.ActivityCreateRequest;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.service.ActivityService;
+import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,6 +20,8 @@ import java.util.List;
 @Service
 public class ActivityServiceImpl implements ActivityService {
     private final SessionService sessionService;
+    private final ImageService imageService;
+
     private final ActivityRepository activityRepository;
 
     @Override
@@ -69,5 +74,30 @@ public class ActivityServiceImpl implements ActivityService {
                 .map(Activity::getDate)
                 .map(date -> date.format(dateFormatter))
                 .toList();
+    }
+
+    @Override
+    public Activity createActivity(ActivityCreateRequest activityCreateRequest, MultipartFile[] uploadedImages, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null) return null;
+
+        Activity activity = new Activity();
+        activity.setTitle(activityCreateRequest.getTitle());
+        activity.setDescription(activityCreateRequest.getDescription());
+        activity.setDate(activityCreateRequest.getDate());
+        activity.setLanguage(activityCreateRequest.getLanguage());
+        activity.setGroupSize(activityCreateRequest.getGroupSize());
+        activity.setOrganizer(activityCreateRequest.getOrganizer());
+        activity.setTags(activityCreateRequest.getTags());
+        activity.setAddress(activityCreateRequest.getAddress());
+        activity.setStartedBy(profile);
+        List<Profile> participants = new ArrayList<>();
+        participants.add(profile);
+        activity.setTakePart(participants);
+
+        Activity newActivity = activityRepository.save(activity);
+        imageService.saveImagesForActivity(newActivity, uploadedImages);
+
+        return newActivity;
     }
 }
