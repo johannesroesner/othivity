@@ -34,7 +34,10 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setFirstName(registerRequest.getFirstName());
         profile.setLastName(registerRequest.getLastName());
         profile.setEmail(registerRequest.getEmail());
+        
+        Profile createdProfile = profileRepository.save(profile);
+        user.setProfile(createdProfile); // Update the bidirectional relationship
 
-        return profileRepository.save(profile);
+        return createdProfile;
     }
 }

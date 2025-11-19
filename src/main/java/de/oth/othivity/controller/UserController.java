@@ -14,7 +14,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 
 import de.oth.othivity.dto.LoginRequest;
 import de.oth.othivity.dto.RegisterRequest;
@@ -42,8 +42,8 @@ public class UserController {
     @PostMapping("/process-register")
     public ModelAndView registerUserAccount(
             @ModelAttribute("registerRequest") @Valid RegisterRequest registerRequest,
-            HttpServletRequest request,
-            Errors errors) {
+            BindingResult errors,
+            HttpServletRequest request) {
         
         ModelAndView mav = new ModelAndView("register");
         mav.addObject("registerRequest", registerRequest);  // Add this line to pass the object back
