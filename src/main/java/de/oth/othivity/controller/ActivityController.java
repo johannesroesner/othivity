@@ -43,7 +43,7 @@ public class ActivityController {
     }
 
     @PostMapping("/activities/create")
-    public String createClub(@ModelAttribute("activity") Activity activity, @RequestParam MultipartFile [] uploadedImages, HttpSession session) {
+    public String createActivity(@ModelAttribute("activity") Activity activity, @RequestParam MultipartFile [] uploadedImages, HttpSession session) {
 
         //logic to-do
         System.out.println("test");
