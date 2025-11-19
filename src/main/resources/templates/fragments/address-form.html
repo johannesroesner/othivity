@@ -11,22 +11,26 @@
 
     <div>
         <label class="label"><span class="label-text text-sm" th:text="#{addressForm.street}"></span></label>
-        <input type="text" th:field="*{address.street}" th:placeholder="#{addressForm.street}" class="input input-bordered w-full">
+        <input type="text" th:field="*{address.street}" th:placeholder="#{addressForm.street}" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('address')} ? 'input-error'">
+        <p th:if="${#fields.hasErrors('address.street')}" th:errors="*{address.street}" class="text-error text-xs mt-1"></p>
     </div>
 
     <div>
         <label class="label"><span class="label-text text-sm" th:text="#{addressForm.houseNumber}"></span></label>
-        <input type="text" th:field="*{address.houseNumber}" th:placeholder="#{addressForm.houseNumber}" class="input input-bordered w-full">
+        <input type="text" th:field="*{address.houseNumber}" th:placeholder="#{addressForm.houseNumber}" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('address')} ? 'input-error'">
+        <p th:if="${#fields.hasErrors('address.houseNumber')}" th:errors="*{address.houseNumber}" class="text-error text-xs mt-1"></p>
     </div>
 
     <div>
         <label class="label"><span class="label-text text-sm" th:text="#{addressForm.postalCode}"></span></label>
-        <input type="text" th:field="*{address.postalCode}" th:placeholder="#{addressForm.postalCode}" class="input input-bordered w-full">
+        <input type="text" th:field="*{address.postalCode}" th:placeholder="#{addressForm.postalCode}" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('address')} ? 'input-error'">
+        <p th:if="${#fields.hasErrors('address.postalCode')}" th:errors="*{address.postalCode}" class="text-error text-xs mt-1"></p>
     </div>
 
     <div>
         <label class="label"><span class="label-text text-sm" th:text="#{addressForm.city}"></span></label>
-        <input type="text" th:field="*{address.city}" th:placeholder="#{addressForm.city}" class="input input-bordered w-full">
+        <input type="text" th:field="*{address.city}" th:placeholder="#{addressForm.city}" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('address')} ? 'input-error'">
+        <p th:if="${#fields.hasErrors('address.city')}" th:errors="*{address.city}" class="text-error text-xs mt-1"></p>
     </div>
 
     <div>

@@ -38,19 +38,19 @@
                 </div>
             </div>
 
-            <div th:insert="~{fragments/image-form :: imageForm}"></div>
+            <!-- new logic with dto see ActivityCreateRequest and ActivityCreateRequestValidator   <div th:insert="~{fragments/image-form :: imageForm}"></div>   -->
 
-            <div th:insert="~{fragments/address-form :: addressForm}"></div>
+            <!-- new logic with dto see ActivityCreateRequest and ActivityCreateRequestValidator <div th:insert="~{fragments/address-form :: addressForm}"></div>  -->
 
-            <div class="lg:col-span-2 space-y-6 card bg-base-200" >MAP</div>
-        </div>
+           <div class="lg:col-span-2 space-y-6 card bg-base-200" >MAP</div>
+       </div>
 
-        <div class="flex justify-end mt-4">
-            <button type="submit" class="btn btn-primary" th:text="#{clubCreate.submitButton}"></button>
-        </div>
-    </form>
+       <div class="flex justify-end mt-4">
+           <button type="submit" class="btn btn-primary" th:text="#{clubCreate.submitButton}"></button>
+       </div>
+   </form>
 
-    <!-- content end -->
+   <!-- content end -->
 </div>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>

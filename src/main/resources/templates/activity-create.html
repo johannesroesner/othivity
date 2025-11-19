@@ -6,7 +6,7 @@
 <nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
     <!-- content start -->
-    <form th:action="@{/activities/create}" th:object="${activity}" method="post" enctype="multipart/form-data" class="space-y-6">
+    <form th:action="@{/activities/create}" th:object="${activityCreateRequest}" method="post" enctype="multipart/form-data" class="space-y-6">
 
         <div class="flex items-center mb-6 space-x-2">
             <a href="/activities" class="btn btn-ghost btn-xl">←</a>
@@ -24,35 +24,41 @@
                     </h2>
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.title}"></span></label>
-                        <input type="text" th:field="*{title}" placeholder="Title" class="input input-bordered w-full" required>
+                        <input type="text" th:field="*{title}" placeholder="Title" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('title')} ? 'input-error'" required>
+                        <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-error text-xs mt-1"></p>
                     </div>
 
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.description}"></span></label>
-                        <textarea th:field="*{description}" placeholder="Description" class="textarea textarea-bordered w-full" required></textarea>
+                        <textarea th:field="*{description}" placeholder="Description" class="textarea textarea-bordered w-full" th:classappend="${#fields.hasErrors('description')} ? 'input-error'" required></textarea>
+                        <p th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-error text-xs mt-1"></p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.date}"></span></label>
-                            <input type="date" id="date" class="input input-bordered w-full" required>
+                            <input type="date" id="date" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required>
+                            <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-error text-xs mt-1"></p>
                         </div>
                         <div>
                             <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.time}"></span></label>
-                            <input type="time" id="time" class="input input-bordered w-full" required>
+                            <input type="time" id="time" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required>
+                            <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-error text-xs mt-1"></p>
                         </div>
                         <input type="hidden" th:field="*{date}" id="datetime">
                     </div>
 
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.language}"></span></label>
-                        <select th:field="*{language}" class="select select-bordered w-full" required>
+                        <select th:field="*{language}" class="select select-bordered w-full" required th:classappend="${#fields.hasErrors('language')} ? 'input-error'">
                             <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}"></option>
                         </select>
+                        <p th:if="${#fields.hasErrors('language')}" th:errors="*{language}" class="text-error text-xs mt-1"></p>
                     </div>
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.groupSize}"></span></label>
-                        <input type="number" min="2" th:field="*{groupSize}" value="2" class="input input-bordered w-full" required>
+                        <input type="number" min="2" th:field="*{groupSize}" value="2" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('groupSize')} ? 'input-error'" required>
+                        <p th:if="${#fields.hasErrors('groupSize')}" th:errors="*{groupSize}" class="text-error text-xs mt-1"></p>
                     </div>
                 </div>
             </div>

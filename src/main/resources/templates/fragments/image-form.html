@@ -4,8 +4,9 @@
         <span th:text="#{imageForm.images}"></span>
     </h2>
     <label class="label"><span class="label-text text-sm" th:text="#{imageForm.uploadImages}"></span></label>
-    <input type="file" id="imageUpload" name="imageFiles" class="file-input file-input-bordered w-full" multiple>
+    <input type="file" id="imageUpload" name="uploadedImages" class="file-input file-input-bordered w-full" th:classappend="${imageFilesError} ? 'input-error'" multiple>
     <div class="text-error" th:if="${imageFilesError}" th:text="${imageFilesError}"></div>
+
 
     <div id="imagePreview" class="grid grid-cols-2 gap-3 mt-3"></div>
 
