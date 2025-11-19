@@ -1,6 +1,8 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.enumeration.Tag;
+import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Activity;

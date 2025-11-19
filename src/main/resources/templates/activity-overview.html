@@ -20,7 +20,7 @@
                     <a role="tab" class="tab" id="createdTab" th:text="#{activityOverview.createdTab}"></a>
                     <a role="tab" class="tab" id="allTab" th:text="#{activityOverview.allTab}"></a>
                 </div>
-                <button class="btn btn-primary" onclick="window.location.href='/activities/create'">+ Create</button>
+                <button class="btn btn-primary" onclick="window.location.href='/activities/create'" th:text="#{activityOverview.createButton}"></button>
             </div>
 
             <div id="myTable" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.myTab}, activities=${profileActivities})"></div>
