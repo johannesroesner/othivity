@@ -1,0 +1,29 @@
+<div th:fragment="clubTable(title, clubs)">
+
+    <h2 class="text-xl font-semibold mb-3" th:text="${title}"></h2>
+
+    <div class="overflow-x-auto rounded-xl shadow">
+        <table class="table w-full">
+            <thead>
+            <tr class="bg-base-200">
+                <th th:text="#{clubTable.name}"></th>
+                <th th:text="#{clubTable.accessLevel}"></th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="club : ${clubs}">
+                <td th:text="${club.name}"></td>
+                <td th:text="${club.accessLevel}"></td>
+                <td>
+                    <a class="btn btn-primary btn-xs"
+                       th:href="@{'/clubs/' + ${club.id}}">
+                        Details
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

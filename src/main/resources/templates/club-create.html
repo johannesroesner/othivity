@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{ activityOverview.pageTitle})}">
+    <th:block>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/dist/vanilla-calendar.min.css">
+    </th:block>
+</head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+
+    <form th:action="@{/clubs/create}" th:object="${club}" method="post" enctype="multipart/form-data" class="space-y-6">
+        <div class="flex items-center mb-6 space-x-2">
+            <a href="/clubs" class="btn btn-ghost btn-xl">←</a>
+            <h1 class="text-3xl font-bold" th:text="#{clubCreate.pageTitle}"></h1>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="card bg-base-200 shadow-md p-6 space-y-4">
+                    <h2 class="text-xl font-bold" th:text="#{clubCreate.details}"></h2>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm" th:text="#{clubCreate.name}"></span></label>
+                        <input type="text" th:field="*{name}" th:placeholder="#{clubCreate.name}" class="input input-bordered w-full">
+                    </div>
+
+                    <div>
+                        <label class="label"><span class="label-text text-sm" th:text="#{clubCreate.description}"></span></label>
+                        <textarea th:field="*{description}" th:placeholder="#{clubCreate.description}" class="textarea textarea-bordered w-full"></textarea>
+                    </div>
+                    <div>
+                        <label class="label"><span class="label-text text-sm" th:text="#{clubCreate.accessLevel}"></span></label>
+                        <select th:field="*{accessLevel}" class="select select-bordered w-full">
+                            <option th:each="level : ${accessLevels}" th:value="${level}" th:text="${level}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div th:insert="~{fragments/address-form :: addressForm}"></div>
+            </div>
+
+            <div class="lg:col-span-1 space-y-6">
+                <div th:insert="~{fragments/image-form :: imageForm}"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-end mt-4">
+            <button type="submit" class="btn btn-primary" th:text="#{clubCreate.submitButton}"></button>
+        </div>
+    </form>
+
+    <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>
