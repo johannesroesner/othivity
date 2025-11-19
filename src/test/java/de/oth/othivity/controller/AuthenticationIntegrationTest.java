@@ -26,6 +26,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AllArgsConstructor
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class AuthenticationIntegrationTest {
 
     private final MockMvc mockMvc;
