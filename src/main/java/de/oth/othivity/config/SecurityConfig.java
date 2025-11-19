@@ -39,7 +39,9 @@ public class SecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
                             request.getSession().setAttribute("profileId", userDetails.getProfileId());
-                            // TODO add role to session
+                            if (userDetails.getUser().getProfile() != null) {
+                                request.getSession().setAttribute("role", userDetails.getUser().getProfile().getRole());
+                            }
                             response.sendRedirect("/dashboard");
                         })
                         .permitAll()
