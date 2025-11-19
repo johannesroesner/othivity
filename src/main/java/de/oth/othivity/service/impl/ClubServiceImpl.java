@@ -13,12 +13,16 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
+import de.oth.othivity.dto.ClubDto;
+import org.springframework.web.multipart.MultipartFile;
+import de.oth.othivity.service.ImageService;
 
 @AllArgsConstructor 
 @Service
 public class ClubServiceImpl implements ClubService {
     private final SessionService sessionService;
     private final ClubRepository clubRepository;
+    private final ImageService imageService;
 
     @Override
     public List<Club> getAllClubs() {
@@ -45,11 +49,19 @@ public class ClubServiceImpl implements ClubService {
         return allClubs;
     }
     @Override
-    public Club createClubForUser(Club club, HttpSession session) {
+    public Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile[] uploadedImages) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) { return null; }
+        Club club = new Club();
+        club.setName(clubDto.getName());
+        club.setDescription(clubDto.getDescription());
+        club.setAccessLevel(clubDto.getAccessLevel());
+        club.setAddress(clubDto.getAddress());
+    
         club.getMembers().add(profile);
         club.getAdmins().add(profile);
+        imageService.saveImagesForClub(club, uploadedImages);
         return clubRepository.save(club);
+
     }
 }
