@@ -1,6 +1,6 @@
 package de.oth.othivity.service.impl;
 
-import de.oth.othivity.dto.ActivityCreateRequest;
+import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ActivityRepository;
@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -77,19 +78,19 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Activity createActivity(ActivityCreateRequest activityCreateRequest, MultipartFile[] uploadedImages, HttpSession session) {
+    public Activity createActivity(ActivityDto activityDto, MultipartFile[] uploadedImages, HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return null;
 
         Activity activity = new Activity();
-        activity.setTitle(activityCreateRequest.getTitle());
-        activity.setDescription(activityCreateRequest.getDescription());
-        activity.setDate(activityCreateRequest.getDate());
-        activity.setLanguage(activityCreateRequest.getLanguage());
-        activity.setGroupSize(activityCreateRequest.getGroupSize());
-        activity.setOrganizer(activityCreateRequest.getOrganizer());
-        activity.setTags(activityCreateRequest.getTags());
-        activity.setAddress(activityCreateRequest.getAddress());
+        activity.setTitle(activityDto.getTitle());
+        activity.setDescription(activityDto.getDescription());
+        activity.setDate(activityDto.getDate());
+        activity.setLanguage(activityDto.getLanguage());
+        activity.setGroupSize(activityDto.getGroupSize());
+        activity.setOrganizer(activityDto.getOrganizer());
+        activity.setTags(activityDto.getTags());
+        activity.setAddress(activityDto.getAddress());
         activity.setStartedBy(profile);
         List<Profile> participants = new ArrayList<>();
         participants.add(profile);
@@ -99,5 +100,24 @@ public class ActivityServiceImpl implements ActivityService {
         imageService.saveImagesForActivity(newActivity, uploadedImages);
 
         return newActivity;
+    }
+
+    @Override
+    public Activity getActivityById(UUID activityId) {
+        return activityRepository.findById(activityId).orElse(null);
+    }
+
+    @Override
+    public ActivityDto activityToDto(Activity activity) {
+        ActivityDto activityDto = new ActivityDto();
+        activityDto.setTitle(activity.getTitle());
+        activityDto.setDescription(activity.getDescription());
+        activityDto.setDate(activity.getDate());
+        activityDto.setLanguage(activity.getLanguage());
+        activityDto.setGroupSize(activity.getGroupSize());
+        activityDto.setOrganizer(activity.getOrganizer());
+        activityDto.setTags(activity.getTags());
+        activityDto.setAddress(activity.getAddress());
+        return activityDto;
     }
 }

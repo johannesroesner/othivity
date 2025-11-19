@@ -19,7 +19,7 @@ public class ImageServiceImpl implements ImageService {
             ActivityImage activityImage = new ActivityImage();
             activityImage.setActivity(activity);
             // String url = postInCloud(images[i]);
-            activityImage.setUrl("dummy");
+            activityImage.setUrl("https://picsum.photos/200");
             activityImage.setPriority(i+1);
             activityImageRepository.save(activityImage);
         }

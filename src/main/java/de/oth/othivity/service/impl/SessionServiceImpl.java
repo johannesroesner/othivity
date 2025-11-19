@@ -1,5 +1,6 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.service.SessionService;
@@ -11,8 +12,6 @@ import java.util.UUID;
 @Service
 public class SessionServiceImpl implements SessionService {
 
-    private static final String PROFILE_ID_KEY = "profileId";
-
     private final ProfileRepository profileRepository;
 
     public UUID profileId ;
@@ -23,6 +22,20 @@ public class SessionServiceImpl implements SessionService {
 
     public Profile getProfileFromSession(HttpSession session) {
         return profileRepository.findById(profileId).orElse(null);
+    }
+
+    @Override
+    public Boolean canEditActivity(HttpSession session, Activity activity) {
+        Profile profile = getProfileFromSession(session);
+        if (profile == null) return false;
+        return activity.getStartedBy().getId().equals(profile.getId()) || profile.getRole().toString().equals("MODERATOR");
+    }
+
+    @Override
+    public Boolean canJoinActivity(HttpSession session, Activity activity) {
+        Profile profile = getProfileFromSession(session);
+        if (profile == null) return false;
+        return !activity.getStartedBy().getId().equals(profile.getId()) && activity.getTakePart().size() < activity.getGroupSize();
     }
 
 }

@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivityCreateRequest {
+public class ActivityDto {
 
     private String title;
 

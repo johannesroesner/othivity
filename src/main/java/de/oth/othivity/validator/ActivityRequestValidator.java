@@ -1,11 +1,10 @@
 package de.oth.othivity.validator;
 
-import de.oth.othivity.dto.ActivityCreateRequest;
+import de.oth.othivity.dto.ActivityDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class ActivityRequestValidator implements Validator {
@@ -14,12 +13,12 @@ public class ActivityRequestValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return ActivityCreateRequest.class.equals(clazz);
+        return ActivityDto.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        ActivityCreateRequest request = (ActivityCreateRequest) target;
+        ActivityDto request = (ActivityDto) target;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "field.required", "Title is required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "field.required", "Description is required");

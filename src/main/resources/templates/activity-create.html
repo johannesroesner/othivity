@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head(#{ activityCreate.pageTitle})}">
+<head th:insert="~{layout/head :: head(#{activityCreate.pageTitle})}">
 </head>
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
     <!-- content start -->
-    <form th:action="@{/activities/create}" th:object="${activityCreateRequest}" method="post" enctype="multipart/form-data" class="space-y-6">
+    <form th:action="@{/activities/create}" th:object="${activityDto}" method="post" enctype="multipart/form-data" class="space-y-6">
 
         <div class="flex items-center mb-6 space-x-2">
             <a href="/activities" class="btn btn-ghost btn-xl">←</a>

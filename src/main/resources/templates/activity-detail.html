@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{activityDetail.pageTitle})}">
+</head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div>
+            <div class="carousel w-64 h-48">
+                <div th:each="img, i : ${images}"
+                     th:id="'s' + ${i.index + 1}"
+                     class="carousel-item w-full h-full">
+
+                    <img th:src="@{${img.url}}"
+                         class="w-full h-full object-cover rounded-box"/>
+                </div>
+            </div>
+            <div class="flex justify-center space-x-2 mt-2">
+                <a th:each="img, i : ${images}"
+                   th:href="'#s' + ${i.index + 1}"
+                   th:text="${i.index + 1}"
+                   class="btn btn-xs">
+                </a>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>
