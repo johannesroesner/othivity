@@ -27,10 +27,10 @@ public class SecurityConfig {
                     .ignoringRequestMatchers("/h2-console/**")  // Nur H2-Console ohne CSRF
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**").permitAll()  // Fixed: Added /process-register and fixed /h2-console path
+                        .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // TODO delete when H2 not needed anymore
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/process-login")
