@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import de.oth.othivity.dto.ClubDto;
 import org.springframework.web.multipart.MultipartFile;
 import de.oth.othivity.service.ImageService;
+import java.util.UUID;
 
 @AllArgsConstructor 
 @Service
@@ -27,6 +28,10 @@ public class ClubServiceImpl implements ClubService {
     @Override
     public List<Club> getAllClubs() {
         return clubRepository.findAll();
+    }
+    @Override
+    public Club getClubById(UUID clubId) {
+        return clubRepository.findById(clubId).orElse(null);
     }
     @Override
     public List<Club> getClubsJoinedByProfile(HttpSession session) {
@@ -62,6 +67,17 @@ public class ClubServiceImpl implements ClubService {
         club.getAdmins().add(profile);
         imageService.saveImagesForClub(club, uploadedImages);
         return clubRepository.save(club);
-
+    }
+    @Override
+    public ClubDto clubToDto(Club club) {
+        if (club == null) {
+            return null;
+        }
+        ClubDto clubDto = new ClubDto();
+        clubDto.setName(club.getName());
+        clubDto.setDescription(club.getDescription());
+        clubDto.setAccessLevel(club.getAccessLevel());
+        clubDto.setAddress(club.getAddress());
+        return clubDto;
     }
 }

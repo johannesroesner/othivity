@@ -6,6 +6,7 @@ import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
+import de.oth.othivity.model.main.Club;
 
 import java.util.UUID;
 
@@ -36,6 +37,18 @@ public class SessionServiceImpl implements SessionService {
         Profile profile = getProfileFromSession(session);
         if (profile == null) return false;
         return !activity.getStartedBy().getId().equals(profile.getId()) && activity.getTakePart().size() < activity.getGroupSize();
+    }
+    @Override
+    public Boolean isMemberOfClub(HttpSession session, Club club) {
+        Profile profile = getProfileFromSession(session);
+        if (profile == null) return false;
+        return profile.getClubs().stream().anyMatch(c -> c.getId().equals(club.getId()));
+    }
+    @Override
+    public Boolean isAdminOfClub(HttpSession session, Club club) {
+        Profile profile = getProfileFromSession(session);
+        if (profile == null) return false;
+        return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(club.getId()));
     }
 
 }

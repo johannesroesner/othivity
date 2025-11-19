@@ -18,8 +18,8 @@
                 <td th:text="${club.accessLevel}"></td>
                 <td>
                     <a class="btn btn-primary btn-xs"
-                       th:href="@{'/clubs/' + ${club.id}}">
-                        Details
+                       th:href="@{'/clubs/' + ${club.id}}"
+                       th:text="#{clubTable.details}">
                     </a>
                 </td>
             </tr>

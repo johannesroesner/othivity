@@ -8,6 +8,7 @@ import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
+import de.oth.othivity.model.main.Club;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,6 +106,11 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Activity getActivityById(UUID activityId) {
         return activityRepository.findById(activityId).orElse(null);
+    }
+
+    @Override
+    public List<Activity> getActivitiesByClub(Club club) {
+        return activityRepository.findAllByOrganizer(club);
     }
 
     @Override

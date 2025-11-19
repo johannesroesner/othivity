@@ -5,6 +5,7 @@ import de.oth.othivity.model.main.Activity;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import de.oth.othivity.model.main.Club;
 
 import java.util.List;
 import java.util.UUID;;
@@ -25,6 +26,8 @@ public interface ActivityService {
     Activity createActivity(ActivityDto activityCreateRequest, MultipartFile [] uploadedImages, HttpSession session);
 
     Activity getActivityById(UUID activityId);
+
+    List<Activity> getActivitiesByClub(Club club);
 
     ActivityDto activityToDto(Activity activity);
 }

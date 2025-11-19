@@ -8,11 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface ClubService {
 
     List<Club> getAllClubs();
+
+    Club getClubById(UUID clubId);
 
     List<Club> getClubsJoinedByProfile(HttpSession session);
     
@@ -21,4 +24,6 @@ public interface ClubService {
     List<Club> getClubsNotJoinedByProfileNotPrivate(HttpSession session);
 
     Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile[] uploadedImages);
+
+    ClubDto clubToDto (Club club);
 }

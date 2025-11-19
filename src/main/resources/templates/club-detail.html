@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{clubDetail.pageTitle})}">
+</head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='clubs')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    
+    <div class="flex items-center mb-6 space-x-2">
+        <a href="/clubs" class="btn btn-ghost btn-xl">←</a>
+        <h1 class="text-3xl font-bold" th:text="${club.name}"></h1>
+        <div class="badge badge-primary" th:text="${club.accessLevel}"></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Club Details -->
+            <div class="card bg-base-200 shadow-md p-6 space-y-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>🏛️</span>
+                    <span th:text="#{clubDetail.details}"></span>
+                </h2>
+                
+                <div>
+                    <h3 class="font-semibold mb-2" th:text="#{clubDetail.description}"></h3>
+                    <p th:text="${club.description}" class="text-base-content/80"></p>
+                </div>
+
+                <div class="divider"></div>
+
+                <div>
+                    <h3 class="font-semibold mb-2" th:text="#{clubDetail.accessLevel}"></h3>
+                    <div class="flex items-center gap-2">
+                        <span class="badge badge-primary" th:text="${club.accessLevel}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Information -->
+            <div class="card bg-base-200 shadow-md p-6 space-y-4" th:if="${club.address != null}">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>📍</span>
+                    <span th:text="#{clubDetail.address}"></span>
+                </h2>
+                
+                <div class="text-base-content/80">
+                    <p th:if="${club.address.addition != null}" th:text="${club.address.addition}"></p>
+                    <p th:text="${club.address.street + ' ' + club.address.houseNumber}"></p>
+                    <p th:text="${club.address.postalCode + ' ' + club.address.city}"></p>
+                    <p th:if="${club.address.country != null}" th:text="${club.address.country}"></p>
+                </div>
+            </div>
+
+            <!-- Members Section -->
+            <div class="card bg-base-200 shadow-md p-6 space-y-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>👥</span>
+                    <span th:text="#{clubDetail.members}"></span>
+                </h2>
+                
+                <div class="flex items-center justify-between">
+                    <span th:text="#{clubDetail.memberCount} + ': ' + ${memberCount}"></span>
+                    <div class="flex -space-x-2" th:if="${club.members != null and !#lists.isEmpty(club.members)}">
+                        <div th:each="member, iterStat : ${club.members}" 
+                             th:if="${iterStat.index < 5}"
+                             class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-content text-xs font-bold"
+                             th:text="${member.firstName.substring(0,1) + member.lastName.substring(0,1)}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Club Images -->
+            <div class="card bg-base-200 shadow-md p-6 space-y-4" th:if="${club.images != null and !#lists.isEmpty(club.images)}">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>📸</span>
+                    <span th:text="#{clubDetail.images}"></span>
+                </h2>
+                
+                <div class="grid grid-cols-1 gap-3">
+                    <img th:each="image : ${club.images}" 
+                         th:src="${image.url}" 
+                         th:alt="${club.name}"
+                         class="rounded border w-full h-32 object-cover hover:scale-105 transition-transform cursor-pointer">
+                </div>
+            </div>
+
+            <!-- Join/Leave Actions -->
+            <div class="card bg-base-200 shadow-md p-6 space-y-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>⚡</span>
+                    <span th:text="#{clubDetail.actions}"></span>
+                </h2>
+                
+                <div class="space-y-2">
+                    <!-- Join Button (if not member) -->
+                    <form th:if="${!isMember}" th:action="@{/clubs/{id}/join(id=${club.id})}" method="post">
+                        <button type="submit" class="btn btn-primary w-full" th:text="#{clubDetail.joinClub}"></button>
+                    </form>
+                    
+                    <!-- Leave Button (if member) -->
+                    <form th:if="${isMember}" th:action="@{/clubs/{id}/leave(id=${club.id})}" method="post">
+                        <button type="submit" class="btn btn-warning w-full" th:text="#{clubDetail.leaveClub}"></button>
+                    </form>
+                    
+                    <!-- Admin Actions (if admin) -->
+                    <div th:if="${isAdmin}" class="space-y-2">
+                        <a th:href="@{/clubs/{id}/edit(id=${club.id})}" class="btn btn-primary w-full" th:text="#{clubDetail.editClub}"></a>
+                        <form th:action="@{/clubs/{id}/delete(id=${club.id})}" method="post" th:attr="onsubmit='return confirm(' + #{clubDetail.deleteConfirm} + ')'">
+                            <button type="submit" class="btn btn-error w-full" th:text="#{clubDetail.deleteClub}"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Club Statistics -->
+            <div class="card bg-base-200 shadow-md p-6 space-y-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>📊</span>
+                    <span th:text="#{clubDetail.statistics}"></span>
+                </h2>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between" th:if="${activitiesCount != null}">
+                        <span th:text="#{clubDetail.activitiesCount}"></span>
+                        <span th:text="${activitiesCount}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>
