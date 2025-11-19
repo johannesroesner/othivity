@@ -118,4 +118,32 @@ public class AuthenticationIntegrationTest {
                 .andExpect(redirectedUrl("/"))
                 .andExpect(unauthenticated());
     }
+
+    @Test
+    void testRegistrationDuplicateEmail() throws Exception {
+        // 1. Register first user
+        mockMvc.perform(post("/process-register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "duplicate@example.com")
+                        .param("password", "password123")
+                        .param("matchingPassword", "password123")
+                        .param("firstName", "First")
+                        .param("lastName", "User"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login?registered"));
+
+        // 2. Try to register same email again
+        mockMvc.perform(post("/process-register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "duplicate@example.com")
+                        .param("password", "password123")
+                        .param("matchingPassword", "password123")
+                        .param("firstName", "Second")
+                        .param("lastName", "User"))
+                .andExpect(status().isOk()) // Should stay on page
+                .andExpect(view().name("register"))
+                .andExpect(model().attributeHasErrors("registerRequest"));
+    }
 }

@@ -70,7 +70,7 @@ public class UserController {
             userService.registerNewUserAccount(registerRequest);
             return new ModelAndView("redirect:/login?registered");
         } catch (UserAlreadyExistException uaeEx) {
-            mav.addObject("message", "An account for that username/email already exists.");
+            errors.reject("register.error.userAlreadyExists");
             return mav;
         }
     }

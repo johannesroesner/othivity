@@ -30,8 +30,8 @@
     <input type="password" th:field="*{matchingPassword}" class="input w-full" th:placeholder="#{register.confirmPassword}" minlength="8" required />
     <span th:if="${#fields.hasErrors('matchingPassword')}" th:errors="*{matchingPassword}" class="text-error text-sm"></span>
 
-    <div th:if="${message}" class="alert alert-error mt-2">
-      <span th:text="${message}"></span>
+    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-error mt-2">
+      <span th:each="err : ${#fields.globalErrors()}" th:text="${err}"></span>
     </div>
 
     <div class="flex w-full flex-col mt-4">

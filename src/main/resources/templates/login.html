@@ -20,11 +20,11 @@
     <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error text-sm"></span>
 
     <div th:if="${param.error}" class="alert alert-error mt-2">
-      <span th:text="#{login.error}">Invalid email or password</span>
+      <span th:text="#{login.error}"></span>
     </div>
 
     <div th:if="${param.registered}" class="alert alert-success mt-2">
-      <span th:text="#{login.registered}">Registration successful! Please login.</span>
+      <span th:text="#{login.registered}"></span>
     </div>
 
     <div class="flex w-full flex-col mt-4">
