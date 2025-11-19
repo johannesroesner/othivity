@@ -31,9 +31,14 @@ public class UserController {
 
     private final IUserService userService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(new LoginRequestValidator(), new RegisterRequestValidator());
+    @InitBinder("loginRequest")
+    public void initLoginBinder(WebDataBinder binder) {
+        binder.addValidators(new LoginRequestValidator());
+    }
+
+    @InitBinder("registerRequest")
+    public void initRegisterBinder(WebDataBinder binder) {
+        binder.addValidators(new RegisterRequestValidator());
     }
 
     @GetMapping("/login")
