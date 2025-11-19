@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import de.oth.othivity.model.security.CustomUserDetails;
 
 @Configuration
 @AllArgsConstructor
@@ -31,6 +32,11 @@ public class SecurityConfig {
                         .loginProcessingUrl("/process-login")
                         .usernameParameter("email")  // Use email field as username
                         .defaultSuccessUrl("/dashboard", true) //(... , true) to always redirect to dashboard
+                        .successHandler((request, response, authentication) -> {
+                            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+                            request.getSession().setAttribute("profileId", userDetails.getProfileId());
+                            response.sendRedirect("/dashboard");
+                        })
                         .permitAll()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)

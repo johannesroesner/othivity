@@ -11,18 +11,14 @@ import java.util.UUID;
 @Service
 public class SessionServiceImpl implements SessionService {
 
-    private static final String PROFILE_ID_KEY = "profileId";
-
     private final ProfileRepository profileRepository;
-
-    public UUID profileId ;
 
     public SessionServiceImpl(ProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
     }
 
     public Profile getProfileFromSession(HttpSession session) {
-        return profileRepository.findById(profileId).orElse(null);
+        return profileRepository.findById((UUID) session.getAttribute("profileId")).orElse(null);
     }
 
 }
