@@ -4,9 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +20,8 @@ import org.springframework.validation.BindingResult;
 
 import de.oth.othivity.dto.LoginRequest;
 import de.oth.othivity.dto.RegisterRequest;
+import de.oth.othivity.validator.LoginRequestValidator;
+import de.oth.othivity.validator.RegisterRequestValidator;
 import de.oth.othivity.exception.UserAlreadyExistException;
 import de.oth.othivity.service.IUserService;
 
@@ -26,6 +30,11 @@ import de.oth.othivity.service.IUserService;
 public class UserController {
 
     private final IUserService userService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.addValidators(new LoginRequestValidator(), new RegisterRequestValidator());
+    }
 
     @GetMapping("/login")
     public String index(Model model) {
