@@ -11,6 +11,7 @@ import de.oth.othivity.service.impl.SessionServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -26,13 +27,14 @@ public class TestDataRunner {
                                    UserRepository userRepository,
                                    ActivityRepository activityRepository,
                                    TagRepository tagRepository,
-                                   SessionServiceImpl sessionService) {
+                                   SessionServiceImpl sessionService,
+                                   PasswordEncoder passwordEncoder) {
         return args -> {
 
             // ---- User & Profil ----
             User user = new User();
             user.setEmail("max.mustermann@example.com");
-            user.setPassword("{noop}password");
+            user.setPassword(passwordEncoder.encode("password"));
             userRepository.save(user);
 
             Profile profile = new Profile();
