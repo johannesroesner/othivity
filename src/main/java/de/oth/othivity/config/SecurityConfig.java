@@ -1,7 +1,8 @@
 package de.oth.othivity.config;
 
 import de.oth.othivity.service.CustomUserDetailsService;
-import lombok.AllArgsConstructor;
+import de.oth.othivity.model.security.CustomUserDetails;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,7 +11,8 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import de.oth.othivity.model.security.CustomUserDetails;
+
+import lombok.AllArgsConstructor;
 
 @Configuration
 @AllArgsConstructor
@@ -21,7 +23,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf
+                    .ignoringRequestMatchers("/h2-console/**")  // Nur H2-Console ohne CSRF
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**").permitAll()  // Fixed: Added /process-register and fixed /h2-console path
                         .anyRequest().authenticated()

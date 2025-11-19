@@ -10,6 +10,7 @@
   <legend class="fieldset-legend" th:text="#{login.title}"></legend>
 
   <form th:action="@{/process-login}" th:object="${loginRequest}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <label class="label" th:text="#{login.email}"></label>
     <input type="email" th:field="*{email}" class="input w-full" th:placeholder="#{login.email}" required />
     <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-error text-sm"></span>
