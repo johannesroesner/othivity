@@ -1,0 +1,32 @@
+<div th:fragment="imageForm" class="card bg-base-200 shadow-md p-6 space-y-2 h-full">
+    <h2 class="text-xl font-bold flex items-center gap-2">
+        <span>📸</span>
+        <span th:text="#{imageForm.images}"></span>
+    </h2>
+    <label class="label"><span class="label-text text-sm" th:text="#{imageForm.uploadImages}"></span></label>
+    <input type="file" id="imageUpload" name="imageFiles" class="file-input file-input-bordered w-full" multiple>
+    <div class="text-error" th:if="${imageFilesError}" th:text="${imageFilesError}"></div>
+
+    <div id="imagePreview" class="grid grid-cols-2 gap-3 mt-3"></div>
+
+    <script>
+        const uploadInput = document.getElementById("imageUpload");
+        const preview = document.getElementById("imagePreview");
+
+        uploadInput.addEventListener("change", () => {
+            preview.innerHTML = "";
+
+            Array.from(uploadInput.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
+                    img.className = "rounded border w-full h-20 object-cover";
+                    preview.appendChild(img);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+</div>

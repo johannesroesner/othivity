@@ -2,15 +2,18 @@ package de.oth.othivity.model.main;
 
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.helper.Address;
-import de.oth.othivity.model.helper.Tag;
+import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.image.ActivityImage;
 import de.oth.othivity.model.report.ActivityReport;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +36,8 @@ public class Activity {
     private String description;
 
     @Column(nullable = false)
-    private Date date;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime date;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -61,13 +65,11 @@ public class Activity {
     @JoinColumn(name = "club_id")
     private Club organizer;
 
-    @ManyToMany
-    @JoinTable(
-            name = "activity_tags",
-            joinColumns = @JoinColumn(name = "activity_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private List<Tag> tags;
+    @ElementCollection(targetClass = Tag.class)
+    @CollectionTable(name = "activity_tags", joinColumns = @JoinColumn(name = "activity_id"))
+    @Column(name = "tag")
+    @Enumerated(EnumType.STRING)
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
@@ -81,19 +83,13 @@ public class Activity {
         return takePart.size() + "/" + groupSize;
     }
 
-    public String getTagNames() {
-        return tags.stream()
-                .map(Tag::getName)
-                .collect(java.util.stream.Collectors.joining(", "));
-    }
-
     public String getDateString() {
         if (date == null) return "";
-        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+        return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
     public String getTimeString() {
         if (date == null) return "";
-        return new SimpleDateFormat("HH:mm").format(date);
+        return date.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 }
