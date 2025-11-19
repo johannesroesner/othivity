@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head(#{ activityOverview.pageTitle})}">
-    <th:block>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/dist/vanilla-calendar.min.css">
-    </th:block>
-</head>
+<head th:insert="~{layout/head :: head(#{ activityOverview.pageTitle})}"></head>
 <body class="flex flex-col min-h-screen">
-<nav th:insert="~{layout/nav :: nav}"></nav>
+<nav th:insert="~{layout/nav :: nav(activeTab='clubs')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
 
     <form th:action="@{/clubs/create}" th:object="${club}" method="post" enctype="multipart/form-data" class="space-y-6">
         <div class="flex items-center mb-6 space-x-2">
@@ -15,17 +12,19 @@
             <h1 class="text-3xl font-bold" th:text="#{clubCreate.pageTitle}"></h1>
         </div>
 
+        <!-- grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <div class="lg:col-span-2 space-y-6">
-                <div class="card bg-base-200 shadow-md p-6 space-y-4">
-                    <h2 class="text-xl font-bold" th:text="#{clubCreate.details}"></h2>
-
+                <div class="card bg-base-200 shadow-md p-6 space-y-4 h-full">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>🏛️</span>
+                        <span class="text-xl font-bold" th:text="#{clubCreate.details}"></span>
+                    </h2>
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{clubCreate.name}"></span></label>
                         <input type="text" th:field="*{name}" th:placeholder="#{clubCreate.name}" class="input input-bordered w-full">
                     </div>
-
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{clubCreate.description}"></span></label>
                         <textarea th:field="*{description}" th:placeholder="#{clubCreate.description}" class="textarea textarea-bordered w-full"></textarea>
@@ -37,12 +36,13 @@
                         </select>
                     </div>
                 </div>
-                <div th:insert="~{fragments/address-form :: addressForm}"></div>
             </div>
 
-            <div class="lg:col-span-1 space-y-6">
-                <div th:insert="~{fragments/image-form :: imageForm}"></div>
-            </div>
+            <div th:insert="~{fragments/image-form :: imageForm}"></div>
+
+            <div th:insert="~{fragments/address-form :: addressForm}"></div>
+
+            <div class="lg:col-span-2 space-y-6 card bg-base-200" >MAP</div>
         </div>
 
         <div class="flex justify-end mt-4">

@@ -1,130 +1,109 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head(#{ activityOverview.pageTitle})}">
-    <th:block>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/dist/vanilla-calendar.min.css">
-    </th:block>
+<head th:insert="~{layout/head :: head(#{ activityCreate.pageTitle})}">
 </head>
 <body class="flex flex-col min-h-screen">
-<nav th:insert="~{layout/nav :: nav}"></nav>
+<nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
-
+    <!-- content start -->
     <form th:action="@{/activities/create}" th:object="${activity}" method="post" enctype="multipart/form-data" class="space-y-6">
 
         <div class="flex items-center mb-6 space-x-2">
             <a href="/activities" class="btn btn-ghost btn-xl">←</a>
-            <h1 class="text-3xl font-bold">Create Activity</h1>
+            <h1 class="text-3xl font-bold" th:text="#{activityCreate.pageTitle}"></h1>
         </div>
 
+        <!-- grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <div class="lg:col-span-2 space-y-6">
                 <div class="card bg-base-200 shadow-md p-6 space-y-4 h-full">
-                    <h2 class="text-xl font-bold">Activity Details</h2>
-
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>ℹ️</span>
+                        <span th:text="#{activityCreate.details}"></span>
+                    </h2>
                     <div>
-                        <label class="label"><span class="label-text text-sm">Title</span></label>
-                        <input type="text" th:field="*{title}" placeholder="Title" class="input input-bordered w-full">
+                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.title}"></span></label>
+                        <input type="text" th:field="*{title}" placeholder="Title" class="input input-bordered w-full" required>
                     </div>
 
                     <div>
-                        <label class="label"><span class="label-text text-sm">Description</span></label>
-                        <textarea th:field="*{description}" placeholder="Description" class="textarea textarea-bordered w-full"></textarea>
+                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.description}"></span></label>
+                        <textarea th:field="*{description}" placeholder="Description" class="textarea textarea-bordered w-full" required></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="label"><span class="label-text text-sm">Date</span></label>
-                            <input type="date" th:field="*{date}" class="input input-bordered w-full">
+                            <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.date}"></span></label>
+                            <input type="date" id="date" class="input input-bordered w-full" required>
                         </div>
                         <div>
-                            <label class="label"><span class="label-text text-sm">Time</span></label>
-                            <input type="time" th:field="*{date}" class="input input-bordered w-full">
+                            <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.time}"></span></label>
+                            <input type="time" id="time" class="input input-bordered w-full" required>
                         </div>
+                        <input type="hidden" th:field="*{date}" id="datetime">
                     </div>
 
                     <div>
-                        <label class="label"><span class="label-text text-sm">Language</span></label>
-                        <select th:field="*{language}" class="select select-bordered w-full">
+                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.language}"></span></label>
+                        <select th:field="*{language}" class="select select-bordered w-full" required>
                             <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}"></option>
                         </select>
                     </div>
-
                     <div>
-                        <label class="label"><span class="label-text text-sm">Group Size</span></label>
-                        <input type="number" min="2" th:field="*{groupSize}" value="2" class="input input-bordered w-full">
+                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.groupSize}"></span></label>
+                        <input type="number" min="2" th:field="*{groupSize}" value="2" class="input input-bordered w-full" required>
                     </div>
                 </div>
             </div>
 
-            <div class="card bg-base-200 shadow-md p-6 space-y-2 h-full">
-                <h2 class="text-xl font-bold">Images</h2>
-                <label class="label"><span class="label-text text-sm">Upload Images</span></label>
-                <input type="file" id="imageUpload" name="images" class="file-input file-input-bordered w-full" multiple>
+            <div th:insert="~{fragments/image-form :: imageForm}"></div>
 
-                <div id="imagePreview" class="grid grid-cols-2 gap-3 mt-3"></div>
+            <div class="space-y-6  flex flex-col">
+                <div th:insert="~{fragments/address-form :: addressForm}"></div>
             </div>
 
-            <div class="space-y-6 lg:col-span-1 flex flex-col">
-                <div class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
-                    <h2 class="text-xl font-bold">Address</h2>
-
-                    <div>
-                        <label class="label"><span class="label-text text-sm">Additional Info</span></label>
-                        <input type="text" th:field="*{address.addition}" placeholder="Additional Info" class="input input-bordered w-full">
-                    </div>
-
-                    <div>
-                        <label class="label"><span class="label-text text-sm">Street</span></label>
-                        <input type="text" th:field="*{address.street}" placeholder="Street" class="input input-bordered w-full">
-                    </div>
-
-                    <div>
-                        <label class="label"><span class="label-text text-sm">House Number</span></label>
-                        <input type="text" th:field="*{address.houseNumber}" placeholder="House Number" class="input input-bordered w-full">
-                    </div>
-
-                    <div>
-                        <label class="label"><span class="label-text text-sm">Postal Code</span></label>
-                        <input type="text" th:field="*{address.postalCode}" placeholder="Postal Code" class="input input-bordered w-full">
-                    </div>
-
-                    <div>
-                        <label class="label"><span class="label-text text-sm">City</span></label>
-                        <input type="text" th:field="*{address.city}" placeholder="City" class="input input-bordered w-full">
-                    </div>
-
-                    <div>
-                        <label class="label"><span class="label-text text-sm">Country</span></label>
-                        <input type="text" th:field="*{address.country}" placeholder="Country" class="input input-bordered w-full">
-                    </div>
-                </div>
+            <div class="space-y-6  card bg-base-200">
+               map todo
             </div>
 
-            <div class="space-y-6 lg:col-span-2 flex flex-col">
-                <div class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
-                    <h2 class="text-xl font-bold">Organizer & Tags</h2>
 
+            <div class="space-y-6 flex flex-col">
+                <div class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>👥</span>
+                        <span th:text="#{activityCreate.organizerAndTags}"></span>
+                    </h2>
                     <div>
-                        <label class="label"><span class="label-text text-sm">Organizer</span></label>
+                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.organizer}"></span></label>
                         <select th:field="*{organizer}" class="select select-bordered w-full">
                             <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}"></option>
                         </select>
                     </div>
-
-                    <div>
-                        <label class="label"><span class="label-text text-sm">Tags</span></label>
-                        <select multiple th:field="*{tags}" class="select select-bordered w-full">
-                            <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
-                        </select>
-                    </div>
+                    <details class="dropdown dropdown-bottom mb-4" id="tagDropdown">
+                        <summary class="m-1 btn btn-outline w-full sm:w-auto justify-between flex items-center">
+                            <span>🏷️</span>
+                            <span th:text="#{activityCreate.tags}" class="ml-2"></span>
+                            <span class="ml-2 opacity-70 text-lg">▾</span>
+                        </summary>
+                        <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-full max-h-60 overflow-y-auto block border border-base-200">
+                            <li th:each="t : ${allTags}">
+                                <label class="label cursor-pointer justify-start hover:bg-base-200 rounded-btn p-2">
+                                    <input type="checkbox" class="checkbox checkbox-sm checkbox-primary mr-3 tag-checkbox" th:field="*{tags}" th:value="${t.name()}" />
+                                    <span class="flex-1 font-medium">
+                                    <span th:text="${t.emoji}"></span>
+                                    <span th:text="#{${t.key}}"></span>
+                                    </span>
+                                </label>
+                            </li>
+                        </ul>
+                    </details>
                 </div>
             </div>
-
         </div>
 
         <div class="flex justify-end mt-4">
-            <button type="submit" class="btn btn-primary">Create Activity</button>
+            <button type="submit" class="btn btn-primary" th:text="#{activityCreate.createActivity}"></button>
         </div>
     </form>
 
@@ -132,23 +111,11 @@
 </div>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 <script>
-    const uploadInput = document.getElementById("imageUpload");
-    const preview = document.getElementById("imagePreview");
-
-    uploadInput.addEventListener("change", () => {
-        preview.innerHTML = "";
-
-        Array.from(uploadInput.files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = document.createElement("img");
-                img.src = event.target.result;
-                preview.appendChild(img);
-            };
-
-            reader.readAsDataURL(file);
-        });
-    });
+    document.querySelector("form").addEventListener("submit", () => {
+        const date = document.getElementById("date").value;
+        const time = document.getElementById("time").value;
+        document.getElementById("datetime").value = date + "T" + time;
+    })
 </script>
 </body>
 </html>

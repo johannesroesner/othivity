@@ -1,5 +1,8 @@
 <div th:fragment="addressForm" class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
-    <h2 class="text-xl font-bold" th:text="#{addressForm.address}"></h2>
+    <h2 class="text-xl font-bold flex items-center gap-2">
+        <span>📍</span>
+        <span th:text="#{addressForm.address}">Address</span>
+    </h2>
 
     <div>
         <label class="label"><span class="label-text text-sm" th:text="#{addressForm.additionalInfo}"></span></label>

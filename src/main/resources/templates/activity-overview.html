@@ -6,7 +6,7 @@
     </th:block>
 </head>
 <body class="flex flex-col min-h-screen">
-<nav th:insert="~{layout/nav :: nav}"></nav>
+<nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
     <!-- content start -->
     <h1 class="text-3xl font-bold mb-6" th:text="#{activityOverview.pageTitle}"></h1>
@@ -20,7 +20,7 @@
                     <a role="tab" class="tab" id="createdTab" th:text="#{activityOverview.createdTab}"></a>
                     <a role="tab" class="tab" id="allTab" th:text="#{activityOverview.allTab}"></a>
                 </div>
-                <button class="btn btn-primary" onclick="window.location.href='/activities/create'">+ Create</button>
+                <button class="btn btn-primary" onclick="window.location.href='/activities/create'" th:text="#{activityOverview.createButton}"></button>
             </div>
 
             <div id="myTable" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.myTab}, activities=${profileActivities})"></div>
