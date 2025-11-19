@@ -4,6 +4,7 @@ import de.oth.othivity.model.security.User;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.service.IUserService;
 import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.model.main.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,10 @@ public class UserServiceImpl implements IUserService {
         
         User savedUser = userRepository.save(user);
         
-        profileService.createProfileFromUser(savedUser, registerRequest);
+        Profile profile = profileService.createProfileFromUser(savedUser, registerRequest);
+
+        savedUser.setProfile(profile);
+        userRepository.save(savedUser);
 
         return savedUser;
     }

@@ -1,7 +1,7 @@
 package de.oth.othivity.config;
 
-import de.oth.othivity.service.CustomUserDetailsService;
 import de.oth.othivity.model.security.CustomUserDetails;
+import de.oth.othivity.service.impl.CustomUserDetailsService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
                             request.getSession().setAttribute("profileId", userDetails.getProfileId());
+                            // TODO add role to session
                             response.sendRedirect("/dashboard");
                         })
                         .permitAll()

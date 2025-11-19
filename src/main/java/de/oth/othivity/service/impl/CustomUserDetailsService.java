@@ -1,4 +1,4 @@
-package de.oth.othivity.service;
+package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.security.CustomUserDetails;
 import de.oth.othivity.model.security.User;
