@@ -1,4 +1,4 @@
-<nav th:fragment="nav" class="navbar bg-base-100 shadow-xl">
+<nav th:fragment="nav(activeTab)" class="navbar bg-base-100 shadow-xl">
     <div class="navbar-start">
         <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -8,7 +8,7 @@
             </div>
             <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                 <li><a href="/activities" th:text="#{nav.activities}"></a></li>
-                <li><a th:text="#{nav.clubs}"></a></li>
+                <li><a href="/clubs" th:text="#{nav.clubs}"></a></li>
                 <li><a th:text="#{nav.explorer}"></a></li>
             </ul>
         </div>

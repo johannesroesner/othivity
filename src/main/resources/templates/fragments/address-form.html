@@ -1,0 +1,36 @@
+<div th:fragment="addressForm" class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
+    <h2 class="text-xl font-bold flex items-center gap-2">
+        <span>📍</span>
+        <span th:text="#{addressForm.address}">Address</span>
+    </h2>
+
+    <div>
+        <label class="label"><span class="label-text text-sm" th:text="#{addressForm.additionalInfo}"></span></label>
+        <input type="text" th:field="*{address.addition}" th:placeholder="#{addressForm.additionalInfo}" class="input input-bordered w-full">
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text text-sm" th:text="#{addressForm.street}"></span></label>
+        <input type="text" th:field="*{address.street}" th:placeholder="#{addressForm.street}" class="input input-bordered w-full">
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text text-sm" th:text="#{addressForm.houseNumber}"></span></label>
+        <input type="text" th:field="*{address.houseNumber}" th:placeholder="#{addressForm.houseNumber}" class="input input-bordered w-full">
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text text-sm" th:text="#{addressForm.postalCode}"></span></label>
+        <input type="text" th:field="*{address.postalCode}" th:placeholder="#{addressForm.postalCode}" class="input input-bordered w-full">
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text text-sm" th:text="#{addressForm.city}"></span></label>
+        <input type="text" th:field="*{address.city}" th:placeholder="#{addressForm.city}" class="input input-bordered w-full">
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text text-sm" th:text="#{addressForm.country}"></span></label>
+        <input type="text" th:field="*{address.country}" th:placeholder="#{addressForm.country}" class="input input-bordered w-full">
+    </div>
+</div>

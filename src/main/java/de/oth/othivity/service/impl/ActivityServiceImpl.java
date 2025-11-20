@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +62,12 @@ public class ActivityServiceImpl implements ActivityService {
         if (activities.isEmpty()) {
             return List.of();
         }
+
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         return activities.stream()
                 .map(Activity::getDate)
-                .map(date -> new java.text.SimpleDateFormat("yyyy-MM-dd").format(date))
+                .map(date -> date.format(dateFormatter))
                 .toList();
     }
 }
