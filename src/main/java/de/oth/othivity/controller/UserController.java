@@ -18,8 +18,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import de.oth.othivity.dto.LoginRequest;
-import de.oth.othivity.dto.RegisterRequest;
+import de.oth.othivity.dto.LoginDto;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.validator.LoginRequestValidator;
 import de.oth.othivity.validator.RegisterRequestValidator;
 import de.oth.othivity.exception.UserAlreadyExistException;
@@ -43,19 +43,19 @@ public class UserController {
 
     @GetMapping("/login")
     public String index(Model model) {
-        model.addAttribute("loginRequest", new LoginRequest());
+        model.addAttribute("loginRequest", new LoginDto());
         return "login";
     }
 
     @GetMapping("/register")
     public String register(Model model) {
-        model.addAttribute("registerRequest", new RegisterRequest());
+        model.addAttribute("registerRequest", new RegisterDto());
         return "register";
     }
 
     @PostMapping("/process-register")
     public ModelAndView registerUserAccount(
-            @ModelAttribute("registerRequest") @Valid RegisterRequest registerRequest,
+            @ModelAttribute("registerRequest") @Valid RegisterDto registerRequest,
             BindingResult errors,
             HttpServletRequest request) {
         

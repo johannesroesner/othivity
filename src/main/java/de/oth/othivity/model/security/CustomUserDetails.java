@@ -27,7 +27,7 @@ public class CustomUserDetails implements UserDetails {
         // Map Profile role to Spring Security authority
         if (user.getProfile() != null && user.getProfile().getRole() != null) {
             return Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + user.getProfile().getRole().name())
+                new SimpleGrantedAuthority("ROLE_" + user.getProfile().getRole().name()) // generates Spring Role with "ROLE_" prefix
             );
         }
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 
-import de.oth.othivity.dto.RegisterRequest;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.exception.UserAlreadyExistException;
 
 
@@ -23,7 +23,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public User registerNewUserAccount(RegisterRequest registerRequest) throws UserAlreadyExistException {
+    public User registerNewUserAccount(RegisterDto registerRequest) throws UserAlreadyExistException {
         if (emailExists(registerRequest.getEmail())) {
             throw new UserAlreadyExistException("User already exist");
         }

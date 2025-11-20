@@ -1,6 +1,6 @@
 package de.oth.othivity.validator;
 
-import de.oth.othivity.dto.RegisterRequest;
+import de.oth.othivity.dto.RegisterDto;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -13,7 +13,7 @@ public class RegisterRequestValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return RegisterRequest.class.equals(clazz);
+        return RegisterDto.class.equals(clazz);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class RegisterRequestValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "field.required", "Password is required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "matchingPassword", "field.required", "Confirm password is required");
 
-        RegisterRequest request = (RegisterRequest) target;
+        RegisterDto request = (RegisterDto) target;
 
         if (request.getEmail() != null && !request.getEmail().isEmpty() && !EMAIL_PATTERN.matcher(request.getEmail()).matches()) {
             errors.rejectValue("email", "field.invalid", "Invalid email format");

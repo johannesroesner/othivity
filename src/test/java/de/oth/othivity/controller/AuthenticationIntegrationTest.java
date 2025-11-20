@@ -1,6 +1,6 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.dto.RegisterRequest;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.repository.security.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.test.context.TestConstructor;

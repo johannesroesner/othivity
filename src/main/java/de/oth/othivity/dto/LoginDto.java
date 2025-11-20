@@ -3,7 +3,7 @@ package de.oth.othivity.dto;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
+public class LoginDto {
     
     private String email;
     

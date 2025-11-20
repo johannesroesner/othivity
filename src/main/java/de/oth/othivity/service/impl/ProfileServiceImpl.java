@@ -5,7 +5,7 @@ import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
-import de.oth.othivity.dto.RegisterRequest;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.repository.main.ProfileRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile createProfileFromUser(User user, RegisterRequest registerRequest) {
+    public Profile createProfileFromUser(User user, RegisterDto registerRequest) {
         // Implementation here
         Profile profile = new Profile();
         profile.setUser(user);

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import de.oth.othivity.model.security.User;
-import de.oth.othivity.dto.RegisterRequest;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.main.Profile;
 
 @Service
@@ -14,6 +14,6 @@ public interface ProfileService {
 
     List<Club> allJoinedClubsByProfile(HttpSession session);
 
-    Profile createProfileFromUser(User user, RegisterRequest registerRequest);
+    Profile createProfileFromUser(User user, RegisterDto registerRequest);
 
 }
