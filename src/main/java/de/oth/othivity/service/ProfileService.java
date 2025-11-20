@@ -14,6 +14,8 @@ public interface ProfileService {
 
     List<Club> allJoinedClubsByProfile(HttpSession session);
 
-    Profile createProfileFromUser(User user, RegisterDto registerRequest);
+    Profile createProfileFromUser(User user, RegisterDto registerDto);
+
+    boolean isusernameTaken(String userName);
 
 }

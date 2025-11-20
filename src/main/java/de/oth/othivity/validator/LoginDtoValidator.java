@@ -1,13 +1,16 @@
 package de.oth.othivity.validator;
 
 import de.oth.othivity.dto.LoginDto;
+
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import java.util.regex.Pattern;
 
-public class LoginRequestValidator implements Validator {
+@Component
+public class LoginDtoValidator implements Validator {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 

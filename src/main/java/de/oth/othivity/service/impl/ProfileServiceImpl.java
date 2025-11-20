@@ -27,14 +27,20 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile createProfileFromUser(User user, RegisterDto registerRequest) {
+    public Profile createProfileFromUser(User user, RegisterDto registerDto) {
         // Implementation here
         Profile profile = new Profile();
         profile.setUser(user);
-        profile.setFirstName(registerRequest.getFirstName());
-        profile.setLastName(registerRequest.getLastName());
-        profile.setEmail(registerRequest.getEmail());
+        profile.setFirstName(registerDto.getFirstName());
+        profile.setLastName(registerDto.getLastName());
+        profile.setUsername(registerDto.getUsername());
+        profile.setEmail(registerDto.getEmail());
         
         return profileRepository.save(profile);
+    }
+
+    @Override
+    public boolean isusernameTaken(String username) {
+        return profileRepository.existsByusername(username);
     }
 }

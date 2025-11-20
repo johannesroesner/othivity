@@ -20,8 +20,8 @@ import org.springframework.validation.BindingResult;
 
 import de.oth.othivity.dto.LoginDto;
 import de.oth.othivity.dto.RegisterDto;
-import de.oth.othivity.validator.LoginRequestValidator;
-import de.oth.othivity.validator.RegisterRequestValidator;
+import de.oth.othivity.validator.LoginDtoValidator;
+import de.oth.othivity.validator.RegisterDtoValidator;
 import de.oth.othivity.exception.UserAlreadyExistException;
 import de.oth.othivity.service.IUserService;
 
@@ -30,44 +30,46 @@ import de.oth.othivity.service.IUserService;
 public class UserController {
 
     private final IUserService userService;
+    private final LoginDtoValidator loginDtoValidator;
+    private final RegisterDtoValidator registerDtoValidator;
 
-    @InitBinder("loginRequest")
+    @InitBinder("loginDto")
     public void initLoginBinder(WebDataBinder binder) {
-        binder.addValidators(new LoginRequestValidator());
+        binder.addValidators(loginDtoValidator);
     }
 
-    @InitBinder("registerRequest")
+    @InitBinder("registerDto")
     public void initRegisterBinder(WebDataBinder binder) {
-        binder.addValidators(new RegisterRequestValidator());
+        binder.addValidators(registerDtoValidator);
     }
 
     @GetMapping("/login")
     public String index(Model model) {
-        model.addAttribute("loginRequest", new LoginDto());
+        model.addAttribute("loginDto", new LoginDto());
         return "login";
     }
 
     @GetMapping("/register")
     public String register(Model model) {
-        model.addAttribute("registerRequest", new RegisterDto());
+        model.addAttribute("registerDto", new RegisterDto());
         return "register";
     }
 
     @PostMapping("/process-register")
     public ModelAndView registerUserAccount(
-            @ModelAttribute("registerRequest") @Valid RegisterDto registerRequest,
+            @ModelAttribute("registerDto") @Valid RegisterDto registerDto,
             BindingResult errors,
             HttpServletRequest request) {
         
         ModelAndView mav = new ModelAndView("register");
-        mav.addObject("registerRequest", registerRequest);  // Add this line to pass the object back
+        mav.addObject("registerDto", registerDto);  // Add this line to pass the object back
         
         if (errors.hasErrors()) {
             return mav;
         }
         
         try {
-            userService.registerNewUserAccount(registerRequest);
+            userService.registerNewUserAccount(registerDto);
             return new ModelAndView("redirect:/login?registered");
         } catch (UserAlreadyExistException uaeEx) {
             errors.reject("register.error.userAlreadyExists");

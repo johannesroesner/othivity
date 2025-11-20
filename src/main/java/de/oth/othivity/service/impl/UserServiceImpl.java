@@ -23,18 +23,18 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public User registerNewUserAccount(RegisterDto registerRequest) throws UserAlreadyExistException {
-        if (emailExists(registerRequest.getEmail())) {
+    public User registerNewUserAccount(RegisterDto registerDto) throws UserAlreadyExistException {
+        if (emailExists(registerDto.getEmail())) {
             throw new UserAlreadyExistException("User already exist");
         }
 
         User user = new User();
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setEmail(registerDto.getEmail());
         
         User savedUser = userRepository.save(user);
         
-        Profile profile = profileService.createProfileFromUser(savedUser, registerRequest);
+        Profile profile = profileService.createProfileFromUser(savedUser, registerDto);
 
         savedUser.setProfile(profile);
         userRepository.save(savedUser);

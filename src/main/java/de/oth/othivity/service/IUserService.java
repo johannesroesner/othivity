@@ -8,6 +8,6 @@ import de.oth.othivity.exception.UserAlreadyExistException;
 @Service
 public interface IUserService {
 
-    User registerNewUserAccount(RegisterDto registerRequest) throws UserAlreadyExistException;
+    User registerNewUserAccount(RegisterDto registerDto) throws UserAlreadyExistException;
 
 }

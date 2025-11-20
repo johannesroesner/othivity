@@ -47,7 +47,8 @@ public class AuthenticationIntegrationTest {
                         .param("password", "password123")
                         .param("matchingPassword", "password123")
                         .param("firstName", "Test")
-                        .param("lastName", "User"))
+                        .param("lastName", "User")
+                        .param("username", "testuser"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?registered"));
 
@@ -63,10 +64,11 @@ public class AuthenticationIntegrationTest {
                         .param("password", "123") // Too short
                         .param("matchingPassword", "123")
                         .param("firstName", "")
-                        .param("lastName", ""))
+                        .param("lastName", "")
+                        .param("username", ""))
                 .andExpect(status().isOk()) // Should return to the form with errors
                 .andExpect(view().name("register"))
-                .andExpect(model().attributeHasErrors("registerRequest"));
+                .andExpect(model().attributeHasErrors("registerDto"));
     }
 
     @Test
@@ -78,7 +80,8 @@ public class AuthenticationIntegrationTest {
                 .param("password", "password123")
                 .param("matchingPassword", "password123")
                 .param("firstName", "Login")
-                .param("lastName", "User"));
+                .param("lastName", "User")
+                .param("username", "loginuser"));
 
         // Then try to login
         mockMvc.perform(formLogin("/process-login")
@@ -128,7 +131,8 @@ public class AuthenticationIntegrationTest {
                         .param("password", "password123")
                         .param("matchingPassword", "password123")
                         .param("firstName", "First")
-                        .param("lastName", "User"))
+                        .param("lastName", "User")
+                        .param("username", "firstuser"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?registered"));
 
@@ -140,9 +144,40 @@ public class AuthenticationIntegrationTest {
                         .param("password", "password123")
                         .param("matchingPassword", "password123")
                         .param("firstName", "Second")
-                        .param("lastName", "User"))
+                        .param("lastName", "User")
+                        .param("username", "seconduser"))
                 .andExpect(status().isOk()) // Should stay on page
                 .andExpect(view().name("register"))
-                .andExpect(model().attributeHasErrors("registerRequest"));
+                .andExpect(model().attributeHasErrors("registerDto"));
+    }
+
+    @Test
+    void testRegistrationDuplicateUsername() throws Exception {
+        // 1. Register first user
+        mockMvc.perform(post("/process-register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "user1@example.com")
+                        .param("password", "password123")
+                        .param("matchingPassword", "password123")
+                        .param("firstName", "First")
+                        .param("lastName", "User")
+                        .param("username", "uniqueuser"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login?registered"));
+
+        // 2. Try to register same username again (but different email)
+        mockMvc.perform(post("/process-register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "user2@example.com") // Different email
+                        .param("password", "password123")
+                        .param("matchingPassword", "password123")
+                        .param("firstName", "Second")
+                        .param("lastName", "User")
+                        .param("username", "uniqueuser")) // SAME username
+                .andExpect(status().isOk()) // Should stay on page (validation error)
+                .andExpect(view().name("register"))
+                .andExpect(model().attributeHasFieldErrors("registerDto", "username"));
     }
 }

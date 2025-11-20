@@ -9,7 +9,7 @@
 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full max-w-md border p-6">
   <legend class="fieldset-legend" th:text="#{register.title}">Register</legend>
 
-  <form th:action="@{/process-register}" th:object="${registerRequest}" method="post">
+  <form th:action="@{/process-register}" th:object="${registerDto}" method="post">
     <label class="label" th:text="#{register.firstname}"></label>
     <input type="text" th:field="*{firstName}" class="input w-full" th:placeholder="#{register.firstname}" required />
     <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-error text-sm"></span>
@@ -17,6 +17,10 @@
     <label class="label" th:text="#{register.lastname}"></label>
     <input type="text" th:field="*{lastName}" class="input w-full" th:placeholder="#{register.lastname}" required />
     <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-error text-sm"></span>
+
+    <label class="label" th:text="#{register.username}"></label>
+    <input type="text" th:field="*{username}" class="input w-full" th:placeholder="#{register.username}" required />
+    <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-error text-sm"></span>
 
     <label class="label" th:text="#{register.email}"></label>
     <input type="email" th:field="*{email}" class="input w-full" th:placeholder="#{register.email}" required />
