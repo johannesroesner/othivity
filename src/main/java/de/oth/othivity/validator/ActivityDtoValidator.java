@@ -7,7 +7,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
-public class ActivityRequestValidator implements Validator {
+public class ActivityDtoValidator implements Validator {
 
     private static final long MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 megabytes
 

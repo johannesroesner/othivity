@@ -1,35 +1,191 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head(#{activityDetail.pageTitle})}">
-</head>
+<head th:insert="~{layout/head :: head(#{activityDetail.pageTitle})}"></head>
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
     <!-- content start -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div>
-            <div class="carousel w-64 h-48">
-                <div th:each="img, i : ${images}"
-                     th:id="'s' + ${i.index + 1}"
-                     class="carousel-item w-full h-full">
 
-                    <img th:src="@{${img.url}}"
-                         class="w-full h-full object-cover rounded-box"/>
+    <div class="flex items-center mb-6 space-x-2">
+        <a href="/activities" class="btn btn-ghost btn-xl">←</a>
+        <h1 class="text-3xl font-bold" th:text="#{activityDetail.pageTitle}"></h1>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div class="flex flex-col items-center lg:col-span-1">
+            <div class="carousel w-96 h-64 shadow-2xl flex-shrink-0">
+                <div th:each="img, i : ${images}" th:id="'s' + ${i.index + 1}" class="carousel-item w-full h-full">
+                    <img th:src="@{${img.url}}" class="w-full h-full object-cover rounded-box"/>
                 </div>
             </div>
-            <div class="flex justify-center space-x-2 mt-2">
-                <a th:each="img, i : ${images}"
-                   th:href="'#s' + ${i.index + 1}"
-                   th:text="${i.index + 1}"
-                   class="btn btn-xs">
-                </a>
+            <div class="flex justify-center space-x-2 mt-2 shadow-2xl">
+                <a th:each="img, i : ${images}" th:href="'#s' + ${i.index + 1}" th:text="${i.index + 1}" class="btn btn-xs"></a>
+            </div>
+
+            <div class="w-full bg-base-200 shadow-2xl p-6 rounded-2xl mt-4 space-y-4 flex-1 flex flex-col justify-between">
+                <p class="text-sm font-semibold text-base-content/70">Teilnehmer</p>
+
+                <div class="space-y-2 flex-1 flex flex-col justify-start">
+                    <!-- Organizer -->
+                    <div th:if="${activity.organizer}" class="bg-white p-4 rounded-xl shadow-sm">
+                        <span class="text-sm font-medium" th:text="'Organizer: ' + ${activity.organizer.name}"></span>
+                    </div>
+
+                    <!-- Starter -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <span class="text-sm font-medium" th:text="'Starter: ' + ${activity.startedBy.firstName}"></span>
+                    </div>
+
+                    <!-- Alle Teilnehmer -->
+                    <div th:each="person : ${activity.takePart}" class="bg-white p-4 rounded-xl shadow-sm">
+                        <span class="text-sm font-medium" th:text="${person.firstName}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+
+                <!-- Header -->
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">ℹ️</span>
+                    <h2 class="text-2xl font-bold" th:text="#{activityDetail.pageTitle}"></h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <!-- Title -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.title}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                            <span class="text-base font-medium" th:text="${activity.title}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Group Size -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.groupSize}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                            <span class="text-base font-medium" th:text="${activity.groupSize}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.description}"></p>
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm whitespace-pre-line leading-relaxed">
+                        <span th:text="${activity.description}"></span>
+                    </div>
+                </div>
+
+                <!-- Date & Time -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.date}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                            <span class="text-base font-medium" th:text="${#temporals.format(activity.date, 'dd-MM-yyyy')}"></span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.time}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                            <span class="text-base font-medium" th:text="${#temporals.format(activity.date, 'HH:mm')}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Language -->
+                <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.language}"></p>
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm flex items-center gap-2 text-lg">
+                        <span th:text="${activity.language.emoji}"></span>
+                        <span th:text="${activity.language.name}"></span>
+                    </div>
+                </div>
+
+
+                <!-- Tags -->
+                <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.tags}"></p>
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm flex flex-wrap gap-2 items-center text-lg">
+                    <span th:each="tag : ${activity.tags}">
+                    <span class="flex items-center gap-1">
+                    <span th:text="${tag.emoji}"></span>
+                    <span th:text="#{${tag.key}}"></span>
+                    </span>
+                    </span>
+                    </div>
+                </div>
+
             </div>
         </div>
 
 
+
+        <div id="map-container" class="lg:col-span-2 relative">
+            <div id="map" class="h-full w-full rounded shadow-2xl"></div>
+        </div>
+
+
+        <div class="">
+            <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📍</span>
+                    <h2 class="text-2xl font-bold">address</h2>
+                </div>
+
+                <div class="space-y-1">
+                    <!-- Addition nur anzeigen, wenn vorhanden und nicht leer -->
+                    <div th:if="!${#strings.isEmpty(activity.address.addition)}"
+                         class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium" th:text="${activity.address.addition}"></span>
+                    </div>
+
+                    <!-- Street + HouseNumber immer anzeigen -->
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                <span class="text-base font-medium"
+                      th:text="${activity.address.street} + ' ' + ${activity.address.houseNumber}"></span>
+                    </div>
+
+                    <!-- PostalCode + City immer anzeigen -->
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium" th:text="${activity.address.postalCode} + ' ' + ${activity.address.city}"></span>
+                    </div>
+
+                    <!-- Country nur anzeigen, wenn vorhanden und nicht leer -->
+                    <div th:if="!${#strings.isEmpty(activity.address.country)}"
+                         class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium" th:text="${activity.address.country}"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
     </div>
+    </form>
     <!-- content end -->
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+    });
+</script>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>
 </html>
