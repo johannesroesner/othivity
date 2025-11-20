@@ -46,7 +46,7 @@ public class ActivityServiceImpl implements ActivityService {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
 
-        List<Activity> allActivities = new ArrayList<>(profile.getParticipatingActivities());
+        List<Activity> allActivities = getAllActivities();
 
         return allActivities.stream()
                 .filter(activity -> !profile.getStartedActivities().contains(activity))
