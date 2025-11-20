@@ -39,6 +39,10 @@ public class ActivityController {
 
     @GetMapping("/activities")
     public String activities(HttpSession session, Model model) {
+
+        // test
+        System.out.println(sessionService.getProfileFromSession(session).getUsername());
+
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session));
         model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session));

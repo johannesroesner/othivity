@@ -39,20 +39,20 @@ public class TestDataRunner {
 
             // ---- User & Profil ----
             User user = new User();
-            user.setEmail("max.mustermann@example.com");
+            user.setEmail("a@a.com");
             user.setPassword(passwordEncoder.encode("password"));
             userRepository.save(user);
 
             Profile profile = new Profile();
             profile.setFirstName("Max");
             profile.setLastName("Mustermann");
-            profile.setEmail("max.mustermann@example.com");
+            profile.setUsername("gaudiSepp");
+            profile.setEmail("a@a.com");
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setPhone("0123456789");
             profile.setRole(Role.USER);
             profile.setUser(user);
             profileRepository.save(profile);
-
 
             User user2 = new User();
             user2.setEmail("sebastian@example.com");
@@ -62,6 +62,7 @@ public class TestDataRunner {
             Profile profile2 = new Profile();
             profile2.setFirstName("Sebastian");
             profile2.setLastName("Moritz");
+            profile2.setUsername("moe");
             profile2.setEmail("sebastian@example.com");
             profile2.setAboutMe("Ich bin ein Testprofil.");
             profile2.setPhone("0123456789");
@@ -69,14 +70,16 @@ public class TestDataRunner {
             profile2.setUser(user2);
             profileRepository.save(profile2);
 
-            //sessionService.profileId = profile.getId();
-
             Activity activity = new Activity();
             activity.setTitle("my activity");
             activity.setDescription("test description");
             activity.setDate(LocalDateTime.now());
             activity.setGroupSize(10);
             activity.setStartedBy(profile);
+            // Teilnehmerliste korrekt setzen
+            List<Profile> participants1 = new ArrayList<>();
+            participants1.add(profile);
+            activity.setTakePart(participants1);
             activity.setLanguage(Language.GERMAN);
             activityRepository.save(activity);
 
@@ -85,9 +88,15 @@ public class TestDataRunner {
             otherActivity.setDescription("test description");
             otherActivity.setDate(LocalDateTime.now());
             otherActivity.setGroupSize(10);
-            otherActivity.setStartedBy(profile2);  
+            otherActivity.setStartedBy(profile2);
+            // Teilnehmerliste korrekt setzen
+            List<Profile> participants2 = new ArrayList<>();
+            participants2.add(profile2);
+            participants2.add(profile);
+            otherActivity.setTakePart(participants2);
             otherActivity.setLanguage(Language.GERMAN);
             activityRepository.save(otherActivity);
+
         };
     }
 }
