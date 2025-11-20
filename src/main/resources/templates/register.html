@@ -11,29 +11,28 @@
 
   <form th:action="@{/process-register}" th:object="${registerDto}" method="post">
     <label class="label" th:text="#{register.firstname}"></label>
-    <input type="text" th:field="*{firstName}" class="input w-full" th:placeholder="#{register.firstname}" required />
-    <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-error text-sm"></span>
+    <input type="text" th:field="*{firstName}" class="input w-full" th:placeholder="#{register.firstname}" required th:classappend="${#fields.hasErrors('firstName')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-error text-xs mt-1"></p>
 
     <label class="label" th:text="#{register.lastname}"></label>
-    <input type="text" th:field="*{lastName}" class="input w-full" th:placeholder="#{register.lastname}" required />
-    <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-error text-sm"></span>
+    <input type="text" th:field="*{lastName}" class="input w-full" th:placeholder="#{register.lastname}" required th:classappend="${#fields.hasErrors('lastName')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-error text-xs mt-1"></p>
 
     <label class="label" th:text="#{register.username}"></label>
-    <input type="text" th:field="*{username}" class="input w-full" th:placeholder="#{register.username}" required />
-    <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-error text-sm"></span>
+    <input type="text" th:field="*{username}" class="input w-full" th:placeholder="#{register.username}" required th:classappend="${#fields.hasErrors('username')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-error text-xs mt-1"></p>
 
     <label class="label" th:text="#{register.email}"></label>
-    <input type="email" th:field="*{email}" class="input w-full" th:placeholder="#{register.email}" required />
-    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-error text-sm"></span>
+    <input type="email" th:field="*{email}" class="input w-full" th:placeholder="#{register.email}" required th:classappend="${#fields.hasErrors('email')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-error text-xs mt-1"></p>
 
     <label class="label mt-2" th:text="#{register.password}"></label>
-    <input type="password" th:field="*{password}" class="input w-full" th:placeholder="#{register.password}" minlength="8" required />
-    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error text-sm"></span>
+    <input type="password" th:field="*{password}" class="input w-full" th:placeholder="#{register.password}" minlength="8" required th:classappend="${#fields.hasErrors('password')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error text-xs mt-1"></p>
 
     <label class="label mt-2" th:text="#{register.confirmPassword}"></label>
-    <input type="password" th:field="*{matchingPassword}" class="input w-full" th:placeholder="#{register.confirmPassword}" minlength="8" required />
-    <span th:if="${#fields.hasErrors('matchingPassword')}" th:errors="*{matchingPassword}" class="text-error text-sm"></span>
-
+    <input type="password" th:field="*{matchingPassword}" class="input w-full" th:placeholder="#{register.confirmPassword}" minlength="8" required th:classappend="${#fields.hasErrors('matchingPassword')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('matchingPassword')}" th:errors="*{matchingPassword}" class="text-error text-xs mt-1"></p>
     <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-error mt-2">
       <span th:each="err : ${#fields.globalErrors()}" th:text="${err}"></span>
     </div>

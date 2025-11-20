@@ -6,7 +6,6 @@ import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
-import de.oth.othivity.repository.helper.TagRepository;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.service.impl.SessionServiceImpl;
 import org.springframework.boot.CommandLineRunner;
@@ -17,9 +16,9 @@ import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.model.main.Activity;
-import de.oth.othivity.model.helper.Tag;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +32,6 @@ public class TestDataRunner {
     CommandLineRunner loadTestData(ProfileRepository profileRepository,
                                    UserRepository userRepository,
                                    ActivityRepository activityRepository,
-                                   TagRepository tagRepository,
                                    SessionServiceImpl sessionService,
                                    PasswordEncoder passwordEncoder,
                                    ClubRepository clubRepository) {
@@ -76,7 +74,7 @@ public class TestDataRunner {
             Activity activity = new Activity();
             activity.setTitle("my activity");
             activity.setDescription("test description");
-            activity.setDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            activity.setDate(LocalDateTime.now());
             activity.setGroupSize(10);
             activity.setStartedBy(profile);
             activity.setLanguage(Language.GERMAN);
@@ -85,7 +83,7 @@ public class TestDataRunner {
             Activity otherActivity = new Activity();
             otherActivity.setTitle("other activity");
             otherActivity.setDescription("test description");
-            otherActivity.setDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            otherActivity.setDate(LocalDateTime.now());
             otherActivity.setGroupSize(10);
             otherActivity.setStartedBy(profile2);  
             otherActivity.setLanguage(Language.GERMAN);
