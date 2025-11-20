@@ -1,0 +1,12 @@
+<nav th:fragment="login-nav" class="navbar bg-base-100 shadow-xl">
+    <div class="navbar-start">
+        <a class="btn btn-ghost text-xl" href="/">OTHivity</a>
+    </div>
+
+    <div class="navbar-end">
+        <div role="tablist" class="tabs tabs-border">
+            <a role="tab" class="btn btn-ghost text-xl" href="/login" th:text="#{nav.login}"></a>
+            <a role="tab" class="btn btn-ghost text-xl" href="/register" th:text="#{nav.register}"></a>
+        </div>
+    </div>
+</nav>
