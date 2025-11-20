@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head('OTHivity')}"></head>
+<body class="min-h-screen flex flex-col">
+<nav th:insert="~{layout/login-nav :: login-nav}"></nav>
+<div class="flex-grow flex items-center justify-center px-6">
+<!-- content start -->
+
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full max-w-md border p-6">
+  <legend class="fieldset-legend" th:text="#{login.title}"></legend>
+
+  <form th:action="@{/process-login}" th:object="${loginDto}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <label class="label" th:text="#{login.email}"></label>
+    <input type="email" th:field="*{email}" class="input w-full" th:placeholder="#{login.email}" required th:classappend="${#fields.hasErrors('email')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-error text-xs mt-1"></p>
+
+    <label class="label mt-2" th:text="#{login.password}"></label>
+    <input type="password" th:field="*{password}" class="input w-full" th:placeholder="#{login.password}" required th:classappend="${#fields.hasErrors('password')} ? 'input-error'"/>
+    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error text-xs mt-1"></p>
+    
+    <div th:if="${param.error}" class="alert alert-error mt-2">
+      <span th:text="#{login.error}"></span>
+    </div>
+
+    <div th:if="${param.registered}" class="alert alert-success mt-2">
+      <span th:text="#{login.registered}"></span>
+    </div>
+
+    <div class="flex w-full flex-col mt-4">
+      <button type="submit" class="btn bg-white text-black border-[#e5e5e5]">
+        <svg aria-label="Email icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="black"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></g></svg>
+        <span th:text="#{login.withEmail}"></span>
+      </button>
+      <div class="divider" th:text="#{login.or}"></div>
+      <button type="button" class="btn bg-white text-black border-[#e5e5e5]">
+        <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
+        <span th:text="#{login.withGoogle}"></span>
+      </button>
+
+      <div class="text-center mt-4">
+        <span class="text-sm" th:text="#{login.noAccount}"></span>
+        <a href="/register" class="link link-primary text-sm" th:text="#{login.registerLink}"></a>
+      </div>
+    </div>
+  </form>
+</fieldset>
+
+<!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>

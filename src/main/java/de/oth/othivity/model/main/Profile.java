@@ -33,6 +33,9 @@ public class Profile {
     private String lastName;
 
     @Column(unique = true)
+    private String username;
+
+    @Column(unique = true)
     private String email;
 
     @Column(length = 3000)
