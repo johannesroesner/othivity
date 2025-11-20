@@ -2,9 +2,13 @@ package de.oth.othivity.model.report;
 
 import de.oth.othivity.model.main.Profile;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 @MappedSuperclass
 public abstract class BaseReport {
 

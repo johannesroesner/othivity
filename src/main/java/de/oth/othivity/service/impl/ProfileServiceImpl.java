@@ -1,5 +1,6 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
@@ -35,6 +36,7 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setLastName(registerDto.getLastName());
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(registerDto.getEmail());
+        profile.setRole(Role.USER);
         
         return profileRepository.save(profile);
     }
