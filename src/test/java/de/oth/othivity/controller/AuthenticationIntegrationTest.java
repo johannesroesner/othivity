@@ -4,6 +4,7 @@ import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.repository.security.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.test.context.TestConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 @AutoConfigureMockMvc
 @AllArgsConstructor
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@Transactional
 public class AuthenticationIntegrationTest {
 
     private final MockMvc mockMvc;
