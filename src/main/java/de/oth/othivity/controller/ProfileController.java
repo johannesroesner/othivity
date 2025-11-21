@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
 
 import de.oth.othivity.validator.ImageUploadValidator;
-import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.dto.ProfileDto;
@@ -26,7 +27,6 @@ import de.oth.othivity.model.main.Profile;
 public class ProfileController {
 
     private final ProfileService profileService;
-    private final ImageService imageService;
     private final ImageUploadValidator imageUploadValidator;
     private final SessionService sessionService;
 
@@ -91,7 +91,7 @@ public class ProfileController {
     }
 
     @PostMapping("/profile/edit/{username}")
-    public String updateProfile(@PathVariable("username") String username, @ModelAttribute("profileDto") ProfileDto profileDto, @RequestParam(value = "uploadedImages", required = false) MultipartFile[] uploadedImages, HttpSession session, Model model) {
+    public String updateProfile(@PathVariable("username") String username, @Valid @ModelAttribute("profileDto") ProfileDto profileDto, BindingResult bindingResult, @RequestParam(value = "uploadedImages", required = false) MultipartFile[] uploadedImages, HttpSession session, Model model) {
         Profile profileToEdit = profileService.getProfileByUsername(username);
         if (profileToEdit == null) {
             return "redirect:/dashboard";
@@ -101,18 +101,17 @@ public class ProfileController {
             return "redirect:/profile/" + username;
         }
 
-        if (uploadedImages != null && uploadedImages.length > 0 && !uploadedImages[0].isEmpty()) {
+        if (bindingResult.hasErrors() || (uploadedImages != null && uploadedImages.length > 0 && !uploadedImages[0].isEmpty() && imageUploadValidator.validate(uploadedImages) != null)) {
              String imageError = imageUploadValidator.validate(uploadedImages);
              if (imageError != null) {
                  model.addAttribute("imageFilesError", imageError);
-                 model.addAttribute("profile", profileToEdit);
-                 model.addAttribute("images", profileToEdit.getImages());
-                 return "profile-edit";
              }
-             imageService.saveImagesForProfile(profileToEdit, uploadedImages);
+             model.addAttribute("profile", profileToEdit);
+             model.addAttribute("images", profileToEdit.getImages());
+             return "profile-edit";
         }
 
-        profileService.updateProfile(profileToEdit, profileDto);
+        profileService.updateProfile(profileToEdit, profileDto, uploadedImages);
         return "redirect:/profile/" + profileToEdit.getUsername();
     }
 

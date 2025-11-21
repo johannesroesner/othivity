@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import de.oth.othivity.model.security.User;
@@ -19,7 +20,7 @@ public interface ProfileService {
 
     Profile createProfileFromUser(User user, RegisterDto registerDto);
     
-    void updateProfile(Profile profile, ProfileDto profileDto);
+    void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile[] uploadedImages);
 
     boolean isusernameTaken(String userName);
 

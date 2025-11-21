@@ -13,9 +13,11 @@ import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ClubRepository;
+import de.oth.othivity.service.ImageService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
     private final ClubRepository clubRepository;
+    private final ImageService imageService;
 
     @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
@@ -51,7 +54,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void updateProfile(Profile profile, ProfileDto profileDto) {
+    public void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile[] uploadedImages) {
+        if (uploadedImages != null && uploadedImages.length > 0 && !uploadedImages[0].isEmpty()) {
+            imageService.saveImagesForProfile(profile, uploadedImages);
+        }
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);
