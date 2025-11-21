@@ -33,6 +33,8 @@ public class ProfileController {
     @GetMapping("/profile/{username}")
     public String getProfileDetail(@PathVariable("username") String username, Model model, HttpSession session, HttpServletRequest request) {
         Profile profile = profileService.getProfileByUsername(username);
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        
         if (profile == null) {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
@@ -40,9 +42,7 @@ public class ProfileController {
         model.addAttribute("profile", profile);
         model.addAttribute("images", profile.getImages());
 
-        Profile currentProfile = sessionService.getProfileFromSession(session);
-        boolean isOwnProfile = currentProfile != null && currentProfile.getId().equals(profile.getId());
-        model.addAttribute("isOwnProfile", isOwnProfile);
+        model.addAttribute("isOwnProfile", currentProfile.getId().equals(profile.getId()));
 
         String returnUrl = sessionService.getReturnUrlFromSession(session, request);
         if (returnUrl == null) returnUrl = "/dashboard";
