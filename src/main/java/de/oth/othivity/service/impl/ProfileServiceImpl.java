@@ -55,17 +55,20 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile[] uploadedImages) {
-        if (uploadedImages != null && uploadedImages.length > 0 && !uploadedImages[0].isEmpty()) {
-            imageService.saveImagesForProfile(profile, uploadedImages);
-        }
+        if(uploadedImages != null) imageService.saveImagesForProfile(profile, uploadedImages);
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);
     }
 
     @Override
-    public boolean isusernameTaken(String username) {
+    public boolean isUsernameTaken(String username) {
         return profileRepository.existsByusername(username);
+    }
+
+    @Override
+    public boolean isEmailTaken(String email){
+        return profileRepository.existsByemail(email);
     }
 
     @Override
@@ -85,28 +88,6 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void deleteProfile(Profile profile) {
-        // Remove from participating activities
-        List<Activity> participatingActivities = List.copyOf(profile.getParticipatingActivities());
-        for (Activity activity : participatingActivities) {
-            activity.getTakePart().remove(profile);
-            activityRepository.save(activity);
-        }
-
-        // Remove from clubs (members)
-        List<Club> clubs = List.copyOf(profile.getClubs());
-        for (Club club : clubs) {
-            club.getMembers().remove(profile);
-            clubRepository.save(club);
-        }
-
-        // Remove from clubs (admins)
-        List<Club> adminClubs = List.copyOf(profile.getAdminClubs());
-        for (Club club : adminClubs) {
-            club.getAdmins().remove(profile);
-            clubRepository.save(club);
-        }
-
-        // Delete User (cascades to Profile)
         userRepository.delete(profile.getUser());
     }
 }

@@ -3,7 +3,6 @@ package de.oth.othivity.service;
 import de.oth.othivity.model.main.Club;
 import jakarta.servlet.http.HttpSession;
 
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +21,9 @@ public interface ProfileService {
     
     void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile[] uploadedImages);
 
-    boolean isusernameTaken(String userName);
+    boolean isUsernameTaken(String userName);
+
+    boolean isEmailTaken(String email);
 
     Profile getProfileById(java.util.UUID profileId);
 
