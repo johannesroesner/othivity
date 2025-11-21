@@ -13,11 +13,11 @@
         </div>
         <div class="flex items-center space-x-2">
             <!-- delete button -->
-            <form sec:authorize="hasRole('MODERATOR')" th:if="${profile.username != currentUsername}" th:action="@{/profile/delete/{username}(username=${profile.username})}" method="post" class="inline">
-                <button type="submit" class="btn btn-error text-white" th:text="#{profileDetail.deleteProfile}"></button>
+            <form th:if="${canDelete and !isOwnProfile}" th:action="@{/profile/delete/{username}(username=${profile.username})}" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this profile?');">
+                <button type="submit" class="btn btn-error text-white" th:text="#{profileDetail.deleteProfile}">Delete Profile</button>
             </form>
             <!-- edit button -->
-            <a th:if="${canUpdate}" th:href="@{/profile/edit}" class="btn btn-primary text-white" th:text="#{profileDetail.editProfile}"></a>
+            <a th:if="${canUpdate}" th:href="@{/profile/edit}" class="btn btn-primary text-white" th:text="#{profileDetail.editProfile}">Edit Profile</a>
         </div>
     </div>
 

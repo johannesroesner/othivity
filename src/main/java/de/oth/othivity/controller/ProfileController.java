@@ -40,6 +40,10 @@ public class ProfileController {
         model.addAttribute("profile", profile);
         model.addAttribute("images", profile.getImages());
 
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        boolean isOwnProfile = currentProfile != null && currentProfile.getId().equals(profile.getId());
+        model.addAttribute("isOwnProfile", isOwnProfile);
+
         String returnUrl = sessionService.getReturnUrlFromSession(session, request);
         if (returnUrl == null) returnUrl = "/dashboard";
         model.addAttribute("returnUrl", returnUrl);
