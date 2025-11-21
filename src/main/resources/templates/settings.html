@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head(#{profileDetail.pageTitle})}"></head>
+<head th:insert="~{layout/head :: head(#{settings.title})}"></head>
 <body class="flex flex-col min-h-screen">
-<nav th:insert="~{layout/nav :: nav(activeTab='profiles')}"></nav>
+<nav th:insert="~{layout/nav :: nav(activeTab='settings')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
     <!-- content start -->
 
     <div class="flex items-center mb-6 space-x-2 justify-between">
         <div class="flex items-center space-x-2">
             <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
-            <h1 class="text-3xl font-bold">Settings</h1>
+            <h1 class="text-3xl font-bold" th:text="#{settings.title}">Settings</h1>
         </div>
     </div>
 
     <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
         <div class="flex flex-col space-y-4">
-            <h2 class="text-xl font-bold text-error">Danger Zone</h2>
-            <p class="text-base-content/70">Once you delete your profile, there is no going back. Please be certain.</p>
+            <h2 class="text-xl font-bold text-error" th:text="#{settings.dangerZone}">Danger Zone</h2>
+            <p class="text-base-content/70" th:text="#{settings.deleteProfile}">Once you delete your profile, there is no going back. Please be certain.</p>
             
-            <form th:action="@{/profile/delete}" method="post" onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');">
-                <button type="submit" class="btn btn-error text-white">Delete Profile</button>
+            <form th:action="@{/profile/delete}" method="post" th:onsubmit="|return confirm('#{settings.confirmDelete}');|">
+                <button type="submit" class="btn btn-error text-white" th:text="#{settings.deleteProfileButton}">Delete Profile</button>
             </form>
         </div>
     </div>
