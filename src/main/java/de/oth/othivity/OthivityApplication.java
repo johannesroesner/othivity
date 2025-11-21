@@ -8,6 +8,7 @@ public class OthivityApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(OthivityApplication.class, args);
+
 	}
 
 }

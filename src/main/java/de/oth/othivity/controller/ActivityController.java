@@ -7,7 +7,7 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
-import de.oth.othivity.validator.ActivityRequestValidator;
+import de.oth.othivity.validator.ActivityDtoValidator;
 import de.oth.othivity.validator.ImageUploadValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -29,16 +29,20 @@ public class ActivityController {
     private final ProfileService profileService;
     private final SessionService sessionService;
 
-    private final ActivityRequestValidator activityRequestValidator;
+    private final ActivityDtoValidator activityDtoValidator;
     private final ImageUploadValidator imageUploadValidator;
 
-    @InitBinder("activityCreateRequest")
+    @InitBinder("activityDto")
     protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(activityRequestValidator);
+        binder.addValidators(activityDtoValidator);
     }
 
     @GetMapping("/activities")
     public String activities(HttpSession session, Model model) {
+
+        // test
+        System.out.println(sessionService.getProfileFromSession(session).getUsername());
+
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session));
         model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session));
@@ -75,8 +79,6 @@ public class ActivityController {
     public String getActivityDetail(@PathVariable("id") String activityId, Model model, HttpSession session) {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null) return "redirect:/activities";
-
-        model.addAttribute("activityDto", activityService.activityToDto(activity));
         model.addAttribute("activity", activity);
         model.addAttribute("images", activity.getImages());
         model.addAttribute("joinAble", sessionService.canJoinActivity(session, activity));

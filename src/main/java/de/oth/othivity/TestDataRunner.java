@@ -1,25 +1,29 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
-import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
-import de.oth.othivity.model.main.Activity;
-import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
-import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.service.impl.SessionServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import de.oth.othivity.model.enumeration.AccessLevel;
+import de.oth.othivity.model.enumeration.Language;
+import de.oth.othivity.repository.main.ClubRepository;
+import de.oth.othivity.model.main.Activity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
+import java.util.UUID;
 
 @Configuration
 public class TestDataRunner {
@@ -29,98 +33,70 @@ public class TestDataRunner {
                                    UserRepository userRepository,
                                    ActivityRepository activityRepository,
                                    SessionServiceImpl sessionService,
+                                   PasswordEncoder passwordEncoder,
                                    ClubRepository clubRepository) {
         return args -> {
 
             // ---- User & Profil ----
             User user = new User();
-            user.setEmail("max.mustermann@example.com");
-            user.setPassword("{noop}password");
+            user.setEmail("a@a.com");
+            user.setPassword(passwordEncoder.encode("password"));
             userRepository.save(user);
 
             Profile profile = new Profile();
             profile.setFirstName("Max");
             profile.setLastName("Mustermann");
-            profile.setEmail("max.mustermann@example.com");
+            profile.setUsername("gaudiSepp");
+            profile.setEmail("a@a.com");
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setPhone("0123456789");
             profile.setRole(Role.USER);
             profile.setUser(user);
             profileRepository.save(profile);
 
-            sessionService.profileId = profile.getId();
+            User user2 = new User();
+            user2.setEmail("sebastian@example.com");
+            user2.setPassword(passwordEncoder.encode("password"));
+            userRepository.save(user2);
 
-            // ---- Testaktivitäten ----
-            List<Activity> activities = new ArrayList<>();
-            // 1. Aktivität: Wandern
-            Activity hiking = new Activity();
-            hiking.setTitle("Wandern in den Bergen");
-            hiking.setDescription("Eine entspannte Wanderung für alle Levels.");
-            // KORREKTUR: LocalDateTime.now() + Tage + Uhrzeit
-            hiking.setDate(LocalDateTime.now().plusDays(2).withHour(10).withMinute(0));
-            hiking.setGroupSize(10);
-            hiking.setLanguage(de.oth.othivity.model.enumeration.Language.GERMAN);
-            hiking.setStartedBy(profile);
-            hiking.getTags().add(de.oth.othivity.model.enumeration.Tag.HIKING);
-            hiking.getTags().add(de.oth.othivity.model.enumeration.Tag.OUTDOOR);
-            hiking.getTags().add(Tag.FOOD);
-            activities.add(hiking);
+            Profile profile2 = new Profile();
+            profile2.setFirstName("Sebastian");
+            profile2.setLastName("Moritz");
+            profile2.setUsername("moe");
+            profile2.setEmail("sebastian@example.com");
+            profile2.setAboutMe("Ich bin ein Testprofil.");
+            profile2.setPhone("0123456789");
+            profile2.setRole(Role.USER);
+            profile2.setUser(user2);
+            profileRepository.save(profile2);
 
-            // 2. Aktivität: Brettspielabend
-            Activity boardGames = new Activity();
-            boardGames.setTitle("Brettspielabend");
-            boardGames.setDescription("Wir spielen Klassiker wie Catan, Risiko und mehr.");
-            // KORREKTUR: LocalDateTime.now() + Tage + Uhrzeit
-            boardGames.setDate(LocalDateTime.now().plusDays(5).withHour(19).withMinute(30));
-            boardGames.setGroupSize(8);
-            boardGames.setLanguage(de.oth.othivity.model.enumeration.Language.ENGLISH);
-            boardGames.setStartedBy(profile);
-            boardGames.getTags().add(de.oth.othivity.model.enumeration.Tag.BOARDGAME);
-            boardGames.getTags().add(de.oth.othivity.model.enumeration.Tag.INDOOR);
-            activities.add(boardGames);
+            Activity activity = new Activity();
+            activity.setTitle("my activity");
+            activity.setDescription("test description");
+            activity.setDate(LocalDateTime.now());
+            activity.setGroupSize(10);
+            activity.setStartedBy(profile);
+            // Teilnehmerliste korrekt setzen
+            List<Profile> participants1 = new ArrayList<>();
+            participants1.add(profile);
+            activity.setTakePart(participants1);
+            activity.setLanguage(Language.GERMAN);
+            activityRepository.save(activity);
 
-            // 3. Aktivität: Party
-            Activity party = new Activity();
-            party.setTitle("Sommerparty auf der Dachterrasse");
-            party.setDescription("Musik, Drinks und gute Laune garantiert!");
-            // KORREKTUR: LocalDateTime.now() + Tage + Uhrzeit
-            party.setDate(LocalDateTime.now().plusDays(7).withHour(21).withMinute(0));
-            party.setGroupSize(20);
-            party.setLanguage(de.oth.othivity.model.enumeration.Language.GERMAN);
-            party.setStartedBy(profile);
-            party.getTags().add(de.oth.othivity.model.enumeration.Tag.PARTY);
-            party.getTags().add(de.oth.othivity.model.enumeration.Tag.MUSIC);
-            activities.add(party);
+            Activity otherActivity = new Activity();
+            otherActivity.setTitle("other activity");
+            otherActivity.setDescription("test description");
+            otherActivity.setDate(LocalDateTime.now());
+            otherActivity.setGroupSize(10);
+            otherActivity.setStartedBy(profile2);
+            // Teilnehmerliste korrekt setzen
+            List<Profile> participants2 = new ArrayList<>();
+            participants2.add(profile2);
+            participants2.add(profile);
+            otherActivity.setTakePart(participants2);
+            otherActivity.setLanguage(Language.GERMAN);
+            activityRepository.save(otherActivity);
 
-            // Speichern aller Aktivitäten
-            activityRepository.saveAll(activities);
-
-            // ---- Club ----
-            Club clubMemberOpen = new Club();
-            clubMemberOpen.setName("Open Test Club Member");
-            clubMemberOpen.setDescription("This is a open test club with the user as a member.");
-            clubMemberOpen.setAccessLevel(AccessLevel.OPEN);
-            clubMemberOpen.setMembers(List.of(profile));
-            clubRepository.save(clubMemberOpen);
-
-            Club clubNoMemberOpen = new Club();
-            clubNoMemberOpen.setName("Open Test Club No Member");
-            clubNoMemberOpen.setDescription("This is an open test club without the user as a member.");
-            clubNoMemberOpen.setAccessLevel(AccessLevel.OPEN);
-            clubRepository.save(clubNoMemberOpen);
-
-            Club clubMemberClosed = new Club();
-            clubMemberClosed.setName("Closed Test Club Member");
-            clubMemberClosed.setDescription("This is a closed test club with the user as a member.");
-            clubMemberClosed.setAccessLevel(AccessLevel.CLOSED);
-            clubMemberClosed.setMembers(List.of(profile));
-            clubRepository.save(clubMemberClosed);
-
-            Club clubNoMemberClosed = new Club();
-            clubNoMemberClosed.setName("Closed Test Club No Member");
-            clubNoMemberClosed.setDescription("This is a closed test club without the user as a member.");
-            clubNoMemberClosed.setAccessLevel(AccessLevel.CLOSED);
-            clubRepository.save(clubNoMemberClosed);
         };
     }
 }

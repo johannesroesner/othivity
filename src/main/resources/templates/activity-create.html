@@ -37,12 +37,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.date}"></span></label>
-                            <input type="date" id="date" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required>
+                            <input type="date" id="date" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required onchange="updateDateTime()">
                             <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-error text-xs mt-1"></p>
                         </div>
                         <div>
                             <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.time}"></span></label>
-                            <input type="time" id="time" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required>
+                            <input type="time" id="time" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required onchange="updateDateTime()">
                             <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-error text-xs mt-1"></p>
                         </div>
                         <input type="hidden" th:field="*{date}" id="datetime">
@@ -117,11 +117,14 @@
 </div>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 <script>
-    document.querySelector("form").addEventListener("submit", () => {
+    function updateDateTime() {
         const date = document.getElementById("date").value;
         const time = document.getElementById("time").value;
-        document.getElementById("datetime").value = date + "T" + time;
-    })
+        const datetimeInput = document.getElementById("datetime");
+        if (date && time) {
+            datetimeInput.value = `${date}T${time}`;
+        }
+    }
 </script>
 </body>
 </html>

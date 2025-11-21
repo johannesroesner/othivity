@@ -11,6 +11,9 @@ import de.oth.othivity.model.main.Club;
 public interface SessionService {
 
     Profile getProfileFromSession(HttpSession session);
+    Boolean canEditActivity(HttpSession session, Activity activity);
+
+    Boolean canJoinActivity(HttpSession session, Activity activity);
 
     Boolean canEditActivity(HttpSession session, Activity activity);
 

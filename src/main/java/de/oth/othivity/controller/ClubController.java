@@ -46,6 +46,7 @@ public class ClubController {
         model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(session));
         return "club-overview";
     }
+
     @GetMapping("/clubs/create")
     public String getCreateClub(Model model) {
         model.addAttribute("clubDto", new ClubDto());

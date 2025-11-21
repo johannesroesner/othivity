@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 @Controller
 public class DashboardController {
 
-    @GetMapping("/")
+    @GetMapping("/dashboard")
     public String index(Model model) {
         model.addAttribute("activeTab", "");
         return "dashboard";

@@ -7,4 +7,8 @@ import java.util.UUID;
 
 public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
+    boolean existsByusername(String username);
+
+    Profile findByusername(String username);
+
 }

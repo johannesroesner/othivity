@@ -15,14 +15,26 @@ public class SessionServiceImpl implements SessionService {
 
     private final ProfileRepository profileRepository;
 
-    public UUID profileId ;
-
     public SessionServiceImpl(ProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
     }
 
     public Profile getProfileFromSession(HttpSession session) {
-        return profileRepository.findById(profileId).orElse(null);
+        return profileRepository.findById((UUID) session.getAttribute("profileId")).orElse(null);
+    }
+
+    @Override
+    public Boolean canEditActivity(HttpSession session, Activity activity) {
+        Profile profile = getProfileFromSession(session);
+        if (profile == null) return false;
+        return activity.getStartedBy().getId().equals(profile.getId()) || profile.getRole().toString().equals("MODERATOR");
+    }
+
+    @Override
+    public Boolean canJoinActivity(HttpSession session, Activity activity) {
+        Profile profile = getProfileFromSession(session);
+        if (profile == null) return false;
+        return !activity.getStartedBy().getId().equals(profile.getId()) && activity.getTakePart().size() < activity.getGroupSize();
     }
 
     @Override

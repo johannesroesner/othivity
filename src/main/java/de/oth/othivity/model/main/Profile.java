@@ -23,6 +23,7 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -31,6 +32,9 @@ public class Profile {
 
     @Column(nullable = false)
     private String lastName;
+
+    @Column(unique = true)
+    private String username;
 
     @Column(unique = true)
     private String email;
