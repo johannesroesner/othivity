@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 
 import de.oth.othivity.dto.RegisterDto;
-import de.oth.othivity.exception.UserAlreadyExistException;
 
 
 @AllArgsConstructor
@@ -23,10 +22,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public User registerNewUserAccount(RegisterDto registerDto) throws UserAlreadyExistException {
-        if (emailExists(registerDto.getEmail())) {
-            throw new UserAlreadyExistException("User already exist");
-        }
+    public User registerNewUserAccount(RegisterDto registerDto) {
 
         User user = new User();
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
@@ -40,9 +36,5 @@ public class UserServiceImpl implements IUserService {
         userRepository.save(savedUser);
 
         return savedUser;
-    }
-
-    private boolean emailExists(String email) {
-        return userRepository.findByEmail(email) != null;
     }
 }

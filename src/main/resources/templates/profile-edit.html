@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{profileDetail.pageTitle})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='profiles')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+
+    <div class="flex items-center mb-6 space-x-2">
+        <a th:href="@{/profile/{username}(username=${profile.username})}" class="btn btn-ghost btn-xl">←</a>
+        <h1 class="text-3xl font-bold" th:text="#{profileDetail.pageTitle}"></h1>
+    </div>
+
+    <form th:action="@{/profile/edit/{username}(username=${profile.username})}" method="post" enctype="multipart/form-data" th:object="${profileDto}">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="flex flex-col items-center lg:col-span-1">
+                <!-- Existing Images -->
+                <div th:if="${not #lists.isEmpty(images)}" class="carousel w-96 h-64 shadow-2xl flex-shrink-0">
+                    <div th:each="img, i : ${images}" th:id="'s' + ${i.index + 1}" class="carousel-item w-full h-full">
+                        <img th:src="@{${img.url}}" class="w-full h-full object-cover rounded-box"/>
+                    </div>
+                </div>
+                <div th:if="${not #lists.isEmpty(images)}" class="flex justify-center space-x-2 mt-2 shadow-2xl">
+                    <a th:each="img, i : ${images}" th:href="'#s' + ${i.index + 1}" th:text="${i.index + 1}" class="btn btn-xs"></a>
+                </div>
+                <div th:if="${#lists.isEmpty(images)}" class="w-96 h-64 flex items-center justify-center rounded-box bg-base-200 shadow-2xl text-base-content/60 font-semibold">
+                    <span th:text="#{profileDetail.noImages}">No images yet</span>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="w-full mt-4">
+                    <div th:insert="~{fragments/image-form :: imageForm(required=false)}"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+
+                    <!-- First Name (Read-only) -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.firstName}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm opacity-70">
+                            <span class="text-base font-medium" th:text="${profile.firstName}"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Last Name (Read-only) -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.lastName}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm opacity-70">
+                            <span class="text-base font-medium" th:text="${profile.lastName}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Username (Read-only) -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.username}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm opacity-70">
+                            <span class="text-base font-medium" th:text="${profile.username}"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Email (Read-only) -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.email}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm opacity-70">
+                            <span class="text-base font-medium" th:text="${profile.email}"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone (Editable) -->
+                    <div class="space-y-1">
+                        <label class="label"><span class="label-text text-sm font-semibold text-base-content/70" th:text="#{profileDetail.phone}"></span></label>
+                        <input type="text" th:field="*{phone}" class="input input-bordered w-full" />
+                    </div>
+
+                    <!-- About Me (Editable) -->
+                    <div class="space-y-1">
+                        <label class="label"><span class="label-text text-sm font-semibold text-base-content/70" th:text="#{profileDetail.aboutMe}"></span></label>
+                        <textarea th:field="*{aboutMe}" class="textarea textarea-bordered w-full h-32"></textarea>
+                    </div>
+
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>
