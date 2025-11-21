@@ -17,7 +17,7 @@
                 <button type="submit" class="btn btn-error text-white" th:text="#{profileDetail.deleteProfile}">Delete Profile</button>
             </form>
             <!-- edit button -->
-            <a th:if="${canUpdate}" th:href="@{/profile/edit}" class="btn btn-primary text-white" th:text="#{profileDetail.editProfile}">Edit Profile</a>
+            <a th:if="${canUpdate and isOwnProfile}" th:href="@{/profile/edit}" class="btn btn-primary text-white" th:text="#{profileDetail.editProfile}">Edit Profile</a>
         </div>
     </div>
 
