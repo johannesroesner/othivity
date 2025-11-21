@@ -127,8 +127,12 @@
 
 
 
-        <div id="map-container" class="lg:col-span-2 relative">
-            <div id="map" class="h-full w-full rounded shadow-2xl"></div>
+        <div class="lg:col-span-2 relative">
+            <!-- Map Div einfügen -->
+            <div th:replace="~{fragments/map :: mapDiv}"></div>
+
+            <!-- Map Script einfügen und Parameter übergeben -->
+            <script th:replace="~{fragments/map :: mapScript(${activity.address.latitude}, ${activity.address.longitude}, ${activity.title})}"></script>
         </div>
 
 
@@ -166,26 +170,10 @@
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-
     </div>
     </form>
     <!-- content end -->
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var map = L.map('map').setView([51.505, -0.09], 13);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-    });
-</script>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>
 </html>
