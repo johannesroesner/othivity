@@ -69,42 +69,51 @@ public class ProfileController {
         return "settings";
     }
 
-    @GetMapping("/profile/edit")
-    public String editProfile(Model model, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
-        if (profile == null) {
-            return "redirect:/login";
+    @GetMapping("/profile/edit/{username}")
+    public String editProfile(@PathVariable("username") String username, Model model, HttpSession session) {
+        Profile profileToEdit = profileService.getProfileByUsername(username);
+        if (profileToEdit == null) {
+            return "redirect:/dashboard";
         }
+
+        if (!sessionService.canUpdate(session, profileToEdit)) {
+            return "redirect:/profile/" + username;
+        }
+
         ProfileDto profileDto = new ProfileDto();
-        profileDto.setPhone(profile.getPhone());
-        profileDto.setAboutMe(profile.getAboutMe());
+        profileDto.setPhone(profileToEdit.getPhone());
+        profileDto.setAboutMe(profileToEdit.getAboutMe());
         
-        model.addAttribute("profile", profile);
+        model.addAttribute("profile", profileToEdit);
         model.addAttribute("profileDto", profileDto);
-        model.addAttribute("images", profile.getImages());
+        model.addAttribute("images", profileToEdit.getImages());
         return "profile-edit";
     }
 
-    @PostMapping("/profile/edit")
-    public String updateProfile(@ModelAttribute("profileDto") ProfileDto profileDto, @RequestParam(value = "uploadedImages", required = false) MultipartFile[] uploadedImages, HttpSession session, Model model) {
-        Profile currentProfile = sessionService.getProfileFromSession(session);
-        if (currentProfile == null) {
-            return "redirect:/login";
+    @PostMapping("/profile/edit/{username}")
+    public String updateProfile(@PathVariable("username") String username, @ModelAttribute("profileDto") ProfileDto profileDto, @RequestParam(value = "uploadedImages", required = false) MultipartFile[] uploadedImages, HttpSession session, Model model) {
+        Profile profileToEdit = profileService.getProfileByUsername(username);
+        if (profileToEdit == null) {
+            return "redirect:/dashboard";
+        }
+
+        if (!sessionService.canUpdate(session, profileToEdit)) {
+            return "redirect:/profile/" + username;
         }
 
         if (uploadedImages != null && uploadedImages.length > 0 && !uploadedImages[0].isEmpty()) {
              String imageError = imageUploadValidator.validate(uploadedImages);
              if (imageError != null) {
                  model.addAttribute("imageFilesError", imageError);
-                 model.addAttribute("profile", currentProfile);
-                 model.addAttribute("images", currentProfile.getImages());
+                 model.addAttribute("profile", profileToEdit);
+                 model.addAttribute("images", profileToEdit.getImages());
                  return "profile-edit";
              }
-             imageService.saveImagesForProfile(currentProfile, uploadedImages);
+             imageService.saveImagesForProfile(profileToEdit, uploadedImages);
         }
 
-        profileService.updateProfile(currentProfile, profileDto);
-        return "redirect:/profile/" + currentProfile.getUsername();
+        profileService.updateProfile(profileToEdit, profileDto);
+        return "redirect:/profile/" + profileToEdit.getUsername();
     }
 
     @PostMapping("/profile/delete/{username}")
