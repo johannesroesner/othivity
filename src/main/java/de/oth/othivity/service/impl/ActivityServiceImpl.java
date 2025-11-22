@@ -125,4 +125,37 @@ public class ActivityServiceImpl implements ActivityService {
         activityDto.setAddress(activity.getAddress());
         return activityDto;
     }
+
+    @Override
+    public Activity joinActivity(Activity activity, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null) return null;
+
+        List<Profile> participants = activity.getTakePart();
+        participants.add(profile);
+        activity.setTakePart(participants);
+
+        return activityRepository.save(activity);
+    }
+
+    @Override
+    public Activity leaveActivity(Activity activity, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null) return null;
+        List<Profile> participants = activity.getTakePart();
+        participants.removeIf(p -> p.getId().equals(profile.getId()));
+        activity.setTakePart(participants);
+        return activityRepository.save(activity);
+    }
+
+    @Override
+    public Activity kickParticipant(Activity activity, Profile profile) {
+        activity.getTakePart().removeIf(p -> p.getId().equals(profile.getId()));
+        return activityRepository.save(activity);
+    }
+
+    @Override
+    public void deleteActivity(Activity activity) {
+        activityRepository.delete(activity);
+    }
 }

@@ -4,6 +4,7 @@ import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
@@ -40,9 +41,6 @@ public class ActivityController {
     @GetMapping("/activities")
     public String activities(HttpSession session, Model model) {
 
-        // test
-        System.out.println(sessionService.getProfileFromSession(session).getUsername());
-
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session));
         model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session));
@@ -74,16 +72,53 @@ public class ActivityController {
         return "redirect:/activities";
     }
 
-
     @GetMapping("/activities/{id}")
     public String getActivityDetail(@PathVariable("id") String activityId, Model model, HttpSession session) {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null) return "redirect:/activities";
         model.addAttribute("activity", activity);
         model.addAttribute("images", activity.getImages());
-        model.addAttribute("joinAble", sessionService.canJoinActivity(session, activity));
-        model.addAttribute("editMode", sessionService.canEditActivity(session, activity));
+        model.addAttribute("joinAble", sessionService.canJoin(session, activity));
+        model.addAttribute("leaveAble", sessionService.canLeave(session, activity));
+        model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
+        model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
         return "activity-detail";
     }
 
+    @PostMapping("/activities/join/{id}")
+    public String joinActivity(@PathVariable("id") String activityId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canJoin(session, activity)) {
+            activityService.joinActivity(activity, session);
+        }
+        return "redirect:/activities/" + activityId;
+    }
+
+    @PostMapping("/activities/leave/{id}")
+    public String leaveActivity(@PathVariable("id") String activityId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canLeave(session, activity)) {
+            activityService.leaveActivity(activity, session);
+        }
+        return "redirect:/activities/" + activityId;
+    }
+
+    @PostMapping("/activities/delete/{id}")
+    public String deleteActivity(@PathVariable("id") String activityId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canDelete(session, activity)) {
+            activityService.deleteActivity(activity);
+        }
+        return "redirect:/activities";
+    }
+
+    @PostMapping("/activities/kick/{activityId}/{personId}")
+    public String kickParticipant(@PathVariable("activityId") String activityId, @PathVariable("personId") String personId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        Profile profile = profileService.getProfileById(UUID.fromString(personId));
+        if (activity != null && profile != null && sessionService.canDelete(session, activity)) {
+            activityService.kickParticipant(activity, profile);
+        }
+        return "redirect:/activities/" + activityId;
+    }
 }
