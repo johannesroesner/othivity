@@ -6,7 +6,7 @@
 <div class="flex-grow flex items-center justify-center px-6">
 <!-- content start -->
 
-<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full max-w-md border p-6">
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full max-w-md border p-6 shadow-2xl">
   <legend class="fieldset-legend" th:text="#{login.title}"></legend>
 
   <form th:action="@{/process-login}" th:object="${loginDto}" method="post">

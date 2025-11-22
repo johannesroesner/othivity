@@ -2,7 +2,7 @@
 
     <h2 class="text-xl font-semibold mb-3" th:text="${title}"></h2>
 
-    <div class="overflow-x-auto rounded-xl shadow">
+    <div class="overflow-x-auto rounded-xl shadow-2xl">
         <table class="table w-full">
             <thead>
             <tr class="bg-base-200">
@@ -19,7 +19,7 @@
             <tr th:each="a : ${activities}">
                 <td th:text="${a.title}"></td>
                 <td><span th:each="tag : ${a.tags}" th:text="${tag.emoji} + ' '"></span></td>
-                <td th:text="${a.dateString}"></td>
+                <td th:text="${#temporals.format(a.date, 'dd.MM.yyyy')}"></td>
                 <td th:text="${a.timeString}"></td>
                 <td th:text="${a.participantStatus}"></td>
                 <td>

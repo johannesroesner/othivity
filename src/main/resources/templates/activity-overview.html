@@ -20,7 +20,7 @@
                     <a role="tab" class="tab" id="createdTab" th:text="#{activityOverview.createdTab}"></a>
                     <a role="tab" class="tab" id="allTab" th:text="#{activityOverview.allTab}"></a>
                 </div>
-                <button class="btn btn-primary" onclick="window.location.href='/activities/create'" th:text="#{activityOverview.createButton}"></button>
+                <button class="btn btn-primary shadow-2xl" onclick="window.location.href='/activities/create'" th:text="#{activityOverview.createButton}"></button>
             </div>
 
             <div id="myTable" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.myTab}, activities=${profileActivities})"></div>
@@ -28,7 +28,7 @@
             <div id="allTable" class="hidden" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.allTab}, activities=${allActivities})"></div>
         </div>
 
-        <div class="card bg-base-200 shadow-md h-fit">
+        <div class="card bg-base-200 shadow-2xl h-fit">
             <div class="card-body">
                 <div class="card-body flex items-center gap-2">
                     <span class="text-3xl">📅</span>
