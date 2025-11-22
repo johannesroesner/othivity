@@ -29,7 +29,8 @@
                 </div>
             </div>
             <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                <li><a th:text="#{nav.profile}"></a></li>
+                <li><a th:text="#{nav.profile}" th:href="@{/profile/{username}(username=${currentUsername})}"></a></li>
+                <li><a th:text="#{nav.settings}" th:href="@{/settings}"></a></li>
                 <li>
                     <form th:action="@{/logout}" method="post">
                         <button type="submit" th:text="#{nav.logout}"></button>

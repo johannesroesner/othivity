@@ -4,21 +4,33 @@ import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.dto.RegisterDto;
+import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.repository.main.ProfileRepository;
+import de.oth.othivity.repository.security.UserRepository;
+import de.oth.othivity.repository.main.ActivityRepository;
+import de.oth.othivity.repository.main.ClubRepository;
+import de.oth.othivity.service.ImageService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
 public class ProfileServiceImpl implements ProfileService {
     private final SessionService sessionService;
     private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
+    private final ActivityRepository activityRepository;
+    private final ClubRepository clubRepository;
+    private final ImageService imageService;
 
     @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
@@ -42,7 +54,40 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public boolean isusernameTaken(String username) {
+    public void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile[] uploadedImages) {
+        if(uploadedImages != null) imageService.saveImagesForProfile(profile, uploadedImages);
+        profile.setPhone(profileDto.getPhone());
+        profile.setAboutMe(profileDto.getAboutMe());
+        profileRepository.save(profile);
+    }
+
+    @Override
+    public boolean isUsernameTaken(String username) {
         return profileRepository.existsByusername(username);
+    }
+
+    @Override
+    public boolean isEmailTaken(String email){
+        return profileRepository.existsByemail(email);
+    }
+
+    @Override
+    public Profile getProfileById(UUID profileId) {
+        return profileRepository.findById(profileId).orElse(null);
+    }
+
+    @Override
+    public Profile getProfileByUsername(String username) {
+        return profileRepository.findByusername(username);
+    }
+
+    @Override
+    public Profile getCurrentProfile(HttpSession session) {
+        return sessionService.getProfileFromSession(session);
+    }
+
+    @Override
+    public void deleteProfile(Profile profile) {
+        userRepository.delete(profile.getUser());
     }
 }

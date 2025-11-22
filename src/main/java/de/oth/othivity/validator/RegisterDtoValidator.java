@@ -35,7 +35,18 @@ public class RegisterDtoValidator implements Validator {
 
         RegisterDto request = (RegisterDto) target;
 
-        if (request.getUsername() != null && profileService.isusernameTaken(request.getUsername())) {
+
+        if (request.getUsername() != null && profileService.isUsernameTaken(request.getUsername())) {
+            errors.rejectValue("username", "register.error.usernameExists");
+        }
+
+
+        if (request.getEmail() != null && profileService.isEmailTaken(request.getEmail())) {
+            errors.rejectValue("email", "register.error.emailExists");
+        }
+
+
+        if (request.getUsername() != null && profileService.isUsernameTaken(request.getUsername())) {
             errors.rejectValue("username", "field.duplicate", "username is already taken");
         }
 

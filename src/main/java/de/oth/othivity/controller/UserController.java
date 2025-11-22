@@ -22,7 +22,6 @@ import de.oth.othivity.dto.LoginDto;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.validator.LoginDtoValidator;
 import de.oth.othivity.validator.RegisterDtoValidator;
-import de.oth.othivity.exception.UserAlreadyExistException;
 import de.oth.othivity.service.IUserService;
 
 @AllArgsConstructor
@@ -56,24 +55,13 @@ public class UserController {
     }
 
     @PostMapping("/process-register")
-    public ModelAndView registerUserAccount(
-            @ModelAttribute("registerDto") @Valid RegisterDto registerDto,
-            BindingResult errors,
-            HttpServletRequest request) {
-        
-        ModelAndView mav = new ModelAndView("register");
-        mav.addObject("registerDto", registerDto);  // Add this line to pass the object back
-        
-        if (errors.hasErrors()) {
-            return mav;
+    public String registerUserAccount(@ModelAttribute("registerDto") @Valid RegisterDto registerDto, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "register";
         }
-        
-        try {
-            userService.registerNewUserAccount(registerDto);
-            return new ModelAndView("redirect:/login?registered");
-        } catch (UserAlreadyExistException uaeEx) {
-            errors.reject("register.error.userAlreadyExists");
-            return mav;
-        }
+
+        userService.registerNewUserAccount(registerDto);
+        return "redirect:/login?registered";
     }
 }

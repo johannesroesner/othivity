@@ -1,9 +1,12 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.image.ActivityImage;
+import de.oth.othivity.model.image.ProfileImage;
 import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.image.ActivityImageRepository;
 import de.oth.othivity.model.image.ClubImage;
+import de.oth.othivity.repository.image.ProfileImageRepository;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.repository.image.ClubImageRepository;
 import de.oth.othivity.service.ImageService;
@@ -16,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageServiceImpl implements ImageService {
     private final ActivityImageRepository activityImageRepository;
     private final ClubImageRepository clubImageRepository;
+    private final ProfileImageRepository profileImageRepository;
 
     @Override
     public void saveImagesForActivity(Activity activity, MultipartFile[] images) {
@@ -36,6 +40,16 @@ public class ImageServiceImpl implements ImageService {
             clubImage.setUrl("https://picsum.photos/400");
             clubImage.setPriority(i + 1);
             clubImageRepository.save(clubImage);
+
+    @Override
+    public void saveImagesForProfile(Profile profile, MultipartFile[] images) {
+        for(int i = 0; i < images.length; i++) {
+            ProfileImage profileImage = new ProfileImage();
+            profileImage.setProfile(profile);
+            // String url = postInCloud(images[i]);
+            profileImage.setUrl("https://picsum.photos/200");
+            profileImage.setPriority(i+1);
+            profileImageRepository.save(profileImage);
         }
     }
 }
