@@ -1,140 +1,184 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head(#{clubDetail.pageTitle})}">
-</head>
+<head th:insert="~{layout/head :: head(#{clubDetail.pageTitle})}"></head>
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='clubs')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
-    
+    <!-- content start -->
+
     <div class="flex items-center mb-6 space-x-2">
         <a href="/clubs" class="btn btn-ghost btn-xl">←</a>
-        <h1 class="text-3xl font-bold" th:text="${club.name}"></h1>
-        <div class="badge badge-primary" th:text="${club.accessLevel}"></div>
+        <h1 class="text-3xl font-bold" th:text="#{clubDetail.pageTitle}"></h1>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Main Content -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Club Details -->
-            <div class="card bg-base-200 shadow-md p-6 space-y-4">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <span>🏛️</span>
-                    <span th:text="#{clubDetail.details}"></span>
-                </h2>
-                
-                <div>
-                    <h3 class="font-semibold mb-2" th:text="#{clubDetail.description}"></h3>
-                    <p th:text="${club.description}" class="text-base-content/80"></p>
+
+        <div class="flex flex-col items-center lg:col-span-1">
+            <div class="carousel w-96 h-64 shadow-2xl flex-shrink-0">
+                <div th:each="img, i : ${clubImages}" th:id="'s' + ${i.index + 1}" class="carousel-item w-full h-full">
+                    <img th:src="@{${img.url}}" class="w-full h-full object-cover rounded-box"/>
                 </div>
+            </div>
+            <div th:if="${clubImages != null and !clubImages.isEmpty()}" class="flex justify-center space-x-2 mt-2 shadow-2xl">
+                <a th:each="img, i : ${clubImages}" th:href="'#s' + ${i.index + 1}" th:text="${i.index + 1}" class="btn btn-xs"></a>
+            </div>
 
-                <div class="divider"></div>
+            <div class="w-full bg-base-200 shadow-2xl p-6 rounded-2xl mt-4 space-y-4 flex-1 flex flex-col justify-between">
+                <p class="text-sm font-semibold text-base-content/70" th:text="#{clubDetail.members}"></p>
 
-                <div>
-                    <h3 class="font-semibold mb-2" th:text="#{clubDetail.accessLevel}"></h3>
-                    <div class="flex items-center gap-2">
-                        <span class="badge badge-primary" th:text="${club.accessLevel}"></span>
+                <div class="space-y-2 flex-1 flex flex-col justify-start">
+                    <!-- Alle Mitglieder -->
+                    <div th:each="admin : ${clubAdmins}" class="bg-white p-4 rounded-xl shadow-sm">
+                        <span class="text-sm font-medium" th:text="${admin.firstName} + ' ' + ${admin.lastName} + ' (Admin)'"></span>
                     </div>
-                </div>
-            </div>
-
-            <!-- Address Information -->
-            <div class="card bg-base-200 shadow-md p-6 space-y-4" th:if="${club.address != null}">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <span>📍</span>
-                    <span th:text="#{clubDetail.address}"></span>
-                </h2>
-                
-                <div class="text-base-content/80">
-                    <p th:if="${club.address.addition != null}" th:text="${club.address.addition}"></p>
-                    <p th:text="${club.address.street + ' ' + club.address.houseNumber}"></p>
-                    <p th:text="${club.address.postalCode + ' ' + club.address.city}"></p>
-                    <p th:if="${club.address.country != null}" th:text="${club.address.country}"></p>
-                </div>
-            </div>
-
-            <!-- Members Section -->
-            <div class="card bg-base-200 shadow-md p-6 space-y-4">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <span>👥</span>
-                    <span th:text="#{clubDetail.members}"></span>
-                </h2>
-                
-                <div class="flex items-center justify-between">
-                    <span th:text="#{clubDetail.memberCount} + ': ' + ${memberCount}"></span>
-                    <div class="flex -space-x-2" th:if="${club.members != null and !#lists.isEmpty(club.members)}">
-                        <div th:each="member, iterStat : ${club.members}" 
-                             th:if="${iterStat.index < 5}"
-                             class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-content text-xs font-bold"
-                             th:text="${member.firstName.substring(0,1) + member.lastName.substring(0,1)}"></div>
+                    <div th:each="member : ${clubMembers}" class="bg-white p-4 rounded-xl shadow-sm">
+                        <span class="text-sm font-medium" th:text="${member.firstName} + ' ' + ${member.lastName}"></span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="lg:col-span-1 space-y-6">
-            <!-- Club Images -->
-            <div class="card bg-base-200 shadow-md p-6 space-y-4" th:if="${club.images != null and !#lists.isEmpty(club.images)}">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <span>📸</span>
-                    <span th:text="#{clubDetail.images}"></span>
-                </h2>
-                
-                <div class="grid grid-cols-1 gap-3">
-                    <img th:each="image : ${club.images}" 
-                         th:src="${image.url}" 
-                         th:alt="${club.name}"
-                         class="rounded border w-full h-32 object-cover hover:scale-105 transition-transform cursor-pointer">
-                </div>
-            </div>
+        <div class="lg:col-span-2 grid grid-cols-1 gap-6">
+            <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
 
-            <!-- Join/Leave Actions -->
-            <div class="card bg-base-200 shadow-md p-6 space-y-4">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <span>⚡</span>
-                    <span th:text="#{clubDetail.actions}"></span>
-                </h2>
-                
-                <div class="space-y-2">
-                    <!-- Join Button (if not member) -->
-                    <form th:if="${!isMember}" th:action="@{/clubs/{id}/join(id=${club.id})}" method="post">
-                        <button type="submit" class="btn btn-primary w-full" th:text="#{clubDetail.joinClub}"></button>
-                    </form>
-                    
-                    <!-- Leave Button (if member) -->
-                    <form th:if="${isMember}" th:action="@{/clubs/{id}/leave(id=${club.id})}" method="post">
-                        <button type="submit" class="btn btn-warning w-full" th:text="#{clubDetail.leaveClub}"></button>
-                    </form>
-                    
-                    <!-- Admin Actions (if admin) -->
-                    <div th:if="${isAdmin}" class="space-y-2">
-                        <a th:href="@{/clubs/{id}/edit(id=${club.id})}" class="btn btn-primary w-full" th:text="#{clubDetail.editClub}"></a>
-                        <form th:action="@{/clubs/{id}/delete(id=${club.id})}" method="post" th:attr="onsubmit='return confirm(' + #{clubDetail.deleteConfirm} + ')'">
-                            <button type="submit" class="btn btn-error w-full" th:text="#{clubDetail.deleteClub}"></button>
-                        </form>
+                <!-- Header -->
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🏛️</span>
+                    <h2 class="text-2xl font-bold" th:text="#{clubDetail.details}"></h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <!-- Club Name -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{clubDetail.clubName}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                            <span class="text-base font-medium" th:text="${club.name}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Member Count -->
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-base-content/70" th:text="#{clubDetail.memberCount}"></p>
+                        <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                            <span class="text-base font-medium" th:text="${memberCount}"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Club Statistics -->
-            <div class="card bg-base-200 shadow-md p-6 space-y-4">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <span>📊</span>
-                    <span th:text="#{clubDetail.statistics}"></span>
-                </h2>
-                
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between" th:if="${activitiesCount != null}">
-                        <span th:text="#{clubDetail.activitiesCount}"></span>
-                        <span th:text="${activitiesCount}"></span>
+                <!-- Description -->
+                <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content/70" th:text="#{clubDetail.description}"></p>
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm whitespace-pre-line leading-relaxed">
+                        <span th:text="${club.description}"></span>
                     </div>
                 </div>
+
+                <!-- Access Level -->
+                <div class="space-y-1">
+                    <p class="text-sm font-semibold text-base-content/70" th:text="#{clubDetail.accessLevel}"></p>
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium capitalize" th:text="${club.accessLevel}"></span>
+                    </div>
+                </div>
+
             </div>
+
+            <!-- Club Activities Section -->
+            <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📅</span>
+                    <h2 class="text-2xl font-bold" th:text="#{clubDetail.activities}"></h2>
+                </div>
+
+                <div th:if="${clubActivities != null and !clubActivities.isEmpty()}" class="grid gap-4">
+                    <div th:each="activity : ${clubActivities}" class="bg-base-100 p-6 rounded-xl shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold mb-2" th:text="${activity.title}"></h4>
+                                <p class="text-base-content/70 mb-3 line-clamp-2" th:text="${activity.description}"></p>
+                                <div class="flex flex-wrap gap-2 text-sm">
+                                    <span class="bg-primary/20 text-primary px-2 py-1 rounded" 
+                                          th:text="#{clubDetail.date} + ': ' + ${#temporals.format(activity.date, 'dd.MM.yyyy')}"></span>
+                                    <span class="bg-secondary/20 text-secondary px-2 py-1 rounded" 
+                                          th:text="#{clubDetail.time} + ': ' + ${#temporals.format(activity.date, 'HH:mm')}"></span>
+                                    <span class="bg-accent/20 text-accent px-2 py-1 rounded" 
+                                          th:text="#{clubDetail.groupSize} + ': ' + ${activity.groupSize}"></span>
+                                </div>
+                            </div>
+                            <a th:href="@{/activities/{id}(id=${activity.id})}" class="btn btn-sm btn-outline ml-4">
+                                <span th:text="#{clubDetail.viewActivity}"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${clubActivities == null or clubActivities.isEmpty()}" class="text-center py-8">
+                    <div class="text-4xl mb-4">📅</div>
+                    <h3 class="text-lg font-semibold mb-2" th:text="#{clubDetail.noActivities}"></h3>
+                    <p class="text-base-content/70" th:text="#{clubDetail.noActivitiesDescription}"></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="map-container" class="lg:col-span-2 relative">
+            <div id="map" class="h-full w-full rounded shadow-2xl"></div>
+        </div>
+
+        <div class="">
+            <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">📍</span>
+                    <h2 class="text-2xl font-bold" th:text="#{clubDetail.address}"></h2>
+                </div>
+
+                <div class="space-y-1">
+                    <div th:if="!${#strings.isEmpty(club.address.addition)}"
+                         class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium" th:text="${club.address.addition}"></span>
+                    </div>
+
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium"
+                              th:text="${club.address.street} + ' ' + ${club.address.houseNumber}"></span>
+                    </div>
+
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium" th:text="${club.address.postalCode} + ' ' + ${club.address.city}"></span>
+                    </div>
+
+                    <div th:if="!${#strings.isEmpty(club.address.country)}"
+                         class="bg-base-100 p-4 rounded-xl shadow-sm">
+                        <span class="text-base font-medium" th:text="${club.address.country}"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-center mt-8 space-x-4">
+        <div th:if="${joinAble}">
+            <button class="btn btn-primary" th:text="#{clubDetail.joinClub}"></button>
+        </div>
+        <div th:if="${editMode}">
+            <button class="btn btn-secondary" th:text="#{clubDetail.manageClub}"></button>
         </div>
     </div>
-    
+
+    <!-- content end -->
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+    });
+</script>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>
 </html>

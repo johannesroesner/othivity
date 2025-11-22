@@ -36,28 +36,17 @@ public class SessionServiceImpl implements SessionService {
         if (profile == null) return false;
         return !activity.getStartedBy().getId().equals(profile.getId()) && activity.getTakePart().size() < activity.getGroupSize();
     }
-
     @Override
-    public Boolean canEditActivity(HttpSession session, Activity activity) {
+    public Boolean canJoinClub(HttpSession session, Club club) {
+        if (club.getAccessLevel().toString().equals("CLOSED")) {
+            return false;
+        }
         Profile profile = getProfileFromSession(session);
         if (profile == null) return false;
-        return activity.getStartedBy().getId().equals(profile.getId()) || profile.getRole().toString().equals("MODERATOR");
-    }
-
-    @Override
-    public Boolean canJoinActivity(HttpSession session, Activity activity) {
-        Profile profile = getProfileFromSession(session);
-        if (profile == null) return false;
-        return !activity.getStartedBy().getId().equals(profile.getId()) && activity.getTakePart().size() < activity.getGroupSize();
+        return profile.getClubs().stream().anyMatch(c -> c.getId().equals(club.getId()))==false;
     }
     @Override
-    public Boolean isMemberOfClub(HttpSession session, Club club) {
-        Profile profile = getProfileFromSession(session);
-        if (profile == null) return false;
-        return profile.getClubs().stream().anyMatch(c -> c.getId().equals(club.getId()));
-    }
-    @Override
-    public Boolean isAdminOfClub(HttpSession session, Club club) {
+    public Boolean canEditClub(HttpSession session, Club club) {
         Profile profile = getProfileFromSession(session);
         if (profile == null) return false;
         return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(club.getId()));

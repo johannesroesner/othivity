@@ -6,6 +6,8 @@ import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.validator.ImageUploadValidator;
+import de.oth.othivity.model.main.Profile;
+import java.util.List;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import de.oth.othivity.dto.ClubDto;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
-import de.oth.othivity.validator.ClubRequestValidator;
+import de.oth.othivity.validator.ClubDtoValidator;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -31,17 +33,16 @@ public class ClubController {
     private final ImageUploadValidator imageUploadValidator;
     private final ClubService clubService;
     private final SessionService sessionService;
-    private final ActivityService activityService;
-    private final ClubRequestValidator clubRequestValidator;
+    private final ClubDtoValidator clubDtoValidator;
 
-    @InitBinder("clubCreateRequest")
+    @InitBinder("clubDto")
     protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(clubRequestValidator);
+        binder.addValidators(clubDtoValidator);
     }
 
     @GetMapping("/clubs")
     public String clubs(HttpSession session, Model model) {
-        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfileNotPrivate(session));
+        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(session));
         model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(session));
         model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(session));
         return "club-overview";
@@ -71,14 +72,16 @@ public class ClubController {
             return "redirect:/clubs";
         }
         model.addAttribute("club", club);
-        model.addAttribute("isMember", sessionService.isMemberOfClub(session, club));
-        model.addAttribute("isAdmin", sessionService.isAdminOfClub(session, club));
-    
-        model.addAttribute("clubMembers", club.getMembers());
+        model.addAttribute("joinAble", sessionService.canJoinClub(session, club));
+        model.addAttribute("editMode", sessionService.canEditClub(session, club));
+        
+
+        model.addAttribute("clubMembers", clubService.getMembersOfClubWithoutAdmins(club));
+        model.addAttribute("clubAdmins", club.getAdmins());
         model.addAttribute("clubImages", club.getImages()); 
         model.addAttribute("memberCount", club.getMembers() != null ? club.getMembers().size() : 0); 
-        model.addAttribute("clubActivities", activityService.getActivitiesByClub(club));
-        model.addAttribute("activitiesCount", activityService.getActivitiesByClub(club).size());
+        model.addAttribute("clubActivities", clubService.getActivitiesByClub(club));
+        model.addAttribute("activitiesCount", clubService.getActivitiesByClub(club).size());
 
         return "club-detail";
     }

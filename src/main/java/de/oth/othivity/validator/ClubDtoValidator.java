@@ -6,7 +6,7 @@ import org.springframework.validation.Validator;
 import de.oth.othivity.dto.ClubDto;
 
 @Component
-public class ClubRequestValidator implements Validator {
+public class ClubDtoValidator implements Validator {
 
     private static final long MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 megabytes
 
@@ -14,7 +14,6 @@ public class ClubRequestValidator implements Validator {
     public boolean supports(Class<?> clazz) {
         return ClubDto.class.equals(clazz);
     }
-
     @Override
     public void validate(Object target, Errors errors) {
         ClubDto request = (ClubDto) target;

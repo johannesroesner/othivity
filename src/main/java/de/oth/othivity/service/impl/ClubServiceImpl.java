@@ -1,11 +1,13 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.enumeration.AccessLevel;
+import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.SessionService;
+import de.oth.othivity.repository.main.ActivityRepository;
 
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ public class ClubServiceImpl implements ClubService {
     private final SessionService sessionService;
     private final ClubRepository clubRepository;
     private final ImageService imageService;
+    private final ActivityRepository activityRepository;
 
     @Override
     public List<Club> getAllClubs() {
@@ -46,10 +49,10 @@ public class ClubServiceImpl implements ClubService {
         return profile.getAdminClubs();
     }       
     @Override
-    public List<Club> getClubsNotJoinedByProfileNotPrivate(HttpSession session) {
+    public List<Club> getClubsNotJoinedByProfile(HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
-        List<Club> allClubs = new ArrayList<>(clubRepository.findByAccessLevelNot(AccessLevel.CLOSED));
+        List<Club> allClubs = new ArrayList<>(clubRepository.findAll());
         allClubs.removeAll(profile.getClubs());
         return allClubs;
     }
@@ -65,8 +68,14 @@ public class ClubServiceImpl implements ClubService {
     
         club.getMembers().add(profile);
         club.getAdmins().add(profile);
-        imageService.saveImagesForClub(club, uploadedImages);
-        return clubRepository.save(club);
+        Club savedClub = clubRepository.save(club);
+        imageService.saveImagesForClub(savedClub, uploadedImages);
+        
+        return savedClub;
+    }
+    @Override
+    public List<Activity> getActivitiesByClub(Club club) {
+        return activityRepository.findAllByOrganizer(club);
     }
     @Override
     public ClubDto clubToDto(Club club) {
@@ -79,5 +88,11 @@ public class ClubServiceImpl implements ClubService {
         clubDto.setAccessLevel(club.getAccessLevel());
         clubDto.setAddress(club.getAddress());
         return clubDto;
+    }
+    @Override
+    public List<Profile> getMembersOfClubWithoutAdmins(Club club) {
+        List<Profile> membersWithoutAdmins = new ArrayList<>(club.getMembers());
+        membersWithoutAdmins.removeAll(club.getAdmins());
+        return membersWithoutAdmins;
     }
 }

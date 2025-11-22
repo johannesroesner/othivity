@@ -1,9 +1,11 @@
 package de.oth.othivity.service;
 
+import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import de.oth.othivity.dto.ClubDto;
+import de.oth.othivity.model.main.Profile;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -21,9 +23,13 @@ public interface ClubService {
     
     List<Club> getClubsManagedByProfile(HttpSession session);
 
-    List<Club> getClubsNotJoinedByProfileNotPrivate(HttpSession session);
+    List<Club> getClubsNotJoinedByProfile(HttpSession session);
 
     Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile[] uploadedImages);
 
+    List<Activity> getActivitiesByClub(Club club);
+
     ClubDto clubToDto (Club club);
+
+    List<Profile> getMembersOfClubWithoutAdmins(Club club);
 }

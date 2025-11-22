@@ -1,6 +1,7 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
@@ -70,6 +71,22 @@ public class TestDataRunner {
             profile2.setUser(user2);
             profileRepository.save(profile2);
 
+            User user3 = new User();
+            user3.setEmail("moritz@example.com");
+            user3.setPassword(passwordEncoder.encode("password"));
+            userRepository.save(user3);
+
+            Profile profile3 = new Profile();
+            profile3.setFirstName("Moritz");
+            profile3.setLastName("Semmelmann");
+            profile3.setUsername("moritz");
+            profile3.setEmail("moritz@example.com");
+            profile3.setAboutMe("Ich bin ein Testprofil.");
+            profile3.setPhone("0123456789");
+            profile3.setRole(Role.USER);
+            profile3.setUser(user3);
+            profileRepository.save(profile3);
+
             Activity activity = new Activity();
             activity.setTitle("my activity");
             activity.setDescription("test description");
@@ -97,6 +114,70 @@ public class TestDataRunner {
             otherActivity.setLanguage(Language.GERMAN);
             activityRepository.save(otherActivity);
 
+            Club club = new Club();
+            club.setName("Test Club");
+            club.setDescription("Dies ist ein Test Club.");
+            club.setAccessLevel(AccessLevel.OPEN);
+            Address address = new Address();
+            address.setStreet("Musterstraße");
+            address.setHouseNumber("1");
+            address.setCity("Musterstadt");
+            address.setPostalCode("12345");
+            club.setAddress(address);
+            club.getMembers().add(profile);
+            club.getMembers().add(profile2);
+            club.getMembers().add(profile3);
+            club.getAdmins().add(profile3);
+            clubRepository.save(club);
+
+            Club club2 = new Club();
+            club2.setName("Exclusive Club");
+            club2.setDescription("Ein exklusiver Club nur für geladene Gäste.");
+            club2.setAccessLevel(AccessLevel.CLOSED);
+            Address address2 = new Address();
+            address2.setStreet("Exclusive Street");
+            address2.setHouseNumber("99");
+            address2.setCity("Elite City");
+            address2.setPostalCode("54321");
+            club2.setAddress(address2);
+            club2.getMembers().add(profile);
+            club2.getMembers().add(profile2);
+            club2.getAdmins().add(profile);
+            clubRepository.save(club2);
+
+            Club club3 = new Club();
+            club3.setName("Open Community");
+            club3.setDescription("Ein offener Club für alle Interessierten.");
+            club3.setAccessLevel(AccessLevel.OPEN);
+            Address address3 = new Address();
+            address3.setStreet("Community Road");
+            address3.setHouseNumber("42");
+            address3.setCity("Openville");
+            address3.setPostalCode("11111");
+            club3.setAddress(address3);
+            club3.getMembers().add(profile);
+            club3.getMembers().add(profile2);
+            club3.getAdmins().add(profile2);
+            clubRepository.save(club3);
+
+            Club club4 = new Club();
+            club4.setName("Social Hub");
+            club4.setDescription("Ein sozialer Club für gemeinsame Aktivitäten.");
+            club4.setAccessLevel(AccessLevel.CLOSED);
+            Address address4 = new Address();
+            address4.setStreet("Social Avenue");
+            address4.setHouseNumber("17");
+            address4.setCity("Friendlytown");
+            address4.setPostalCode("22222");
+            club4.setAddress(address4);
+            club4.getMembers().add(profile);
+            club4.getMembers().add(profile2);
+            club4.getMembers().add(profile3);
+            club4.getAdmins().add(profile);
+            club4.getAdmins().add(profile2);
+            clubRepository.save(club4);
+
+            
         };
     }
 }

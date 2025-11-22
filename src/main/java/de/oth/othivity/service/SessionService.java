@@ -15,12 +15,8 @@ public interface SessionService {
 
     Boolean canJoinActivity(HttpSession session, Activity activity);
 
-    Boolean canEditActivity(HttpSession session, Activity activity);
+    Boolean canEditClub(HttpSession session, Club club);
 
-    Boolean canJoinActivity(HttpSession session, Activity activity);
-
-    Boolean isMemberOfClub(HttpSession session, Club club);
-
-    Boolean isAdminOfClub(HttpSession session, Club club);
+    Boolean canJoinClub(HttpSession session, Club club);
 
 }
