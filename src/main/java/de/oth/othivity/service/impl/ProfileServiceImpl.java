@@ -54,8 +54,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile[] uploadedImages) {
-        if(uploadedImages != null) imageService.saveImagesForProfile(profile, uploadedImages);
+    public void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage) {
+        profile.setProfileImageUrl(imageService.saveImageForProfile(uploadedImage));
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);

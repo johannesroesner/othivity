@@ -21,10 +21,17 @@ public class GlobalControllerAdvice {
     private final SessionService sessionService;
 
     @ModelAttribute
-    public void addCurrentUser(HttpSession session, Model model) {
+    public void addCurrentUsername(HttpSession session, Model model) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile != null) model.addAttribute("currentUsername", profile.getUsername());
+    }
+
+    @ModelAttribute
+    public void addCurrentProfileImage(HttpSession session, Model model) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) {
-            model.addAttribute("currentUsername", profile.getUsername());
+            model.addAttribute("currentProfileImage", profile.getProfileImageUrl());
+            model.addAttribute("currentProfileInitials", profile.getInitials());
         }
     }
 }

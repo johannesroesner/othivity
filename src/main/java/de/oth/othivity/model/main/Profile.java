@@ -3,7 +3,6 @@ package de.oth.othivity.model.main;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.report.ProfileReport;
 import de.oth.othivity.model.security.User;
-import de.oth.othivity.model.image.ProfileImage;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,14 +41,13 @@ public class Profile {
     @Column(length = 3000)
     private String aboutMe;
 
+    private String profileImageUrl;
+
     private String phone;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProfileImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "startedBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Activity> startedActivities = new ArrayList<>();
@@ -65,4 +63,8 @@ public class Profile {
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileReport> reports = new ArrayList<>();
+
+    public String getInitials() {
+        return (firstName.substring(0,1) + lastName.substring(0,1)).toUpperCase();
+    }
 }

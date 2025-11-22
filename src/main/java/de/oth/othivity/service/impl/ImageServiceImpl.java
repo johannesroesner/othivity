@@ -1,21 +1,21 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.image.ActivityImage;
-import de.oth.othivity.model.image.ProfileImage;
 import de.oth.othivity.model.main.Activity;
-import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.image.ActivityImageRepository;
-import de.oth.othivity.repository.image.ProfileImageRepository;
+import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.service.ImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @AllArgsConstructor
 @Service
 public class ImageServiceImpl implements ImageService {
     private final ActivityImageRepository activityImageRepository;
-    private final ProfileImageRepository profileImageRepository;
+    private final ProfileRepository profileRepository;
 
     @Override
     public void saveImagesForActivity(Activity activity, MultipartFile[] images) {
@@ -23,21 +23,22 @@ public class ImageServiceImpl implements ImageService {
             ActivityImage activityImage = new ActivityImage();
             activityImage.setActivity(activity);
             // String url = postInCloud(images[i]);
-            activityImage.setUrl("https://picsum.photos/200");
+
+            int randomId = ThreadLocalRandom.current().nextInt(1, 101);
+            activityImage.setUrl("https://picsum.photos/id/" + randomId + "/200/300");
+
             activityImage.setPriority(i+1);
             activityImageRepository.save(activityImage);
         }
     }
 
     @Override
-    public void saveImagesForProfile(Profile profile, MultipartFile[] images) {
-        for(int i = 0; i < images.length; i++) {
-            ProfileImage profileImage = new ProfileImage();
-            profileImage.setProfile(profile);
-            // String url = postInCloud(images[i]);
-            profileImage.setUrl("https://picsum.photos/200");
-            profileImage.setPriority(i+1);
-            profileImageRepository.save(profileImage);
-        }
+    public String saveImageForProfile(MultipartFile image) {
+            if(image == null || image.isEmpty()) {
+                return null;
+            }
+            // String url = postInCloud(image);
+        int randomId = ThreadLocalRandom.current().nextInt(1, 101);
+        return "https://picsum.photos/id/" + randomId + "/200/300";
     }
 }

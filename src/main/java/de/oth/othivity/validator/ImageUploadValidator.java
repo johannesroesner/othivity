@@ -27,4 +27,10 @@ public class ImageUploadValidator {
 
         return null;
     }
+
+    public String validateOne(MultipartFile image) {
+        if (image == null) return "field.required";
+        if (!image.isEmpty() && image.getSize() > MAX_SIZE)  return "image.sizeExceeded";
+        return null;
+    }
 }
