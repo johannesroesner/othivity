@@ -37,9 +37,11 @@ public class ImageServiceImpl implements ImageService {
             ClubImage clubImage = new ClubImage();
             clubImage.setClub(club);
             // String url = postInCloud(images[i]);
-            clubImage.setUrl("https://picsum.photos/400");
+            clubImage.setUrl("https://picsum.photos/200");
             clubImage.setPriority(i + 1);
             clubImageRepository.save(clubImage);
+        }
+    }
 
     @Override
     public void saveImagesForProfile(Profile profile, MultipartFile[] images) {
