@@ -8,15 +8,20 @@
     <!-- content start -->
     <form th:action="@{/activities/create}" th:object="${activityDto}" method="post" enctype="multipart/form-data" class="space-y-6">
 
-        <div class="flex items-center mb-6 space-x-2">
+        <div class="flex items-center mb-6">
             <a href="/activities" class="btn btn-ghost btn-xl">←</a>
-            <h1 class="text-3xl font-bold" th:text="#{activityCreate.pageTitle}"></h1>
+            <h1 class="text-3xl font-bold ml-4" th:text="#{activityCreate.pageTitle}"></h1>
+
+            <!-- Button rechts -->
+            <div class="ml-auto">
+                <button type="submit" class="btn btn-primary" th:text="#{activityCreate.createActivity}"></button>
+            </div>
         </div>
 
         <!-- grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-6 shadow-2xl">
                 <div class="card bg-base-200 shadow-md p-6 space-y-4 h-full">
                     <h2 class="text-xl font-bold flex items-center gap-2">
                         <span>ℹ️</span>
@@ -63,25 +68,24 @@
                 </div>
             </div>
 
-            <div th:insert="~{fragments/image-form :: imageForm(required=true)}"></div>
+            <div th:insert="~{fragments/image-form :: imageForm(required=true, multiple=true)}"></div>
 
             <div class="space-y-6  flex flex-col">
                 <div th:insert="~{fragments/address-form :: addressForm}"></div>
             </div>
 
-            <div class="space-y-6  card bg-base-200">
-               map todo
-            </div>
 
 
-            <div class="space-y-6 flex flex-col">
+            <div class="space-y-6 flex flex-col lg:col-span-2 shadow-2xl">
                 <div class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
                     <h2 class="text-xl font-bold flex items-center gap-2">
                         <span>👥</span>
                         <span th:text="#{activityCreate.organizerAndTags}"></span>
                     </h2>
-                    <div>
-                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.organizer}"></span></label>
+                    <div th:if="${tagableClubs != null and !#lists.isEmpty(tagableClubs)}">
+                        <label class="label">
+                            <span class="label-text text-sm" th:text="#{activityCreate.organizer}"></span>
+                        </label>
                         <select th:field="*{organizer}" class="select select-bordered w-full">
                             <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}"></option>
                         </select>
@@ -106,10 +110,6 @@
                     </details>
                 </div>
             </div>
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <button type="submit" class="btn btn-primary" th:text="#{activityCreate.createActivity}"></button>
         </div>
     </form>
 

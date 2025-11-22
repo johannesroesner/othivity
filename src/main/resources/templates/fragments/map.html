@@ -1,0 +1,32 @@
+<div th:fragment="mapDiv" id="map" class="h-full w-full rounded shadow-2xl"></div>
+
+<script th:inline="javascript" th:fragment="mapScript(lat, lon, title)">
+    document.addEventListener("DOMContentLoaded", function () {
+        const latitude = /*[[${lat}]]*/ 0;
+        const longitude = /*[[${lon}]]*/ 0;
+        let popupText = /*[[${title}]]*/ 0;
+
+        const map = L.map('map').setView([latitude, longitude], 15);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+
+        if(latitude === 0 && longitude === 0) popupText = 'Location not available';
+
+        L.marker([latitude, longitude])
+            .addTo(map)
+            .bindPopup(popupText)
+            .openPopup();
+
+        map.on('focus', function() {
+            map.scrollWheelZoom.enable();
+        });
+
+        map.on('blur', function() {
+            map.scrollWheelZoom.disable();
+        });
+    });
+</script>

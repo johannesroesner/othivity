@@ -9,6 +9,6 @@ import de.oth.othivity.model.main.Club;
 @Service
 public interface ImageService {
     void saveImagesForActivity(Activity activity, MultipartFile[] file);
-    void saveImagesForProfile(Profile profile, MultipartFile[] file);
+    String saveImageForProfile(MultipartFile file);
     void saveImagesForClub(Club club, MultipartFile[] images);
 }

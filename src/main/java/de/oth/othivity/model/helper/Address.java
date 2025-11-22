@@ -32,4 +32,11 @@ public class Address {
     private String addition;
 
     private String country;
+
+    // for map feature
+    @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
 }

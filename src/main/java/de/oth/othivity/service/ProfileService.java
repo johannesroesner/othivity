@@ -19,7 +19,7 @@ public interface ProfileService {
 
     Profile createProfileFromUser(User user, RegisterDto registerDto);
     
-    void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile[] uploadedImages);
+    void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage);
 
     boolean isUsernameTaken(String userName);
 

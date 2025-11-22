@@ -9,37 +9,69 @@
     <div class="flex items-center mb-6 space-x-2">
         <a href="/activities" class="btn btn-ghost btn-xl">←</a>
         <h1 class="text-3xl font-bold" th:text="#{activityDetail.pageTitle}"></h1>
+
+        <!-- Buttons rechts in der gleichen Zeile -->
+        <div class="ml-auto flex gap-4">
+            <!-- Edit Button, nur sichtbar wenn editMode -->
+            <a th:if="${editMode}" th:href="@{'/activities/edit/' + ${activity.id}}" class="btn btn-primary">
+                Edit
+            </a>
+
+            <!-- Delete Button, nur sichtbar wenn editMode -->
+            <form th:if="${editMode}" th:action="@{'/activities/delete/' + ${activity.id}}" method="post" onsubmit="return confirm('Are you sure you want to delete this activity?');">
+                <button type="submit" class="btn btn-error">Delete</button>
+            </form>
+
+            <!-- Join Button, nur sichtbar wenn joinAble -->
+            <form th:if="${joinAble}" th:action="@{'/activities/join/' + ${activity.id}}" method="post">
+                <button type="submit" class="btn btn-success">Join</button>
+            </form>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <div class="flex flex-col items-center lg:col-span-1">
-            <div class="carousel w-96 h-64 shadow-2xl flex-shrink-0">
-                <div th:each="img, i : ${images}" th:id="'s' + ${i.index + 1}" class="carousel-item w-full h-full">
+        <div class="flex flex-col items-center lg:col-span-1 w-full">
+            <!-- Carousel -->
+            <div class="carousel w-full h-64 shadow-2xl relative overflow-hidden">
+                <div th:each="img, i : ${images}" th:id="'slide-' + ${i.index}"
+                     class="carousel-item w-full h-full absolute top-0 left-0 transition-opacity duration-500"
+                     th:classappend="${i.index == 0} ? 'opacity-100 z-10' : 'opacity-0 z-0'">
                     <img th:src="@{${img.url}}" class="w-full h-full object-cover rounded-box"/>
+
+                    <!-- Pfeile -->
+                    <button type="button"
+                            class="absolute left-2 top-1/2 transform -translate-y-1/2 btn btn-circle"
+                            th:onclick="'prevSlide()'">❮</button>
+                    <button type="button"
+                            class="absolute right-2 top-1/2 transform -translate-y-1/2 btn btn-circle"
+                            th:onclick="'nextSlide()'">❯</button>
                 </div>
             </div>
-            <div class="flex justify-center space-x-2 mt-2 shadow-2xl">
-                <a th:each="img, i : ${images}" th:href="'#s' + ${i.index + 1}" th:text="${i.index + 1}" class="btn btn-xs"></a>
-            </div>
 
-            <div class="w-full bg-base-200 shadow-2xl p-6 rounded-2xl mt-4 space-y-4 flex-1 flex flex-col justify-between">
-                <p class="text-sm font-semibold text-base-content/70">Teilnehmer</p>
+            <!-- Teilnehmer Block -->
+            <div class="w-full bg-base-200 shadow-2xl p-6 rounded-2xl mt-4 flex-1 flex flex-col">
+                <p class="text-sm font-semibold text-base-content/70 mb-2">Teilnehmer</p>
 
-                <div class="space-y-2 flex-1 flex flex-col justify-start">
-                    <!-- Organizer -->
-                    <div th:if="${activity.organizer}" class="bg-white p-4 rounded-xl shadow-sm">
-                        <span class="text-sm font-medium" th:text="'Organizer: ' + ${activity.organizer.name}"></span>
+                <!-- Starter -->
+                <div class="p-4 rounded-xl shadow-sm flex items-center gap-3 mb-2 border-l-4 border-primary">
+                    <span th:if="${activity.startedBy.profileImageUrl == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${activity.startedBy.initials}"></span>
+                    <img th:if="${activity.startedBy.profileImageUrl != null}" th:src="${activity.startedBy.profileImageUrl}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-500">Starter</span>
+                        <a th:href="@{'/profile/' + ${activity.startedBy.username}}" class="text-sm font-medium hover:underline" th:text="${activity.startedBy.username}"></a>
                     </div>
+                </div>
 
-                    <!-- Starter -->
-                    <div class="bg-white p-4 rounded-xl shadow-sm">
-                        <span class="text-sm font-medium" th:text="'Starter: ' + ${activity.startedBy.firstName}"></span>
-                    </div>
-
-                    <!-- Alle Teilnehmer -->
-                    <div th:each="person : ${activity.takePart}" class="bg-white p-4 rounded-xl shadow-sm">
-                        <span class="text-sm font-medium" th:text="${person.firstName}"></span>
+                <!-- Teilnehmer -->
+                <div class="flex-1 overflow-y-auto space-y-2" style="max-height: 300px;">
+                    <div th:each="person : ${activity.takePart}" th:if="${person.username != activity.startedBy.username}" class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3">
+                        <span th:if="${person.profileImageUrl == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${person.initials}"></span>
+                        <img th:if="${person.profileImageUrl != null}" th:src="${person.profileImageUrl}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-gray-500">Teilnehmer</span>
+                            <a th:href="@{'/profile/' + ${person.username}}" class="text-sm font-medium hover:underline" th:text="${person.username}"></a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -48,7 +80,6 @@
         <div class="lg:col-span-2">
             <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
 
-                <!-- Header -->
                 <div class="flex items-center gap-2">
                     <span class="text-2xl">ℹ️</span>
                     <h2 class="text-2xl font-bold" th:text="#{activityDetail.pageTitle}"></h2>
@@ -56,7 +87,6 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                    <!-- Title -->
                     <div class="space-y-1">
                         <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.title}"></p>
                         <div class="bg-base-100 p-4 rounded-xl shadow-sm">
@@ -64,33 +94,28 @@
                         </div>
                     </div>
 
-                    <!-- Group Size -->
                     <div class="space-y-1">
                         <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.groupSize}"></p>
                         <div class="bg-base-100 p-4 rounded-xl shadow-sm">
-                            <span class="text-base font-medium" th:text="${activity.groupSize}"></span>
+                            <span class="text-base font-medium" th:text="${activity.participantStatus}"></span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Description -->
                 <div class="space-y-1">
                     <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.description}"></p>
-                    <div class="bg-base-100 p-4 rounded-xl shadow-sm whitespace-pre-line leading-relaxed">
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm">
                         <span th:text="${activity.description}"></span>
                     </div>
                 </div>
 
-                <!-- Date & Time -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
                     <div class="space-y-1">
                         <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.date}"></p>
                         <div class="bg-base-100 p-4 rounded-xl shadow-sm">
-                            <span class="text-base font-medium" th:text="${#temporals.format(activity.date, 'dd-MM-yyyy')}"></span>
+                            <span class="text-base font-medium" th:text="${#temporals.format(activity.date, 'dd.MM.yyyy')}"></span>
                         </div>
                     </div>
-
                     <div class="space-y-1">
                         <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.time}"></p>
                         <div class="bg-base-100 p-4 rounded-xl shadow-sm">
@@ -99,7 +124,6 @@
                     </div>
                 </div>
 
-                <!-- Language -->
                 <div class="space-y-1">
                     <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.language}"></p>
                     <div class="bg-base-100 p-4 rounded-xl shadow-sm flex items-center gap-2 text-lg">
@@ -108,29 +132,24 @@
                     </div>
                 </div>
 
-
-                <!-- Tags -->
-                <div class="space-y-1">
+                <div class="space-y-1" th:if="${!#lists.isEmpty(activity.tags)}">
                     <p class="text-sm font-semibold text-base-content/70" th:text="#{activityCreate.tags}"></p>
                     <div class="bg-base-100 p-4 rounded-xl shadow-sm flex flex-wrap gap-2 items-center text-lg">
-                    <span th:each="tag : ${activity.tags}">
-                    <span class="flex items-center gap-1">
-                    <span th:text="${tag.emoji}"></span>
-                    <span th:text="#{${tag.key}}"></span>
-                    </span>
-                    </span>
+                        <span th:each="tag : ${activity.tags}">
+                            <span class="flex items-center gap-1">
+                                <span th:text="${tag.emoji}"></span>
+                                <span th:text="#{${tag.key}}"></span>
+                             </span>
+                        </span>
                     </div>
                 </div>
 
             </div>
         </div>
 
-
-
-        <div id="map-container" class="lg:col-span-2 relative">
-            <div id="map" class="h-full w-full rounded shadow-2xl"></div>
+        <div class="bg-base-200 lg:col-span-2 shadow-2xl h-full rounded-2xl flex items-center justify-center text-6xl">
+            ☀️
         </div>
-
 
         <div class="">
             <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
@@ -167,25 +186,44 @@
             </div>
         </div>
 
-
-
-
-
-
+        <div class="lg:col-span-3 min-h-[300px]">
+            <div th:replace="~{fragments/map :: mapDiv}"></div>
+            <script th:replace="~{fragments/map :: mapScript(${activity.address.latitude}, ${activity.address.longitude}, ${activity.title})}"></script>
+        </div>
 
     </div>
     </form>
     <!-- content end -->
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var map = L.map('map').setView([51.505, -0.09], 13);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-    });
-</script>
 <footer th:insert="~{layout/footer :: footer}"></footer>
+<script>
+    const slides = document.querySelectorAll('.carousel-item');
+    let currentIndex = 0;
+
+    function showSlide(index) {
+        currentIndex = index;
+        slides.forEach((slide, i) => {
+            if(i === index){
+                slide.classList.add('opacity-100', 'z-10');
+                slide.classList.remove('opacity-0', 'z-0');
+            } else {
+                slide.classList.add('opacity-0', 'z-0');
+                slide.classList.remove('opacity-100', 'z-10');
+            }
+        });
+    }
+
+    function prevSlide() {
+        let newIndex = currentIndex - 1;
+        if(newIndex < 0) newIndex = slides.length - 1;
+        showSlide(newIndex);
+    }
+
+    function nextSlide() {
+        let newIndex = currentIndex + 1;
+        if(newIndex >= slides.length) newIndex = 0;
+        showSlide(newIndex);
+    }
+</script>
 </body>
 </html>

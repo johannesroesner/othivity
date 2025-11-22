@@ -5,6 +5,7 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.service.ActivityService;
+import de.oth.othivity.service.GeocodingService;
 import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class ActivityServiceImpl implements ActivityService {
     private final SessionService sessionService;
     private final ImageService imageService;
+    private final GeocodingService geocodingService;
 
     private final ActivityRepository activityRepository;
 
@@ -90,8 +92,11 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setGroupSize(activityDto.getGroupSize());
         activity.setOrganizer(activityDto.getOrganizer());
         activity.setTags(activityDto.getTags());
-        activity.setAddress(activityDto.getAddress());
+
+        // get latitude and longitude from geocoding service
+        activity.setAddress(geocodingService.geocode(activityDto.getAddress()));
         activity.setStartedBy(profile);
+
         List<Profile> participants = new ArrayList<>();
         participants.add(profile);
         activity.setTakePart(participants);
