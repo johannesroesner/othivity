@@ -108,6 +108,30 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    public Activity updateActivity(Activity activity, ActivityDto activityDto, MultipartFile[] uploadedImages, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null) return null;
+
+        activity.setTitle(activityDto.getTitle());
+        activity.setDescription(activityDto.getDescription());
+        activity.setDate(activityDto.getDate());
+        activity.setLanguage(activityDto.getLanguage());
+        activity.setGroupSize(activityDto.getGroupSize());
+        activity.setOrganizer(activityDto.getOrganizer());
+        activity.setTags(activityDto.getTags());
+
+        // get latitude and longitude from geocoding service
+        activity.setAddress(geocodingService.geocode(activityDto.getAddress()));
+        activity.setStartedBy(profile);
+
+        Activity updatedActivity = activityRepository.save(activity);
+        imageService.deleteImagesForActivity(activity);
+        imageService.saveImagesForActivity(updatedActivity, uploadedImages);
+
+        return updatedActivity;
+    }
+
+    @Override
     public Activity getActivityById(UUID activityId) {
         return activityRepository.findById(activityId).orElse(null);
     }
@@ -115,6 +139,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityDto activityToDto(Activity activity) {
         ActivityDto activityDto = new ActivityDto();
+        activityDto.setId(activity.getId());
         activityDto.setTitle(activity.getTitle());
         activityDto.setDescription(activity.getDescription());
         activityDto.setDate(activity.getDate());

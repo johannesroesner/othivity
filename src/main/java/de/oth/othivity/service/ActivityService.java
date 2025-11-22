@@ -25,6 +25,8 @@ public interface ActivityService {
 
     Activity createActivity(ActivityDto activityCreateRequest, MultipartFile [] uploadedImages, HttpSession session);
 
+    Activity updateActivity(Activity activity, ActivityDto activityUpdateRequest, MultipartFile [] uploadedImages, HttpSession session) ;
+
     Activity getActivityById(UUID activityId);
 
     ActivityDto activityToDto(Activity activity);

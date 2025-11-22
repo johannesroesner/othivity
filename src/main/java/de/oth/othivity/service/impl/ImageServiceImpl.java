@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @AllArgsConstructor
@@ -30,6 +31,13 @@ public class ImageServiceImpl implements ImageService {
             activityImage.setPriority(i+1);
             activityImageRepository.save(activityImage);
         }
+    }
+
+    @Override
+    public void deleteImagesForActivity(Activity activity) {
+        // do something in the cloud to delete images
+        List<ActivityImage> existingImages = activity.getImages();
+        if (existingImages != null) existingImages.clear();
     }
 
     @Override
