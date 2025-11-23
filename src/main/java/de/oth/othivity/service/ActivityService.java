@@ -2,6 +2,7 @@ package de.oth.othivity.service;
 
 import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +25,17 @@ public interface ActivityService {
 
     Activity createActivity(ActivityDto activityCreateRequest, MultipartFile [] uploadedImages, HttpSession session);
 
+    Activity updateActivity(Activity activity, ActivityDto activityUpdateRequest, MultipartFile [] uploadedImages, HttpSession session) ;
+
     Activity getActivityById(UUID activityId);
 
     ActivityDto activityToDto(Activity activity);
+
+    Activity joinActivity(Activity activity, HttpSession session);
+
+    Activity leaveActivity(Activity activity, HttpSession session);
+
+    Activity kickParticipant(Activity activity, Profile profile);
+
+    void deleteActivity(Activity activity);
 }

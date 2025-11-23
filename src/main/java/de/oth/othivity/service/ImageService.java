@@ -11,4 +11,6 @@ public interface ImageService {
     void saveImagesForActivity(Activity activity, MultipartFile[] file);
     String saveImageForProfile(MultipartFile file);
     void saveImagesForClub(Club club, MultipartFile[] images);
+    void deleteImagesForActivity(Activity activity);
+    String saveImageForProfile(MultipartFile file);
 }

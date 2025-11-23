@@ -12,10 +12,6 @@ import de.oth.othivity.model.main.Club;
 public interface SessionService {
 
     Profile getProfileFromSession(HttpSession session);
-    
-    Boolean canEditActivity(HttpSession session, Activity activity);
-
-    Boolean canJoinActivity(HttpSession session, Activity activity);
 
     Boolean canEditClub(HttpSession session, Club club);
 
@@ -26,6 +22,10 @@ public interface SessionService {
     <T> Boolean canUpdate(HttpSession session, T entity);
 
     <T> Boolean canDelete(HttpSession session, T entity);
+
+    <T> Boolean canJoin(HttpSession session, T entity);
+
+    <T> Boolean canLeave(HttpSession session, T entity);
 
     String getReturnUrlFromSession(HttpSession session, HttpServletRequest request);
 

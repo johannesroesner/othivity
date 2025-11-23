@@ -4,11 +4,13 @@ import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.validator.ActivityDtoValidator;
 import de.oth.othivity.validator.ImageUploadValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -40,9 +42,6 @@ public class ActivityController {
     @GetMapping("/activities")
     public String activities(HttpSession session, Model model) {
 
-        // test
-        System.out.println(sessionService.getProfileFromSession(session).getUsername());
-
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session));
         model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session));
@@ -55,18 +54,18 @@ public class ActivityController {
         model.addAttribute("activityDto", new ActivityDto());
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("allTags", Tag.values());
-        model.addAttribute("tagableClubs", profileService.allJoinedClubsByProfile(session));
-        return "activity-create";
+        model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+        return "activity-edit";
     }
 
     @PostMapping("/activities/create")
     public String createActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @RequestParam MultipartFile [] uploadedImages, HttpSession session, Model model) {
-        if (bindingResult.hasErrors() || imageUploadValidator.validate(uploadedImages) != null ) {
-            model.addAttribute("imageFilesError", imageUploadValidator.validate(uploadedImages));
+        if (bindingResult.hasErrors() || imageUploadValidator.validateRequired(uploadedImages) != null ) {
+            model.addAttribute("imageFilesError", imageUploadValidator.validateRequired(uploadedImages));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
-            model.addAttribute("tagableClubs", profileService.allJoinedClubsByProfile(session));
-            return "activity-create";
+            model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+            return "activity-edit";
         }
 
         activityService.createActivity(activityDto, uploadedImages,session);
@@ -74,16 +73,77 @@ public class ActivityController {
         return "redirect:/activities";
     }
 
-
     @GetMapping("/activities/{id}")
     public String getActivityDetail(@PathVariable("id") String activityId, Model model, HttpSession session) {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null) return "redirect:/activities";
         model.addAttribute("activity", activity);
         model.addAttribute("images", activity.getImages());
-        model.addAttribute("joinAble", sessionService.canJoinActivity(session, activity));
-        model.addAttribute("editMode", sessionService.canEditActivity(session, activity));
+        model.addAttribute("joinAble", sessionService.canJoin(session, activity));
+        model.addAttribute("leaveAble", sessionService.canLeave(session, activity));
+        model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
+        model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
         return "activity-detail";
     }
 
+    @PostMapping("/activities/join/{id}")
+    public String joinActivity(@PathVariable("id") String activityId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canJoin(session, activity)) activityService.joinActivity(activity, session);
+        return "redirect:/activities/" + activityId;
+    }
+
+    @PostMapping("/activities/leave/{id}")
+    public String leaveActivity(@PathVariable("id") String activityId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canLeave(session, activity)) activityService.leaveActivity(activity, session);
+        return "redirect:/activities/" + activityId;
+    }
+
+    @PostMapping("/activities/delete/{id}")
+    public String deleteActivity(@PathVariable("id") String activityId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canDelete(session, activity)) activityService.deleteActivity(activity);
+
+        return "redirect:/activities";
+    }
+
+    @PostMapping("/activities/kick/{activityId}/{personId}")
+    public String kickParticipant(@PathVariable("activityId") String activityId, @PathVariable("personId") String personId, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        Profile profile = profileService.getProfileById(UUID.fromString(personId));
+        if (activity != null && profile != null && sessionService.canDelete(session, activity)) activityService.kickParticipant(activity, profile);
+
+        return "redirect:/activities/" + activityId;
+    }
+
+    @GetMapping("/activities/update/{activityId}")
+    public String showUpdateForm(@PathVariable("activityId") String activityId, Model model, HttpServletRequest request, HttpSession session) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
+        model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
+        model.addAttribute("activityDto", activityService.activityToDto(activity));
+        model.addAttribute("languages", Language.getFlags());
+        model.addAttribute("allTags", Tag.values());
+        model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+        return "activity-edit";
+    }
+
+    @PostMapping("/activities/update/{activityId}")
+    public String updateActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @PathVariable("activityId") String activityId, HttpServletRequest request, @RequestParam MultipartFile [] uploadedImages, HttpSession session, Model model) {
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
+        if (bindingResult.hasErrors() || imageUploadValidator.validateNotRequired(uploadedImages) != null ) {
+            model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
+            model.addAttribute("imageFilesError", imageUploadValidator.validateNotRequired(uploadedImages));
+            model.addAttribute("languages", Language.getFlags());
+            model.addAttribute("allTags", Tag.values());
+            model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+            return "activity-edit";
+        }
+
+        activityService.updateActivity(activity, activityDto, uploadedImages, session);
+
+        return "redirect:/activities/" + activityId;
+    }
 }

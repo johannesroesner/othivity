@@ -26,13 +26,6 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Boolean canEditActivity(HttpSession session, Activity activity) {
-        Profile profile = getProfileFromSession(session);
-        if (profile == null) return false;
-        return activity.getStartedBy().getId().equals(profile.getId()) || profile.getRole().toString().equals("MODERATOR");
-    }
-
-    @Override
     public <T> Boolean canUpdate(HttpSession session, T entity) {
         if (entity instanceof Activity) {
             Profile profile = getProfileFromSession(session);
@@ -61,10 +54,29 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Boolean canJoinActivity(HttpSession session, Activity activity) {
-        Profile profile = getProfileFromSession(session);
-        if (profile == null) return false;
-        return !activity.getStartedBy().getId().equals(profile.getId()) && activity.getTakePart().size() < activity.getGroupSize();
+    public <T> Boolean canJoin(HttpSession session, T entity) {
+        if (entity instanceof Activity activity) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+            boolean isNotCreator = !activity.getStartedBy().getId().equals(profile.getId());
+            boolean hasNotJoined = activity.getTakePart().stream().noneMatch(p -> p.getId().equals(profile.getId()));
+            return isNotCreator && hasNotJoined && activity.getTakePart().size() < activity.getGroupSize();
+        }
+        return false;
+    }
+
+    @Override
+    public <T> Boolean canLeave(HttpSession session, T entity) {
+        if (entity instanceof Activity activity) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+
+            boolean isCreator = activity.getStartedBy().getId().equals(profile.getId());
+            boolean isParticipant = activity.getTakePart().stream().anyMatch(p -> p.getId().equals(profile.getId()));
+
+            return !isCreator && isParticipant;
+        }
+        return false;
     }
     @Override
     public Boolean canJoinClub(HttpSession session, Club club) {
