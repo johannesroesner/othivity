@@ -74,6 +74,21 @@ public class ClubServiceImpl implements ClubService {
         return savedClub;
     }
     @Override
+    public Club updateClub(Club club, ClubDto clubDto, MultipartFile[] uploadedImages, HttpSession session) {
+        if (club == null) {
+            return null;
+        }
+        club.setName(clubDto.getName());
+        club.setDescription(clubDto.getDescription());
+        club.setAccessLevel(clubDto.getAccessLevel());
+        club.setAddress(clubDto.getAddress());
+        Club updatedClub = clubRepository.save(club);
+        imageService.deleteImagesForClub(club);
+        imageService.saveImagesForClub(updatedClub, uploadedImages);
+        return updatedClub;
+    }
+
+    @Override
     public List<Activity> getActivitiesByClub(Club club) {
         return activityRepository.findAllByOrganizer(club);
     }
@@ -83,6 +98,7 @@ public class ClubServiceImpl implements ClubService {
             return null;
         }
         ClubDto clubDto = new ClubDto();
+        clubDto.setId(club.getId());
         clubDto.setName(club.getName());
         clubDto.setDescription(club.getDescription());
         clubDto.setAccessLevel(club.getAccessLevel());

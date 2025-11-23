@@ -27,6 +27,8 @@ public interface ClubService {
 
     Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile[] uploadedImages);
 
+    Club updateClub(Club club, ClubDto clubDto, MultipartFile[] uploadedImages, HttpSession session);
+
     List<Activity> getActivitiesByClub(Club club);
 
     ClubDto clubToDto (Club club);

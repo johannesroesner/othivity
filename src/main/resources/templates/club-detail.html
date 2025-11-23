@@ -73,9 +73,19 @@
                     <div th:each="member : ${clubMembers}" class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3">
                         <span th:if="${member.profileImageUrl == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${member.initials}"></span>
                         <img th:if="${member.profileImageUrl != null}" th:src="${member.profileImageUrl}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
-                        <div class="flex flex-col">
+                        <div class="flex flex-col flex-1">
                             <span class="text-xs text-gray-500">Mitglied</span>
                             <a th:href="@{'/profile/' + ${member.username}}" class="text-sm font-medium hover:underline" th:text="${member.username}"></a>
+                        </div>
+                        
+                        <!-- Member Actions -->
+                        <div th:if="${editMode}" class="flex gap-2">
+                            <form th:action="@{'/clubs/removeMember/' + ${club.id} + '/' + ${member.id}}" method="post">
+                                <button type="submit" class="btn btn-xs btn-error">Remove</button>
+                            </form>
+                            <form th:action="@{'/clubs/makeAdmin/' + ${club.id} + '/' + ${member.id}}" method="post">
+                                <button type="submit" class="btn btn-xs btn-primary">Make Admin</button>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -51,17 +51,22 @@ public class ClubController {
     }
 
     @GetMapping("/clubs/create")
-    public String getCreateClub(Model model) {
+    public String getCreateClub(Model model, HttpSession session) {
         model.addAttribute("clubDto", new ClubDto());
         model.addAttribute("accessLevels", AccessLevel.values());
-        return "club-create";
+        model.addAttribute("returnUrl", "/clubs");
+        model.addAttribute("pageTitle", "clubCreate.pageTitle");
+        return "club-edit";
     }
 
     @PostMapping("/clubs/create")
     public String createClub(@Valid @ModelAttribute("clubDto") ClubDto clubDto, BindingResult bindingResult, @RequestParam MultipartFile[] uploadedImages, HttpSession session, Model model) {
         if(bindingResult.hasErrors()|| imageUploadValidator.validateRequired(uploadedImages) != null) {
+            model.addAttribute("imageFilesError", imageUploadValidator.validateRequired(uploadedImages));
             model.addAttribute("accessLevels", AccessLevel.values());
-            return "club-create";
+            model.addAttribute("returnUrl", "/clubs");
+            model.addAttribute("pageTitle", "clubCreate.pageTitle");
+            return "club-edit";
         }
         clubService.createClubForUser(clubDto, session, uploadedImages);
         return "redirect:/clubs";
@@ -74,9 +79,9 @@ public class ClubController {
             return "redirect:/clubs";
         }
         model.addAttribute("club", club);
-        model.addAttribute("joinAble", sessionService.canJoinClub(session, club));
-        model.addAttribute("editMode", sessionService.canEditClub(session, club));
-        model.addAttribute("leaveAble", sessionService.canLeaveClub(session, club));
+        model.addAttribute("joinAble", sessionService.canJoin(session, club));
+        model.addAttribute("editMode", sessionService.canUpdate(session, club));
+        model.addAttribute("leaveAble", sessionService.canLeave(session, club));
         
 
         model.addAttribute("clubMembers", clubService.getMembersOfClubWithoutAdmins(club));
@@ -88,6 +93,37 @@ public class ClubController {
 
         return "club-detail";
     }
+
+    @GetMapping("/clubs/edit/{id}")
+    public String getEditClub(@PathVariable("id") String clubId, Model model, HttpSession session) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null || !sessionService.canUpdate(session, club)) {
+            return "redirect:/clubs/" + clubId;
+        }
+        model.addAttribute("clubDto", clubService.clubToDto(club));
+        model.addAttribute("accessLevels", AccessLevel.values());
+        model.addAttribute("returnUrl", "/clubs/" + clubId);
+        model.addAttribute("pageTitle", "clubEdit.pageTitle");
+        return "club-edit";
+    }
+
+    @PostMapping("/clubs/edit/{id}")
+    public String editClub(@Valid @ModelAttribute("clubDto") ClubDto clubDto, BindingResult bindingResult, @PathVariable("id") String clubId, @RequestParam MultipartFile[] uploadedImages, HttpSession session, Model model) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null || !sessionService.canUpdate(session, club)) {
+            return "redirect:/clubs/" + clubId;
+        }
+        if(bindingResult.hasErrors()|| imageUploadValidator.validateNotRequired(uploadedImages) != null) {
+            model.addAttribute("imageFilesError", imageUploadValidator.validateNotRequired(uploadedImages));
+            model.addAttribute("accessLevels", AccessLevel.values());
+            model.addAttribute("returnUrl", "/clubs/" + clubId);
+            model.addAttribute("pageTitle", "clubEdit.pageTitle");
+            return "club-edit";
+        }
+        clubService.updateClub(club, clubDto, uploadedImages, session);
+        return "redirect:/clubs/" + clubId;
+    }
+    
     @PostMapping("/clubs/join/{id}")
     public String joinClub(@PathVariable("id") String clubId, HttpSession session) {
         Club club = clubService.getClubById(UUID.fromString(clubId));
