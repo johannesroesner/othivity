@@ -137,11 +137,47 @@ public class ClubController {
     public String leaveClub(@PathVariable("id") String clubId, HttpSession session) {
         Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) return "redirect:/clubs";
-
+        if (clubService.wouldLeaveRequireAdminSelection(session, club)) {
+            return "redirect:/clubs/" + clubId + "/select-admin?leaving=true";
+        }
+        
         clubService.leaveClubForProfile(session, club);
 
         return "redirect:/clubs/" + clubId;
     }
+
+    @GetMapping("/clubs/{id}/select-admin")
+    public String getSelectAdmin(@PathVariable("id") String clubId, @RequestParam(value = "leaving", defaultValue = "false") boolean isLeaving, HttpSession session, Model model) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null) {
+            return "redirect:/clubs";
+        }
+        
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        if (currentProfile == null) {
+            return "redirect:/clubs/" + clubId;
+        }
+        if (isLeaving) {
+            if (!club.getAdmins().contains(currentProfile) || club.getAdmins().size() > 1) {
+                return "redirect:/clubs/" + clubId;
+            }
+        } else {
+            if (!club.getAdmins().isEmpty()) {
+                return "redirect:/clubs/" + clubId;
+            }
+        }
+        if (club.getMembers().isEmpty()) {
+            return "redirect:/clubs";
+        }
+        
+        model.addAttribute("club", club);
+        model.addAttribute("clubMembers", isLeaving ? 
+            club.getMembers().stream().filter(m -> !m.equals(currentProfile)).toList() : 
+            club.getMembers());
+        model.addAttribute("isLeaving", isLeaving);
+        return "club-select-admin";
+    }
+    
     @PostMapping("/clubs/delete/{id}")
     public String deleteClub(@PathVariable("id") String clubId, HttpSession session) {
         Club club = clubService.getClubById(UUID.fromString(clubId));
@@ -152,7 +188,8 @@ public class ClubController {
         return "redirect:/clubs";
     }
     @PostMapping("/clubs/makeAdmin/{clubId}/{profileId}")
-    public String makeAdmin(@PathVariable("clubId") String clubId, @PathVariable("profileId") String profileId, HttpSession session) {
+    public String makeAdmin(@PathVariable("clubId") String clubId, @PathVariable("profileId") String profileId, 
+                           @RequestParam(value = "leaving", defaultValue = "false") boolean isLeaving, HttpSession session) {
         Club club = clubService.getClubById(UUID.fromString(clubId));
         Profile profile = profileService.getProfileById(UUID.fromString(profileId));
         if (club == null || profile == null) {
@@ -160,6 +197,13 @@ public class ClubController {
         }
 
         clubService.makeProfileAdminOfClub(profile, club, session);
+        
+        // If this was triggered by someone leaving, now actually process the leave
+        if (isLeaving) {
+            clubService.leaveClubForProfile(session, club);
+            // Redirect to clubs overview since user left the club
+            return "redirect:/clubs";
+        }
 
         return "redirect:/clubs/" + clubId;
     }

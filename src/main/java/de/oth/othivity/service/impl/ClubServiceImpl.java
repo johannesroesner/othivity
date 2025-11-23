@@ -133,17 +133,29 @@ public class ClubServiceImpl implements ClubService {
         if (club.getMembers().contains(profile)) {
             club.getMembers().remove(profile);
             club.getAdmins().remove(profile);
+            
             if(club.getMembers().isEmpty()) {
                 clubRepository.delete(club);
                 return;
             }
-            if(club.getAdmins().isEmpty()) {
-                Profile newAdmin = club.getMembers().get(0);
-                club.getAdmins().add(newAdmin);
-            }
+            
             clubRepository.save(club);
         }
     }
+    
+    @Override
+    public boolean wouldLeaveRequireAdminSelection(HttpSession session, Club club) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null || club == null) {
+            return false;
+        }
+        if (club.getMembers().contains(profile) && club.getAdmins().contains(profile)) {
+            return club.getAdmins().size() == 1 && club.getMembers().size() > 1;
+        }
+        
+        return false;
+    }
+    
     @Override
     public void deleteClub(Club club, HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);

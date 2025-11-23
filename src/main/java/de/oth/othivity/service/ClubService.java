@@ -39,6 +39,8 @@ public interface ClubService {
 
     void leaveClubForProfile(HttpSession session, Club club);
 
+    boolean wouldLeaveRequireAdminSelection(HttpSession session, Club club);
+
     void deleteClub(Club club, HttpSession session);
 
     void makeProfileAdminOfClub(Profile profile, Club club, HttpSession session);
