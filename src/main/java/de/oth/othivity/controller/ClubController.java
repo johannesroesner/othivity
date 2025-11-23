@@ -59,7 +59,7 @@ public class ClubController {
 
     @PostMapping("/clubs/create")
     public String createClub(@Valid @ModelAttribute("clubDto") ClubDto clubDto, BindingResult bindingResult, @RequestParam MultipartFile[] uploadedImages, HttpSession session, Model model) {
-        if(bindingResult.hasErrors()|| imageUploadValidator.validate(uploadedImages) != null) {
+        if(bindingResult.hasErrors()|| imageUploadValidator.validateRequired(uploadedImages) != null) {
             model.addAttribute("accessLevels", AccessLevel.values());
             return "club-create";
         }
