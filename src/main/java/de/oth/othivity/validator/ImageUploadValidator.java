@@ -9,47 +9,16 @@ public class ImageUploadValidator {
     private static final long MAX_SIZE = 15 * 1024 * 1024; // 15 megabytes
     private static final long MAX_IMAGE_COUNT = 5;
 
-    public String validateRequired(MultipartFile[] images) {
-
-        if (images == null || images.length == 0) {
-            return "field.required";
-        }
-
-        if(images.length > MAX_IMAGE_COUNT) {
-            return "image.uploadLimit";
-        }
-
-        for (MultipartFile file : images) {
-            if (!file.isEmpty() && file.getSize() > MAX_SIZE) {
-                return "image.sizeExceeded";
-            }
-        }
-
-        return null;
-    }
-
-    public String validateNotRequired(MultipartFile[] images) {
-
-        if (images == null || images.length == 0) {
-            return null;
-        }
-
-        if(images.length > MAX_IMAGE_COUNT) {
-            return "image.uploadLimit";
-        }
-
-        for (MultipartFile file : images) {
-            if (!file.isEmpty() && file.getSize() > MAX_SIZE) {
-                return "image.sizeExceeded";
-            }
-        }
-
-        return null;
-    }
-
-    public String validateOne(MultipartFile image) {
+    public String validateRequired(MultipartFile image) {
         if (image == null) return "field.required";
-        if (!image.isEmpty() && image.getSize() > MAX_SIZE)  return "image.sizeExceeded";
+        if (!image.isEmpty() && image.getSize() > MAX_SIZE)return "image.sizeExceeded";
+        return null;
+    }
+
+    public String validateNotRequired(MultipartFile image) {
+
+        if (image == null) return null;
+        if (!image.isEmpty() && image.getSize() > MAX_SIZE) return "image.sizeExceeded";
         return null;
     }
 }

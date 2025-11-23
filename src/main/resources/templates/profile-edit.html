@@ -17,13 +17,13 @@
             <div class="flex flex-col items-center lg:col-span-1">
                 <div class="avatar">
                     <div class="w-100 rounded-full bg-base-200 flex items-center justify-center shadow-2xl">
-                        <img th:if="${profile.profileImageUrl != null}" th:src="@{${profile.profileImageUrl}}" class="object-cover" />
-                        <span th:if="${profile.profileImageUrl == null}" class="text-3xl font-semibold text-base-content/60" th:text="${profile.initials}"></span>
+                        <img th:if="${profile.image != null}" th:src="@{${profile.image.url}}" class="object-cover" />
+                        <span th:if="${profile.image == null}" class="text-3xl font-semibold text-base-content/60" th:text="${profile.initials}"></span>
                     </div>
                 </div>
 
                 <div class="w-full mt-4">
-                    <div th:insert="~{fragments/image-form :: imageForm(required=false, multiple=false)}"></div>
+                    <div th:insert="~{fragments/image-form :: imageForm(required=false)}"></div>
                 </div>
             </div>
 

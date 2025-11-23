@@ -35,31 +35,27 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="flex flex-col items-center lg:col-span-1 w-full">
 
-            <div class="carousel w-full h-64 shadow-2xl relative overflow-hidden rounded-2xl bg-base-100">
-
-                <div th:each="img, i : ${images}" th:id="'slide-' + ${i.index}" class="carousel-item w-full h-full absolute top-0 left-0 transition-opacity duration-500" th:classappend="${i.index == 0} ? 'opacity-100 z-10' : 'opacity-0 z-0'">
-
-                    <div class="hover-3d w-full h-full bg-base-100">
-                        <figure class="w-full h-full rounded-2xl bg-base-100">
-                            <img th:src="@{${img.url}}" class="w-full h-full object-cover rounded-2xl"/>
-                        </figure>
-
-                        <div></div><div></div><div></div><div></div>
-                        <div></div><div></div><div></div><div></div>
-                    </div>
-                    <button type="button" class="absolute left-2 top-1/2 transform -translate-y-1/2 btn btn-circle z-20" th:onclick="'prevSlide()'">❮</button>
-
-                    <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 btn btn-circle z-20" th:onclick="'nextSlide()'">❯</button>
-                </div>
-
+            <div class="hover-3d w-full h-64 shadow-2xl relative overflow-hidden rounded-2xl bg-base-100">
+                <figure class="w-full h-full rounded-2xl bg-base-100">
+                    <img th:src="@{${activity.image.url}}" class="w-full h-full object-cover rounded-2xl"/>
+                </figure>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
             </div>
+
 
             <div class="w-full bg-base-200 shadow-2xl p-6 rounded-2xl mt-4 flex-1 flex flex-col">
                 <p class="text-sm font-semibold text-base-content/70 mb-2" th:text="#{activityDetail.participants}"></p>
 
                 <div class="p-4 rounded-xl shadow-sm flex items-center gap-3 mb-2 border-l-4 border-primary">
-                <span th:if="${activity.startedBy.profileImageUrl == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${activity.startedBy.initials}"></span>
-                    <img th:if="${activity.startedBy.profileImageUrl != null}" th:src="${activity.startedBy.profileImageUrl}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
+                <span th:if="${activity.startedBy.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${activity.startedBy.initials}"></span>
+                    <img th:if="${activity.startedBy.image != null}" th:src="${activity.startedBy.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
                     <div class="flex flex-col">
                         <span class="text-xs text-gray-500" th:text="#{activityDetail.starter}"></span>
                         <a th:href="@{'/profile/' + ${activity.startedBy.username}}" class="text-sm font-medium hover:underline" th:text="${activity.startedBy.username}"></a>
@@ -70,8 +66,8 @@
                     <div th:each="person : ${activity.takePart}" th:if="${person.username != activity.startedBy.username}" class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3 justify-between">
 
                         <div class="flex items-center gap-3">
-                        <span th:if="${person.profileImageUrl == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${person.initials}"></span>
-                            <img th:if="${person.profileImageUrl != null}" th:src="${person.profileImageUrl}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
+                        <span th:if="${person.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${person.initials}"></span>
+                            <img th:if="${person.image != null}" th:src="${person.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
                             <div class="flex flex-col">
                                 <span class="text-xs text-gray-500" th:text="#{activityDetail.participants}"></span>
                                 <a th:href="@{'/profile/' + ${person.username}}" class="text-sm font-medium hover:underline" th:text="${person.username}"></a>
@@ -194,34 +190,5 @@
     <!-- content end -->
 </div>
 <footer th:insert="~{layout/footer :: footer}"></footer>
-<script>
-    const slides = document.querySelectorAll('.carousel-item');
-    let currentIndex = 0;
-
-    function showSlide(index) {
-        currentIndex = index;
-        slides.forEach((slide, i) => {
-            if(i === index){
-                slide.classList.add('opacity-100', 'z-10');
-                slide.classList.remove('opacity-0', 'z-0');
-            } else {
-                slide.classList.add('opacity-0', 'z-0');
-                slide.classList.remove('opacity-100', 'z-10');
-            }
-        });
-    }
-
-    function prevSlide() {
-        let newIndex = currentIndex - 1;
-        if(newIndex < 0) newIndex = slides.length - 1;
-        showSlide(newIndex);
-    }
-
-    function nextSlide() {
-        let newIndex = currentIndex + 1;
-        if(newIndex >= slides.length) newIndex = 0;
-        showSlide(newIndex);
-    }
-</script>
 </body>
 </html>

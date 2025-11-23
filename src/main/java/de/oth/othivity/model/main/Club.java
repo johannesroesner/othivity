@@ -2,7 +2,8 @@ package de.oth.othivity.model.main;
 
 import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.helper.Address;
-import de.oth.othivity.model.image.ClubImage;
+import de.oth.othivity.model.helper.Image;
+import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ClubReport;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Club {
+public class Club implements HasImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,8 +34,9 @@ public class Club {
     @Column(nullable = false)
     private AccessLevel accessLevel;
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ClubImage> images = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
