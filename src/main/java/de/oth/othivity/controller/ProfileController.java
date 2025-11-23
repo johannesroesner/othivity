@@ -40,8 +40,6 @@ public class ProfileController {
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
         model.addAttribute("profile", profile);
-        model.addAttribute("images", profile.getImages());
-
         model.addAttribute("isOwnProfile", currentProfile.getId().equals(profile.getId()));
 
         String returnUrl = sessionService.getReturnUrlFromSession(session, request);
@@ -61,7 +59,6 @@ public class ProfileController {
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
         model.addAttribute("profile", profile);
-        model.addAttribute("images", profile.getImages());
 
         String returnUrl = sessionService.getReturnUrlFromSession(session, request);
         model.addAttribute("returnUrl", returnUrl);
@@ -86,26 +83,24 @@ public class ProfileController {
         
         model.addAttribute("profile", profileToEdit);
         model.addAttribute("profileDto", profileDto);
-        model.addAttribute("images", profileToEdit.getImages());
         return "profile-edit";
     }
 
     @PostMapping("/profile/edit/{username}")
-    public String updateProfile(@PathVariable("username") String username, @Valid @ModelAttribute("profileDto") ProfileDto profileDto, BindingResult bindingResult, @RequestParam(value = "uploadedImages", required = false) MultipartFile[] uploadedImages, HttpSession session, Model model) {
+    public String updateProfile(@PathVariable("username") String username, @Valid @ModelAttribute("profileDto") ProfileDto profileDto, BindingResult bindingResult, @RequestParam(value = "uploadedImages", required = false) MultipartFile uploadedImage, HttpSession session, Model model) {
         Profile profileToEdit = profileService.getProfileByUsername(username);
 
         if (profileToEdit == null) return "redirect:/dashboard";
         if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
 
-        if (bindingResult.hasErrors() || (uploadedImages != null && imageUploadValidator.validate(uploadedImages) != null)) {
-            model.addAttribute("imageFilesError", uploadedImages != null ? imageUploadValidator.validate(uploadedImages) : null);
+        if (bindingResult.hasErrors() || (uploadedImage != null && imageUploadValidator.validateOne(uploadedImage) != null)) {
+            model.addAttribute("imageFilesError", uploadedImage != null ? imageUploadValidator.validateOne(uploadedImage) : null);
             model.addAttribute("profile", profileToEdit);
-            model.addAttribute("images", profileToEdit.getImages());
             return "profile-edit";
         }
 
 
-        profileService.updateProfile(profileToEdit, profileDto, uploadedImages);
+        profileService.updateProfile(profileToEdit, profileDto, uploadedImage);
         return "redirect:/profile/" + profileToEdit.getUsername();
     }
 

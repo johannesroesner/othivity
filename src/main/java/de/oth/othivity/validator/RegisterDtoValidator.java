@@ -18,6 +18,7 @@ public class RegisterDtoValidator implements Validator {
     private final ProfileService profileService;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9]+$");
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -35,6 +36,9 @@ public class RegisterDtoValidator implements Validator {
 
         RegisterDto request = (RegisterDto) target;
 
+        if (request.getUsername() != null && !USERNAME_PATTERN.matcher(request.getUsername()).matches()) {
+            errors.rejectValue("username", "register.error.usernameInvalid");
+        }
 
         if (request.getUsername() != null && profileService.isUsernameTaken(request.getUsername())) {
             errors.rejectValue("username", "register.error.usernameExists");
@@ -43,11 +47,6 @@ public class RegisterDtoValidator implements Validator {
 
         if (request.getEmail() != null && profileService.isEmailTaken(request.getEmail())) {
             errors.rejectValue("email", "register.error.emailExists");
-        }
-
-
-        if (request.getUsername() != null && profileService.isUsernameTaken(request.getUsername())) {
-            errors.rejectValue("username", "field.duplicate", "username is already taken");
         }
 
         if (request.getEmail() != null && !request.getEmail().isEmpty() && !EMAIL_PATTERN.matcher(request.getEmail()).matches()) {

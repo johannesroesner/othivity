@@ -1,10 +1,10 @@
-<div th:fragment="imageForm(required)" class="card bg-base-200 shadow-md p-6 space-y-2 h-full">
+<div th:fragment="imageForm(required, multiple)" class="card bg-base-200 shadow-2xl p-6 space-y-2 h-full">
     <h2 class="text-xl font-bold flex items-center gap-2">
         <span>📸</span>
         <span th:text="#{imageForm.images}"></span>
     </h2>
     <label class="label"><span class="label-text text-sm" th:text="#{imageForm.uploadImages}"></span></label>
-    <input type="file" id="imageUpload" name="uploadedImages" class="file-input file-input-bordered w-full" th:classappend="${imageFilesError} ? 'input-error'" multiple th:required="${required}">
+    <input type="file" id="imageUpload" name="uploadedImages" class="file-input file-input-bordered w-full" th:classappend="${imageFilesError} ? 'input-error'" th:multiple="${multiple}" th:required="${required}">
     <div class="text-error" th:if="${imageFilesError}" th:text="${imageFilesError}"></div>
 
 

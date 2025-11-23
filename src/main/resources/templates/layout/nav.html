@@ -1,34 +1,36 @@
-<nav th:fragment="nav(activeTab)" class="navbar bg-base-100 shadow-xl">
+<nav th:fragment="nav(activeTab)" class="navbar bg-base-200 shadow-2xl h-20 px-6">
     <div class="navbar-start">
         <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
                 </svg>
             </div>
-            <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+            <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow">
                 <li><a href="/activities" th:text="#{nav.activities}"></a></li>
                 <li><a href="/clubs" th:text="#{nav.clubs}"></a></li>
-                <li><a th:text="#{nav.explorer}"></a></li>
+                <li><a href="/explorer" th:text="#{nav.explorer}"></a></li>
             </ul>
         </div>
-        <a class="btn btn-ghost text-xl" href="/dashboard">OTHivity</a>
+        <a class="btn btn-ghost text-2xl font-bold" href="/dashboard">OTHivity</a>
     </div>
 
-
     <div class="navbar-end">
-        <div role="tablist" class="hidden lg:flex tabs tabs-border">
+        <div role="tablist" class="hidden lg:flex tabs tabs-border text-2xl">
             <a role="tab" th:class="'tab ' + (${activeTab} == 'activities' ? 'tab-active' : '')" href="/activities" th:text="#{nav.activities}"></a>
             <a role="tab" th:class="'tab ' + (${activeTab} == 'clubs' ? 'tab-active' : '')" href="/clubs" th:text="#{nav.clubs}"></a>
             <a role="tab" th:class="'tab ' + (${activeTab} == 'explorer' ? 'tab-active' : '')" href="/explorer" th:text="#{nav.explorer}"></a>
         </div>
+
         <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                <div class="w-10 rounded-full">
-                    <img alt="Tailwind CSS Navbar component" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"/>
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar w-16 h-16">
+                <div class="w-full h-full rounded-full overflow-hidden bg-primary flex items-center justify-center">
+                    <img th:if="${currentProfileImage != null}" th:src="@{${currentProfileImage}}" class="w-full h-full object-cover"/>
+                    <span th:if="${currentProfileImage == null}" class="text-lg font-semibold text-white" th:text="${currentProfileInitials}"></span>
                 </div>
             </div>
-            <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+
+            <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow">
                 <li><a th:text="#{nav.profile}" th:href="@{/profile/{username}(username=${currentUsername})}"></a></li>
                 <li><a th:text="#{nav.settings}" th:href="@{/settings}"></a></li>
                 <li>

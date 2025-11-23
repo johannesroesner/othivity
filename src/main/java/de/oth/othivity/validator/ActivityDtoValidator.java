@@ -1,13 +1,18 @@
 package de.oth.othivity.validator;
 
 import de.oth.othivity.dto.ActivityDto;
+import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.service.ActivityService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+@AllArgsConstructor
 @Component
 public class ActivityDtoValidator implements Validator {
+    private ActivityService activityService;
 
     private static final long MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 megabytes
 
@@ -38,8 +43,15 @@ public class ActivityDtoValidator implements Validator {
             errors.rejectValue("address", "field.required", "Address is required");
         }
 
+        if (request.getId() != null) {
+            Activity activity = activityService.getActivityById(request.getId());
+            if (request.getGroupSize() < activity.getTakePart().size()) {
+                errors.rejectValue("groupSize", "groupSize.currentExceeds", "Group size cannot be smaller than current number of participants");
+            }
+        }
+
         if (request.getGroupSize() < 2) {
-            errors.rejectValue("groupSize", "bad.value", "Group size should be at least 2");
+            errors.rejectValue("groupSize", "groupSize.min", "Group size should be at least 2");
         }
 
         if (request.getDate() != null && request.getDate().isBefore(java.time.LocalDateTime.now().plusHours(1))) {

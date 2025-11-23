@@ -6,17 +6,20 @@
 <nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
     <!-- content start -->
-    <form th:action="@{/activities/create}" th:object="${activityDto}" method="post" enctype="multipart/form-data" class="space-y-6">
 
-        <div class="flex items-center mb-6 space-x-2">
-            <a href="/activities" class="btn btn-ghost btn-xl">←</a>
-            <h1 class="text-3xl font-bold" th:text="#{activityCreate.pageTitle}"></h1>
+    <form th:action="|/activities/${activityDto.id != null ? 'update/' + activityDto.id : 'create'}|" th:object="${activityDto}" method="post" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" th:if="${activityDto.id != null}" th:field="*{id}" />
+        <div class="flex items-center mb-6">
+            <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
+            <h1 class="text-3xl font-bold ml-4" th:text="${activityDto.id != null} ? #{activityUpdate.pageTitle} : #{activityCreate.pageTitle}"></h1>
+            <div class="ml-auto">
+                <button type="submit" class="btn btn-primary" th:text="${activityDto.id != null} ? #{activityUpdate.pageTitle} : #{activityCreate.createActivity}"></button>
+            </div>
         </div>
 
-        <!-- grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-6 shadow-2xl">
                 <div class="card bg-base-200 shadow-md p-6 space-y-4 h-full">
                     <h2 class="text-xl font-bold flex items-center gap-2">
                         <span>ℹ️</span>
@@ -36,13 +39,17 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.date}"></span></label>
-                            <input type="date" id="date" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required onchange="updateDateTime()">
+                            <label class="label">
+                                <span class="label-text text-sm" th:text="#{activityCreate.date}"></span>
+                            </label>
+                            <input type="date" id="date" class="input input-bordered w-full" th:value="${activityDto.date != null} ? ${#temporals.format(activityDto.date,'yyyy-MM-dd')} : ''" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required onchange="updateDateTime()">
                             <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-error text-xs mt-1"></p>
                         </div>
                         <div>
-                            <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.time}"></span></label>
-                            <input type="time" id="time" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('date')} ? 'input-error'" required onchange="updateDateTime()">
+                            <label class="label">
+                                <span class="label-text text-sm" th:text="#{activityCreate.time}"></span>
+                            </label>
+                            <input type="time" id="time" class="input input-bordered w-full" th:value="${activityDto.date != null} ? ${#temporals.format(activityDto.date,'HH:mm')} : ''" required onchange="updateDateTime()">
                             <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-error text-xs mt-1"></p>
                         </div>
                         <input type="hidden" th:field="*{date}" id="datetime">
@@ -51,39 +58,37 @@
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.language}"></span></label>
                         <select th:field="*{language}" class="select select-bordered w-full" required th:classappend="${#fields.hasErrors('language')} ? 'input-error'">
-                            <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}"></option>
+                            <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}" th:selected="${entry.key == activityDto.language}"></option>
                         </select>
                         <p th:if="${#fields.hasErrors('language')}" th:errors="*{language}" class="text-error text-xs mt-1"></p>
                     </div>
+
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.groupSize}"></span></label>
-                        <input type="number" min="2" th:field="*{groupSize}" value="2" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('groupSize')} ? 'input-error'" required>
+                        <input type="number" min="2" th:field="*{groupSize}" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('groupSize')} ? 'input-error'" required>
                         <p th:if="${#fields.hasErrors('groupSize')}" th:errors="*{groupSize}" class="text-error text-xs mt-1"></p>
                     </div>
                 </div>
             </div>
 
-            <div th:insert="~{fragments/image-form :: imageForm(required=true)}"></div>
+            <div th:insert="~{fragments/image-form :: imageForm(required=${activityDto.id == null}, multiple=true)}"></div>
 
-            <div class="space-y-6  flex flex-col">
+            <div class="space-y-6 flex flex-col">
                 <div th:insert="~{fragments/address-form :: addressForm}"></div>
             </div>
 
-            <div class="space-y-6  card bg-base-200">
-               map todo
-            </div>
-
-
-            <div class="space-y-6 flex flex-col">
+            <div class="space-y-6 flex flex-col lg:col-span-2 shadow-2xl">
                 <div class="card bg-base-200 shadow-md p-6 space-y-4 flex-1">
                     <h2 class="text-xl font-bold flex items-center gap-2">
                         <span>👥</span>
                         <span th:text="#{activityCreate.organizerAndTags}"></span>
                     </h2>
-                    <div>
-                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.organizer}"></span></label>
+                    <div th:if="${tagableClubs != null and !#lists.isEmpty(tagableClubs)}">
+                        <label class="label">
+                            <span class="label-text text-sm" th:text="#{activityCreate.organizer}"></span>
+                        </label>
                         <select th:field="*{organizer}" class="select select-bordered w-full">
-                            <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}"></option>
+                            <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}" th:selected="${club.id == activityDto.organizer}"></option> <!-- CHANGE: Selected für Update -->
                         </select>
                     </div>
                     <details class="dropdown dropdown-bottom mb-4" id="tagDropdown">
@@ -95,10 +100,10 @@
                         <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-full max-h-60 overflow-y-auto block border border-base-200">
                             <li th:each="t : ${allTags}">
                                 <label class="label cursor-pointer justify-start hover:bg-base-200 rounded-btn p-2">
-                                    <input type="checkbox" class="checkbox checkbox-sm checkbox-primary mr-3 tag-checkbox" th:field="*{tags}" th:value="${t.name()}" />
+                                    <input type="checkbox" class="checkbox checkbox-sm checkbox-primary mr-3 tag-checkbox" th:field="*{tags}" th:value="${t.name()}" th:checked="${activityDto.tags != null} ? ${activityDto.tags.contains(t.name())} : false"/> <!-- CHANGE: Checked für Update -->
                                     <span class="flex-1 font-medium">
-                                    <span th:text="${t.emoji}"></span>
-                                    <span th:text="#{${t.key}}"></span>
+                                        <span th:text="${t.emoji}"></span>
+                                        <span th:text="#{${t.key}}"></span>
                                     </span>
                                 </label>
                             </li>
@@ -106,10 +111,6 @@
                     </details>
                 </div>
             </div>
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <button type="submit" class="btn btn-primary" th:text="#{activityCreate.createActivity}"></button>
         </div>
     </form>
 
