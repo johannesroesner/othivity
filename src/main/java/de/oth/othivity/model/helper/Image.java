@@ -1,4 +1,4 @@
-package de.oth.othivity.model.image;
+package de.oth.othivity.model.helper;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,8 +6,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@MappedSuperclass
-public abstract class BaseImage {
+public abstract class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
