@@ -21,6 +21,8 @@ public interface SessionService {
 
     <T> Boolean canLeave(HttpSession session, T entity);
 
+    <T> Boolean canJoinOnInvite(HttpSession session, T entity);
+
     String getReturnUrlFromSession(HttpSession session, HttpServletRequest request);
 
 }

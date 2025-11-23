@@ -82,8 +82,8 @@ public class ClubController {
         model.addAttribute("joinAble", sessionService.canJoin(session, club));
         model.addAttribute("editMode", sessionService.canUpdate(session, club));
         model.addAttribute("leaveAble", sessionService.canLeave(session, club));
-        
-
+        model.addAttribute("joinAbleOnInvite", sessionService.canJoinOnInvite(session, club));
+    
         model.addAttribute("clubMembers", clubService.getMembersOfClubWithoutAdmins(club));
         model.addAttribute("clubAdmins", club.getAdmins());
         model.addAttribute("clubImages", club.getImages()); 
@@ -197,11 +197,8 @@ public class ClubController {
         }
 
         clubService.makeProfileAdminOfClub(profile, club, session);
-        
-        // If this was triggered by someone leaving, now actually process the leave
         if (isLeaving) {
             clubService.leaveClubForProfile(session, club);
-            // Redirect to clubs overview since user left the club
             return "redirect:/clubs";
         }
 
@@ -219,5 +216,7 @@ public class ClubController {
 
         return "redirect:/clubs/" + clubId;
     }
+
+    
        
 }

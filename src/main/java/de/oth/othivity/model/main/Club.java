@@ -4,6 +4,7 @@ import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.image.ClubImage;
 import de.oth.othivity.model.report.ClubReport;
+import de.oth.othivity.model.helper.ClubJoinRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -59,4 +60,7 @@ public class Club {
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClubReport> reports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClubJoinRequest> joinRequests = new ArrayList<>();
 }

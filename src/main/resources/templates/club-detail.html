@@ -12,6 +12,12 @@
 
         <!-- Buttons -->
         <div class="ml-auto flex gap-4">
+            <!-- Join Requests Button -->
+            <a th:if="${editMode}" th:href="@{'/clubs/join-requests/' + ${club.id}}" class="btn btn-info">
+                <span>📝</span>
+                <span th:text="#{clubDetail.joinRequests}"></span>
+            </a>
+            
             <!-- Edit Button -->
             <a th:if="${editMode}" th:href="@{'/clubs/edit/' + ${club.id}}" class="btn btn-primary">
                 Edit
@@ -30,6 +36,13 @@
             <!-- Join Button -->
             <form th:if="${joinAble}" th:action="@{'/clubs/join/' + ${club.id}}" method="post">
                 <button type="submit" class="btn btn-success">Join</button>
+            </form>
+
+            <!-- Join Request Button -->
+            <form th:if="${joinAbleOnInvite}" th:action="@{'/clubs/join-requests/create/' + ${club.id}}" method="get">
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="#{clubDetail.sendJoinRequest}">Send Join Request</span>
+                </button>
             </form>
         </div>
     </div>

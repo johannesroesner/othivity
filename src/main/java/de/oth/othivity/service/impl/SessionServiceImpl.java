@@ -79,6 +79,16 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    public <T> Boolean canJoinOnInvite(HttpSession session, T entity) {
+        if (entity instanceof Club club) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+            return profile.getClubs().stream().noneMatch(c -> c.getId().equals(club.getId())) && (club.getAccessLevel().equals(AccessLevel.ON_INVITE));
+        }
+        return false;
+    }
+
+    @Override
     public <T> Boolean canLeave(HttpSession session, T entity) {
         if (entity instanceof Activity activity) {
             Profile profile = getProfileFromSession(session);

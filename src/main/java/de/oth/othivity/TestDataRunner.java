@@ -2,9 +2,11 @@ package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Address;
+import de.oth.othivity.model.helper.ClubJoinRequest;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
+import de.oth.othivity.repository.helper.ClubJoinRequestRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
@@ -28,6 +30,12 @@ import java.util.UUID;
 
 @Configuration
 public class TestDataRunner {
+
+    private final ClubJoinRequestRepository clubJoinRequestRepository;
+
+    TestDataRunner(ClubJoinRequestRepository clubJoinRequestRepository) {
+        this.clubJoinRequestRepository = clubJoinRequestRepository;
+    }
 
     @Bean
     CommandLineRunner loadTestData(ProfileRepository profileRepository,
@@ -193,7 +201,40 @@ public class TestDataRunner {
             club4.getAdmins().add(profile);
             club4.getAdmins().add(profile2);
             clubRepository.save(club4);
-            
+
+            Club club5 = new Club();
+            club5.setName("Only on invite Club");
+            club5.setDescription("Ein exklusiver Club, der nur auf Einladung beitretbar ist.");
+            club5.setAccessLevel(AccessLevel.ON_INVITE);
+            Address address5 = new Address();
+            address5.setStreet("Invite Lane");
+            address5.setHouseNumber("7");
+            address5.setCity("Invitetown");
+            address5.setPostalCode("33333");
+            club5.setAddress(address5);
+            club5.getMembers().add(profile);
+            club5.getAdmins().add(profile);
+            clubRepository.save(club5);
+
+            Club club6 = new Club();
+            club6.setName("Invite Only Club");
+            club6.setDescription("Ein weiterer exklusiver Club, der nur auf Einladung beitretbar ist.");
+            club6.setAccessLevel(AccessLevel.ON_INVITE);
+            Address address6 = new Address();
+            address6.setStreet("Exclusive Blvd");
+            address6.setHouseNumber("13");
+            address6.setCity("Selectville");
+            address6.setPostalCode("44444");
+            club6.setAddress(address6);
+            club6.getMembers().add(profile3);
+            club6.getAdmins().add(profile3);
+            clubRepository.save(club6);
+
+            ClubJoinRequest joinRequest = new ClubJoinRequest();
+            joinRequest.setClub(club6);
+            joinRequest.setProfile(profile);
+            joinRequest.setText("Ich würde gerne diesem exklusiven Club beitreten.");
+            clubJoinRequestRepository.save(joinRequest);
         };
     }
 }

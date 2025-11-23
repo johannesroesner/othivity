@@ -2,6 +2,7 @@ package de.oth.othivity.model.main;
 
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.report.ProfileReport;
+import de.oth.othivity.model.helper.ClubJoinRequest;
 import de.oth.othivity.model.security.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -67,4 +68,7 @@ public class Profile {
     public String getInitials() {
         return (firstName.substring(0,1) + lastName.substring(0,1)).toUpperCase();
     }
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClubJoinRequest> clubJoinRequests = new ArrayList<>();
 }
