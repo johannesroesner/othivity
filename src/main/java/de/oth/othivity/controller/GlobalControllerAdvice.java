@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
     ActivityController.class,
     ClubController.class,
     DashboardController.class,
-    ProfileController.class
+    ProfileController.class,
+    ExplorerController.class
 })
 public class GlobalControllerAdvice {
 
