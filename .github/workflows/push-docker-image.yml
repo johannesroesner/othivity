@@ -1,7 +1,6 @@
 name: build and push docker image
 
 on:
-  push:
   workflow_dispatch:
     inputs:
       tag:
