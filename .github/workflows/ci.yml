@@ -1,0 +1,37 @@
+name: Java CI with Maven
+
+on:
+  push:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up jdk
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: maven wrapper permissions
+        run: chmod +x mvnw
+
+      - name: run tests and build
+        run: ./mvnw clean verify
+
+      - name: set up docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: my-app:latest, my-app:${{ github.sha }}
