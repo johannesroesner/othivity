@@ -18,9 +18,13 @@ public interface SessionService {
     Boolean canJoinActivity(HttpSession session, Activity activity);
 
     Boolean canEditClub(HttpSession session, Club club);
-    <T> Boolean canUpdate(HttpSession session, T entity);
 
     Boolean canJoinClub(HttpSession session, Club club);
+
+    Boolean canLeaveClub(HttpSession session, Club club);
+
+    <T> Boolean canUpdate(HttpSession session, T entity);
+
     <T> Boolean canDelete(HttpSession session, T entity);
 
     String getReturnUrlFromSession(HttpSession session, HttpServletRequest request);

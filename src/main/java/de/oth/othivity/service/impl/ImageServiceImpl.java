@@ -5,7 +5,6 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.repository.image.ActivityImageRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.model.image.ClubImage;
-import de.oth.othivity.repository.image.ProfileImageRepository;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.repository.image.ClubImageRepository;
 import de.oth.othivity.service.ImageService;
@@ -21,7 +20,6 @@ public class ImageServiceImpl implements ImageService {
     private final ActivityImageRepository activityImageRepository;
     private final ProfileRepository profileRepository;
     private final ClubImageRepository clubImageRepository;
-    private final ProfileImageRepository profileImageRepository;
 
     @Override
     public void saveImagesForActivity(Activity activity, MultipartFile[] images) {

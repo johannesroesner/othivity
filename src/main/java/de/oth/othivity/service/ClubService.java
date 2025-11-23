@@ -32,4 +32,15 @@ public interface ClubService {
     ClubDto clubToDto (Club club);
 
     List<Profile> getMembersOfClubWithoutAdmins(Club club);
+
+    void joinClubForProfile(HttpSession session, Club club);
+
+    void leaveClubForProfile(HttpSession session, Club club);
+
+    void deleteClub(Club club, HttpSession session);
+
+    void makeProfileAdminOfClub(Profile profile, Club club, HttpSession session);
+
+    void removeProfileFromClub(Profile profile, Club club, HttpSession session);
+
 }

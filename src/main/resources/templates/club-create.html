@@ -44,7 +44,7 @@
             </div>
 
             <div class="lg:col-span-1 space-y-6">
-                <div th:insert="~{fragments/image-form :: imageForm(parameterName='uploadedImages')}"></div>
+                <div th:insert="~{fragments/image-form :: imageForm(required=false, multiple=true)}"></div>
             </div>
         </div>
 

@@ -63,7 +63,7 @@ public class TestDataRunner {
             Profile profile2 = new Profile();
             profile2.setFirstName("Sebastian");
             profile2.setLastName("Moritz");
-            profile2.setUsername("moe");
+            profile2.setUsername("moesef");
             profile2.setEmail("sebastian@example.com");
             profile2.setAboutMe("Ich bin ein Testprofil.");
             profile2.setPhone("0123456789");
@@ -86,6 +86,23 @@ public class TestDataRunner {
             profile3.setRole(Role.USER);
             profile3.setUser(user3);
             profileRepository.save(profile3);
+
+
+            User user4 = new User();
+            user4.setEmail("Sebastian@moritz-furth.de");
+            user4.setPassword(passwordEncoder.encode("jklöjklö"));
+            userRepository.save(user4);
+
+            Profile profile4 = new Profile();
+            profile4.setFirstName("Sebastian");
+            profile4.setLastName("Moritz");
+            profile4.setUsername("moe");
+            profile4.setEmail("sebastian@moritz-furth.de");
+            profile4.setAboutMe("Ich bin ein Testprofil.");
+            profile4.setPhone("0123456789");
+            profile4.setRole(Role.MODERATOR);
+            profile4.setUser(user4);
+            profileRepository.save(profile4);
 
             Activity activity = new Activity();
             activity.setTitle("my activity");
@@ -176,7 +193,6 @@ public class TestDataRunner {
             club4.getAdmins().add(profile);
             club4.getAdmins().add(profile2);
             clubRepository.save(club4);
-
             
         };
     }

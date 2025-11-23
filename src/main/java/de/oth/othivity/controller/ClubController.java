@@ -4,10 +4,9 @@ import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.SessionService;
-import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.validator.ImageUploadValidator;
+import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.model.main.Profile;
-import java.util.List;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -26,6 +25,8 @@ import org.springframework.validation.BindingResult;
 import de.oth.othivity.validator.ClubDtoValidator;
 import java.util.UUID;
 
+
+
 @AllArgsConstructor
 @Controller
 public class ClubController {
@@ -34,6 +35,7 @@ public class ClubController {
     private final ClubService clubService;
     private final SessionService sessionService;
     private final ClubDtoValidator clubDtoValidator;
+    private final ProfileService profileService;
 
     @InitBinder("clubDto")
     protected void initBinder(WebDataBinder binder) {
@@ -74,6 +76,7 @@ public class ClubController {
         model.addAttribute("club", club);
         model.addAttribute("joinAble", sessionService.canJoinClub(session, club));
         model.addAttribute("editMode", sessionService.canEditClub(session, club));
+        model.addAttribute("leaveAble", sessionService.canLeaveClub(session, club));
         
 
         model.addAttribute("clubMembers", clubService.getMembersOfClubWithoutAdmins(club));
@@ -85,4 +88,56 @@ public class ClubController {
 
         return "club-detail";
     }
+    @PostMapping("/clubs/join/{id}")
+    public String joinClub(@PathVariable("id") String clubId, HttpSession session) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null) return "redirect:/clubs";
+
+        clubService.joinClubForProfile(session, club);
+
+        return "redirect:/clubs/" + clubId;
+    }
+    @PostMapping("/clubs/leave/{id}")
+    public String leaveClub(@PathVariable("id") String clubId, HttpSession session) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null) return "redirect:/clubs";
+
+        clubService.leaveClubForProfile(session, club);
+
+        return "redirect:/clubs/" + clubId;
+    }
+    @PostMapping("/clubs/delete/{id}")
+    public String deleteClub(@PathVariable("id") String clubId, HttpSession session) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null) return "redirect:/clubs";
+
+        clubService.deleteClub(club, session);
+
+        return "redirect:/clubs";
+    }
+    @PostMapping("/clubs/makeAdmin/{clubId}/{profileId}")
+    public String makeAdmin(@PathVariable("clubId") String clubId, @PathVariable("profileId") String profileId, HttpSession session) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        Profile profile = profileService.getProfileById(UUID.fromString(profileId));
+        if (club == null || profile == null) {
+            return "redirect:/clubs/" + clubId;
+        }
+
+        clubService.makeProfileAdminOfClub(profile, club, session);
+
+        return "redirect:/clubs/" + clubId;
+    }
+    @PostMapping("/clubs/removeMember/{clubId}/{profileId}")
+    public String removeMember(@PathVariable("clubId") String clubId, @PathVariable("profileId") String profileId, HttpSession session) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        Profile profile = profileService.getProfileById(UUID.fromString(profileId));
+        if (club == null || profile == null) {
+            return "redirect:/clubs/" + clubId;
+        }
+
+        clubService.removeProfileFromClub(profile, club, session);
+
+        return "redirect:/clubs/" + clubId;
+    }
+       
 }

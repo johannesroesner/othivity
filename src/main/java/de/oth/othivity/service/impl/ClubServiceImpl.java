@@ -95,4 +95,74 @@ public class ClubServiceImpl implements ClubService {
         membersWithoutAdmins.removeAll(club.getAdmins());
         return membersWithoutAdmins;
     }
+    @Override
+    public void joinClubForProfile(HttpSession session, Club club) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null || club == null) {
+            return;
+        }
+
+        if (!club.getMembers().contains(profile)) {
+            club.getMembers().add(profile);
+            clubRepository.save(club);
+        }
+    }
+    @Override
+    public void leaveClubForProfile(HttpSession session, Club club) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null || club == null) {
+            return;
+        }
+
+        if (club.getMembers().contains(profile)) {
+            club.getMembers().remove(profile);
+            club.getAdmins().remove(profile);
+            if(club.getMembers().isEmpty()) {
+                clubRepository.delete(club);
+                return;
+            }
+            if(club.getAdmins().isEmpty()) {
+                Profile newAdmin = club.getMembers().get(0);
+                club.getAdmins().add(newAdmin);
+            }
+            clubRepository.save(club);
+        }
+    }
+    @Override
+    public void deleteClub(Club club, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null || club == null) {
+            return;
+        }
+
+        if (club.getAdmins().contains(profile)) {
+            clubRepository.delete(club);
+        }
+    }
+    @Override
+    public void makeProfileAdminOfClub(Profile profile, Club club, HttpSession session) {
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        if (currentProfile == null || club == null || profile == null) {
+            return;
+        }
+
+        if (club.getAdmins().contains(currentProfile) && club.getMembers().contains(profile)) {
+            if (!club.getAdmins().contains(profile)) {
+                club.getAdmins().add(profile);
+                clubRepository.save(club);
+            }
+        }
+    }
+    @Override
+    public void removeProfileFromClub (Profile profile, Club club, HttpSession session) {
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        if (currentProfile == null || club == null || profile == null) {
+            return;
+        }
+
+        if (club.getAdmins().contains(currentProfile) && !club.getAdmins().contains(profile)) {
+            club.getMembers().remove(profile);
+            clubRepository.save(club);
+        }
+    }
 }

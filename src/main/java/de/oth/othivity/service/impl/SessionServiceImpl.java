@@ -83,6 +83,13 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    public Boolean canLeaveClub(HttpSession session, Club club) {
+        Profile profile = getProfileFromSession(session);
+        if (profile == null) return false;
+        return profile.getClubs().stream().anyMatch(c -> c.getId().equals(club.getId()));
+    }
+
+    @Override
     public String getReturnUrlFromSession(HttpSession session, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         
