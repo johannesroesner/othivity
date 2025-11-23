@@ -1,46 +1,25 @@
-name: Java CI with Maven and Docker Push
+name: java-ci
 
 on:
   push:
-    branches: [ '**' ]
   pull_request:
 
 jobs:
-  build-and-docker:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: set up jdk
         uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'temurin'
           cache: maven
 
-      - name: Maven wrapper permissions
+      - name: maven wrapper permissions
         run: chmod +x mvnw
 
-      - name: Build and test Java project
+      - name: run tests and build
         run: ./mvnw clean verify
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/my-app:latest
-            ghcr.io/${{ github.repository_owner }}/my-app:${{ github.sha }}
