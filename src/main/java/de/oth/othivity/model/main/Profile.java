@@ -44,7 +44,7 @@ public class Profile implements HasImage {
     @Column(length = 3000)
     private String aboutMe;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
 

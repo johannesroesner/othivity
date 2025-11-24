@@ -61,7 +61,7 @@ public class ActivityController {
     @PostMapping("/activities/create")
     public String createActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model) {
         if (bindingResult.hasErrors() || imageUploadValidator.validateRequired(uploadedImage) != null ) {
-            model.addAttribute("imageFilesError", imageUploadValidator.validateRequired(uploadedImage));
+            model.addAttribute("imageFileError", imageUploadValidator.validateRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
             model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
@@ -121,7 +121,7 @@ public class ActivityController {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
         model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
-        model.addAttribute("activityDto", activityService.activityToDto(activity));
+        model.addAttribute( "activityDto", activityService.activityToDto(activity));
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("allTags", Tag.values());
         model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
@@ -134,7 +134,7 @@ public class ActivityController {
         if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
         if (bindingResult.hasErrors() || imageUploadValidator.validateNotRequired(uploadedImage) != null ) {
             model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
-            model.addAttribute("imageFilesError", imageUploadValidator.validateNotRequired(uploadedImage));
+            model.addAttribute("imageFileError", imageUploadValidator.validateNotRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
             model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));

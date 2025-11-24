@@ -94,13 +94,25 @@ public class ProfileController {
         if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
 
         if (bindingResult.hasErrors() || (uploadedImage != null && imageUploadValidator.validateNotRequired(uploadedImage) != null)) {
-            model.addAttribute("imageFilesError", uploadedImage != null ? imageUploadValidator.validateNotRequired(uploadedImage) : null);
+            model.addAttribute("imageFileError", uploadedImage != null ? imageUploadValidator.validateNotRequired(uploadedImage) : null);
             model.addAttribute("profile", profileToEdit);
             return "profile-edit";
         }
 
         profileService.updateProfile(profileToEdit, profileDto, uploadedImage);
         return "redirect:/profile/" + profileToEdit.getUsername();
+    }
+
+    @PostMapping("/profile/deleteImage/{username}")
+    public String deleteProfileImage(@PathVariable String username, HttpSession session) {
+        Profile profileToEdit = profileService.getProfileByUsername(username);
+
+        if (profileToEdit == null) return "redirect:/dashboard";
+        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+
+        profileService.deleteProfileImage(profileToEdit);
+
+        return "redirect:/profile/edit/" + username;
     }
 
     @PostMapping("/profile/delete/{username}")

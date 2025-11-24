@@ -32,4 +32,6 @@ public interface ProfileService {
     Profile getCurrentProfile(HttpSession session);
 
     void deleteProfile(Profile profile);
+
+    void deleteProfileImage(Profile profile);
 }

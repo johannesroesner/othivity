@@ -34,7 +34,7 @@ public class Club implements HasImage {
     @Column(nullable = false)
     private AccessLevel accessLevel;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
 

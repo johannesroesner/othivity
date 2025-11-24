@@ -50,6 +50,10 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void deleteImage(Image image) {
-        imageRepository.delete(image);
+        try {
+            deleteFromCloud(image.getPublicId());
+        } catch (IOException error) {
+            System.out.println(error.getMessage());
+        }
     }
 }

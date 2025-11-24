@@ -15,17 +15,20 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <div class="flex flex-col items-center lg:col-span-1">
-                <div class="avatar">
-                    <div class="w-100 rounded-full bg-base-200 flex items-center justify-center shadow-2xl">
-                        <img th:if="${profile.image != null}" th:src="@{${profile.image.url}}" class="object-cover" />
-                        <span th:if="${profile.image == null}" class="text-3xl font-semibold text-base-content/60" th:text="${profile.initials}"></span>
+                <div class="mb-4">
+                    <div class="avatar">
+                        <div class="w-100 rounded-full bg-base-200 flex items-center justify-center shadow-2xl">
+                            <img th:if="${profile.image != null}" th:src="@{${profile.image.url}}" class="object-cover w-full h-full rounded-full" />
+                            <span th:if="${profile.image == null}" class="text-3xl font-semibold text-base-content/60" th:text="${profile.initials}"></span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="w-full mt-4">
-                    <div th:insert="~{fragments/image-form :: imageForm(required=false)}"></div>
+                <div class="mt-2">
+                    <div th:insert="~{fragments/image-form ::imageForm(required = false,currentImage = ${profile.image},deleteAction = ${profile.image != null ? '/profile/deleteImage/' + profile.username : null})}"></div>
                 </div>
             </div>
+
 
             <div class="lg:col-span-2">
                 <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">

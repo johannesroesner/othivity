@@ -90,4 +90,10 @@ public class ProfileServiceImpl implements ProfileService {
     public void deleteProfile(Profile profile) {
         userRepository.delete(profile.getUser());
     }
+
+    @Override
+    public void deleteProfileImage(Profile profile) {
+        profile.setImage(null);
+        profileRepository.save(profile);
+    }
 }

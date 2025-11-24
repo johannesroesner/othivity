@@ -3,14 +3,18 @@ package de.oth.othivity.listener;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.service.ImageService;
 import jakarta.persistence.PreRemove;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@AllArgsConstructor
 @Component
 public class ImageEntityListener {
 
     private static ImageService imageService;
+
+    @Autowired
+    public void setImageService(ImageService imageService) {
+        ImageEntityListener.imageService = imageService;
+    }
 
     @PreRemove
     public void preRemove(Image image) {

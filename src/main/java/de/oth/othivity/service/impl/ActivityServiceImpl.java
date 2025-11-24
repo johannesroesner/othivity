@@ -149,6 +149,7 @@ public class ActivityServiceImpl implements ActivityService {
         activityDto.setOrganizer(activity.getOrganizer());
         activityDto.setTags(activity.getTags());
         activityDto.setAddress(activity.getAddress());
+        activityDto.setImage(activity.getImage());
         return activityDto;
     }
 

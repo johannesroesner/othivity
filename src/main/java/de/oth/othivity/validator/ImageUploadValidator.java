@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageUploadValidator {
 
     private static final long MAX_SIZE = 15 * 1024 * 1024; // 15 megabytes
-    private static final long MAX_IMAGE_COUNT = 5;
 
     public String validateRequired(MultipartFile image) {
         if (image == null) return "field.required";
