@@ -1,0 +1,18 @@
+<div th:fragment="cardStack(title, activities, cardClass)" class="flex flex-col items-center gap-4 w-80">
+    <h2 class="text-2xl font-bold" th:text="${title}"></h2>
+    <div th:if="${activities.isEmpty()}" class="text-gray-500">None found</div>
+    <div th:each="activity, iter : ${activities}" 
+         th:class="${cardClass}"
+         th:classappend="${iter.index == 0} ? 'block' : 'hidden'">
+        <a th:href="@{/activities/{id}(id=${activity.id})}" class="hover-3d w-full h-full bg-base-100">
+            <figure class="w-full h-full rounded-2xl bg-base-100">
+                <img th:src="${activity.images[0].url}" class="w-full h-full object-cover rounded-2xl" />
+                <div class="absolute bottom-0 w-full bg-black/50 text-white p-2 text-center rounded-b-2xl backdrop-blur-sm">
+                    <span th:text="${activity.title}" class="font-semibold">Title</span>
+                </div>
+            </figure>
+            <!-- 8 empty divs needed for the 3D effect -->
+            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        </a>
+    </div>
+</div>
