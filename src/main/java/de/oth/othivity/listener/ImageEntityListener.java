@@ -12,7 +12,7 @@ public class ImageEntityListener {
     private static ImageService imageService;
 
     @Autowired
-    public void setImageService(ImageService imageService) {
+    public void init(ImageService imageService) {
         ImageEntityListener.imageService = imageService;
     }
 

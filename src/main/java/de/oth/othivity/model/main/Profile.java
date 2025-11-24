@@ -1,7 +1,7 @@
 package de.oth.othivity.model.main;
 
+import de.oth.othivity.listener.ProfileEntityListener;
 import de.oth.othivity.model.enumeration.Role;
-import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ProfileReport;
@@ -15,6 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "profile")
+@EntityListeners(ProfileEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
