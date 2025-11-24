@@ -1,10 +1,34 @@
-<div th:fragment="mapDiv" id="map" class="h-full w-full rounded shadow-2xl"></div>
+<div th:fragment="mapDiv" class="h-full w-full rounded shadow-2xl">
+    <div id="map-container" class="h-full w-full">
+        <div id="map" class="h-full w-full"></div>
+    </div>
+</div>
 
 <script th:inline="javascript" th:fragment="mapScript(lat, lon, title)">
     document.addEventListener("DOMContentLoaded", function () {
         const latitude = /*[[${lat}]]*/ 0;
         const longitude = /*[[${lon}]]*/ 0;
-        let popupText = /*[[${title}]]*/ 0;
+        const popupText = /*[[${title}]]*/ 0;
+        const messageText = /*[[#{map.locationUnavailable}]]*/ 'Location error';
+
+        const errorMessage = '⚠️ ' + messageText;
+
+        const mapElement = document.getElementById('map');
+        const mapContainer = document.getElementById('map-container');
+
+        if (latitude === 0 && longitude === 0) {
+            mapElement.style.display = 'none';
+
+            mapContainer.innerHTML = `
+                <div class="flex items-center justify-center h-full w-full bg-base-200 p-4  rounded">
+                    <p class="text-gray-600 font-semibold text-lg">
+                        ${errorMessage}
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
 
         const map = L.map('map').setView([latitude, longitude], 15);
 
@@ -12,9 +36,6 @@
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
-
-
-        if(latitude === 0 && longitude === 0) popupText = 'Location not available';
 
         L.marker([latitude, longitude])
             .addTo(map)

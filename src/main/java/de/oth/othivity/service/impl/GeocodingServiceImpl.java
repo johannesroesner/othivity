@@ -47,8 +47,6 @@ public class GeocodingServiceImpl implements GeocodingService {
             e.printStackTrace();
         }
 
-        address.setLatitude(0);
-        address.setLongitude(0);
         return address;
     }
 }
