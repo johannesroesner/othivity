@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{dashboard.pageTitle})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='explorer')}"></nav>
+
+<!-- Styles für die Animation -->
+<style>
+    @keyframes flyInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px) rotateY(-10deg);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0) rotateY(0);
+        }
+    }
+
+    .animate-fly-in {
+        animation: flyInRight 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+</style>
+
+<div class="container mx-auto px-6 py-8 grow relative overflow-hidden">
+<!-- content start -->
+
+<button onclick="rotateCards()" class="absolute right-4 top-64 btn btn-circle btn-ghost z-20 hover:bg-base-200 shadow-lg bg-base-100/50 backdrop-blur-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+    </svg>
+</button>
+
+<div class="flex flex-wrap justify-center gap-10 py-10">
+    <div th:replace="~{fragments/card-stack :: cardStack('Best Mix', ${bestMixActivities}, 'bestmix-card')}"></div>
+    <div th:replace="~{fragments/card-stack :: cardStack('Soonest', ${soonestActivities}, 'soonest-card')}"></div>
+    <div th:replace="~{fragments/card-stack :: cardStack('Closest', ${closestActivities}, 'closest-card')}"></div>
+</div>
+
+<div class="mt-12">
+    <div class="mb-2">
+        <div role="tablist" class="tabs tabs-border flex space-x-2">
+            <a role="tab" class="tab tab-active" id="bestMixTab">Best Mix</a>
+            <a role="tab" class="tab" id="soonestTab">Soonest</a>
+            <a role="tab" class="tab" id="closestTab">Closest</a>
+        </div>
+    </div>
+
+    <div class="flex justify-end mb-2">
+        <input type="text" id="activitySearch" placeholder="Search activities..." class="input input-bordered input-sm w-full max-w-xs" onkeyup="filterActivities()" />
+    </div>
+    
+    <div id="bestMixTable" th:insert="~{fragments/activity-table :: activityTable(title='Best Mix', activities=${bestMixActivities})}"></div>
+    <div id="soonestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Soonest', activities=${soonestActivities})}"></div>
+    <div id="closestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Closest', activities=${closestActivities})}"></div>
+</div>
+
+<!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const soonestTab = document.getElementById("soonestTab");
+    const closestTab = document.getElementById("closestTab");
+    const bestMixTab = document.getElementById("bestMixTab");
+    
+    const soonestTable = document.getElementById("soonestTable");
+    const closestTable = document.getElementById("closestTable");
+    const bestMixTable = document.getElementById("bestMixTable");
+
+    soonestTab.onclick = () => {
+        setActiveTab(soonestTab, soonestTable);
+    };
+
+    closestTab.onclick = () => {
+        setActiveTab(closestTab, closestTable);
+    };
+
+    bestMixTab.onclick = () => {
+        setActiveTab(bestMixTab, bestMixTable);
+    };
+
+    function setActiveTab(tab, table) {
+        soonestTab.classList.remove("tab-active");
+        closestTab.classList.remove("tab-active");
+        bestMixTab.classList.remove("tab-active");
+        
+        soonestTable.classList.add("hidden");
+        closestTable.classList.add("hidden");
+        bestMixTable.classList.add("hidden");
+        
+        tab.classList.add("tab-active");
+        table.classList.remove("hidden");
+    }
+
+    function filterActivities() {
+        const input = document.getElementById('activitySearch');
+        const filter = input.value.toLowerCase();
+        const tables = document.querySelectorAll('table');
+        
+        tables.forEach(table => {
+            const tr = table.getElementsByTagName('tr');
+            for (let i = 1; i < tr.length; i++) {
+                const tds = tr[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < tds.length; j++) {
+                    const td = tds[j];
+                    if (td) {
+                        const txtValue = td.textContent || td.innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (found) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        });
+    }
+
+    let currentIndex = 0;
+
+    function rotateCards() {
+        currentIndex++;
+        updateColumn('bestmix-card', currentIndex);
+        setTimeout(() => updateColumn('soonest-card', currentIndex), 100);
+        setTimeout(() => updateColumn('closest-card', currentIndex), 200);
+    }
+
+    function updateColumn(className, index) {
+        const cards = document.getElementsByClassName(className);
+        if (cards.length === 0) return;
+        
+        for (let card of cards) {
+            card.classList.add('hidden');
+            card.classList.remove('animate-fly-in'); // Reset animation class
+        }
+        
+        const targetIndex = index % cards.length;
+        const targetCard = cards[targetIndex];
+        
+        targetCard.classList.remove('hidden');
+        
+        void targetCard.offsetWidth;
+        
+        targetCard.classList.add('animate-fly-in');
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasLat = urlParams.has('lat');
+        const hasLon = urlParams.has('lon');
+
+        if (!hasLat || !hasLon) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    const newUrl = new URL(window.location.href);
+                    newUrl.searchParams.set('lat', lat);
+                    newUrl.searchParams.set('lon', lon);
+                    
+                    window.location.href = newUrl.toString();
+                }, function(error) {
+                    console.warn("Geolocation not available or denied. Using default location (OTH Regensburg).");
+                });
+            }
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

@@ -2,8 +2,10 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.SessionService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,7 +16,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
     ActivityController.class,
     ClubController.class,
     DashboardController.class,
-    ProfileController.class
+    ProfileController.class,
+    ExplorerController.class
 })
 public class GlobalControllerAdvice {
 
@@ -33,5 +36,12 @@ public class GlobalControllerAdvice {
             model.addAttribute("currentProfileImage", profile.getImage() != null ? profile.getImage().getUrl() : null);
             model.addAttribute("currentProfileInitials", profile.getInitials());
         }
+    }
+
+    @ModelAttribute
+    public void addReturnUrl(HttpSession session, HttpServletRequest request, Model model) {
+        String returnUrl = sessionService.getReturnUrlFromSession(session, request);
+        if (returnUrl != null) model.addAttribute("returnUrl", returnUrl);
+        else model.addAttribute("returnUrl", "/dashboard");
     }
 }

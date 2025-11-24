@@ -120,7 +120,6 @@ public class ActivityController {
     public String showUpdateForm(@PathVariable("activityId") String activityId, Model model, HttpServletRequest request, HttpSession session) {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
-        model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
         model.addAttribute( "activityDto", activityService.activityToDto(activity));
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("allTags", Tag.values());
@@ -133,7 +132,6 @@ public class ActivityController {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
         if (bindingResult.hasErrors() || imageUploadValidator.validateNotRequired(uploadedImage) != null ) {
-            model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
             model.addAttribute("imageFileError", imageUploadValidator.validateNotRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());

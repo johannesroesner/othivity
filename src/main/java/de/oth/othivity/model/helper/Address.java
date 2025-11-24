@@ -34,7 +34,7 @@ public class Address {
     private String country;
 
     // for map feature
-    private double latitude;
-
-    private double longitude;
+    private Double latitude;
+    
+    private Double longitude;
 }
