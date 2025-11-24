@@ -6,6 +6,7 @@ import de.oth.othivity.repository.helper.ClubJoinRequestRepository;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.service.ClubJoinRequestService;
 import de.oth.othivity.service.ClubService;
+import de.oth.othivity.dto.ClubJoinRequestDto;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import java.util.List;
@@ -29,8 +30,8 @@ public class ClubJoinRequestServiceImpl implements ClubJoinRequestService {
     }
     
     @Override
-    public ClubJoinRequest createJoinRequest(UUID clubId, Profile profile, String message) {
-        Club club = clubService.getClubById(clubId);
+    public ClubJoinRequest createJoinRequest(ClubJoinRequestDto clubJoinRequestDto, Profile profile) {
+        Club club = clubService.getClubById(clubJoinRequestDto.getClubId());
         if (club == null) {
             throw new IllegalArgumentException("Club not found");
         }
@@ -38,7 +39,7 @@ public class ClubJoinRequestServiceImpl implements ClubJoinRequestService {
         ClubJoinRequest joinRequest = new ClubJoinRequest();
         joinRequest.setClub(club);
         joinRequest.setProfile(profile);
-        joinRequest.setText(message);
+        joinRequest.setText(clubJoinRequestDto.getText());
         
         return clubJoinRequestRepository.save(joinRequest);
     }

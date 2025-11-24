@@ -12,11 +12,18 @@ import de.oth.othivity.service.ClubJoinRequestService;
 import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.dto.ClubJoinRequestDto;
+import de.oth.othivity.validator.ClubJoinRequestDtoValidator;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
 
 
 
@@ -26,6 +33,12 @@ public class ClubJoinRequestController {
     private final ClubJoinRequestService clubJoinRequestService;
     private final ClubService clubService;
     private final SessionService sessionService;
+    private final ClubJoinRequestDtoValidator clubJoinRequestDtoValidator;
+
+    @InitBinder("clubJoinRequestDto")
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(clubJoinRequestDtoValidator);
+    }
 
     @GetMapping("/clubs/join-requests/{clubId}")
     public String getJoinRequestsForClub(@PathVariable("clubId") String clubId, Model model, HttpSession session) {
@@ -37,15 +50,29 @@ public class ClubJoinRequestController {
     
     @GetMapping("/clubs/join-requests/create/{clubId}")
     public String getCreateJoinRequestForClub(@PathVariable("clubId") String clubId, Model model, HttpSession session) {
+        ClubJoinRequestDto clubJoinRequestDto = new ClubJoinRequestDto();
+        clubJoinRequestDto.setClubId(UUID.fromString(clubId));
+        model.addAttribute("clubJoinRequestDto", clubJoinRequestDto);
         model.addAttribute("clubId", clubId);
         return "club-join-request-create";
     }
     
     @PostMapping("/clubs/join-requests/create/{clubId}")
-    public String createJoinRequest(@PathVariable("clubId") String clubId, 
-                                  @RequestParam("text") String message,
-                                  HttpSession session, 
+    public String createJoinRequest(@PathVariable("clubId") String clubId,
+                                  @Valid @ModelAttribute("clubJoinRequestDto") ClubJoinRequestDto clubJoinRequestDto,
+                                  BindingResult bindingResult,
+                                  HttpSession session,
+                                  Model model,
                                   RedirectAttributes redirectAttributes) {
+        
+        // Set clubId in case it's not set correctly
+        clubJoinRequestDto.setClubId(UUID.fromString(clubId));
+        
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("clubId", clubId);
+            return "club-join-request-create";
+        }
+        
         try {
             Profile currentProfile = sessionService.getProfileFromSession(session);
             if (currentProfile == null) {
@@ -53,8 +80,7 @@ public class ClubJoinRequestController {
                 return "redirect:/login";
             }
             
-            UUID clubUuid = UUID.fromString(clubId);
-            clubJoinRequestService.createJoinRequest(clubUuid, currentProfile, message);
+            clubJoinRequestService.createJoinRequest(clubJoinRequestDto, currentProfile);
             
             redirectAttributes.addFlashAttribute("successMessage", "Join request sent successfully!");
             return "redirect:/clubs/" + clubId;

@@ -17,7 +17,9 @@
             <span th:text="#{clubJoinRequestCreate.sendRequest}"></span>
         </h2>
         
-        <form th:action="@{'/clubs/join-requests/create/' + ${clubId}}" method="post" class="space-y-6">
+        <form th:action="@{'/clubs/join-requests/create/' + ${clubId}}" th:object="${clubJoinRequestDto}" method="post" class="space-y-6">
+            <input type="hidden" th:field="*{clubId}" />
+            
             <!-- Info Message -->
             <div class="alert alert-info">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6">
@@ -33,15 +35,17 @@
                     <span class="label-text-alt text-error">*</span>
                 </label>
                 <textarea 
-                    name="text" 
+                    th:field="*{text}" 
                     th:placeholder="#{clubJoinRequestCreate.messagePlaceholder}"
                     class="textarea textarea-bordered h-32 resize-none" 
+                    th:classappend="${#fields.hasErrors('text')} ? 'textarea-error'"
                     required
                     maxlength="500"></textarea>
-                <label class="label">
+                <div class="label">
                     <span class="label-text-alt" th:text="#{clubJoinRequestCreate.messageHint}"></span>
                     <span class="label-text-alt text-gray-500">0/500</span>
-                </label>
+                </div>
+                <p th:if="${#fields.hasErrors('text')}" th:errors="*{text}" class="text-error text-xs mt-1"></p>
             </div>
             
             <!-- Action Buttons -->
@@ -68,16 +72,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const counter = document.querySelector('.label-text-alt.text-gray-500');
     
     if (textarea && counter) {
-        textarea.addEventListener('input', function() {
-            const length = this.value.length;
+        // Update counter on page load in case there's already text
+        updateCounter();
+        
+        textarea.addEventListener('input', updateCounter);
+        
+        function updateCounter() {
+            const length = textarea.value.length;
             counter.textContent = length + '/500';
             
             if (length > 450) {
                 counter.classList.add('text-warning');
+                counter.classList.remove('text-gray-500');
             } else {
                 counter.classList.remove('text-warning');
+                counter.classList.add('text-gray-500');
             }
-        });
+        }
     }
 });
 </script>

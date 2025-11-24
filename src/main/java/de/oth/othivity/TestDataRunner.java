@@ -125,11 +125,27 @@ public class TestDataRunner {
             activity.setLanguage(Language.GERMAN);
             activityRepository.save(activity);
 
+            Club club6 = new Club();
+            club6.setName("Invite Only Club");
+            club6.setDescription("Ein weiterer exklusiver Club, der nur auf Einladung beitretbar ist.");
+            club6.setAccessLevel(AccessLevel.ON_INVITE);
+            Address address6 = new Address();
+            address6.setStreet("Exclusive Blvd");
+            address6.setHouseNumber("13");
+            address6.setCity("Selectville");
+            address6.setPostalCode("44444");
+            club6.setAddress(address6);
+            club6.getMembers().add(profile3);
+            club6.getAdmins().add(profile3);
+            clubRepository.save(club6);
+
+
             Activity otherActivity = new Activity();
             otherActivity.setTitle("other activity");
             otherActivity.setDescription("test description");
             otherActivity.setDate(LocalDateTime.now());
             otherActivity.setGroupSize(10);
+            otherActivity.setOrganizer(club6);
             otherActivity.setStartedBy(profile2);
             // Teilnehmerliste korrekt setzen
             List<Profile> participants2 = new ArrayList<>();
@@ -215,20 +231,6 @@ public class TestDataRunner {
             club5.getMembers().add(profile);
             club5.getAdmins().add(profile);
             clubRepository.save(club5);
-
-            Club club6 = new Club();
-            club6.setName("Invite Only Club");
-            club6.setDescription("Ein weiterer exklusiver Club, der nur auf Einladung beitretbar ist.");
-            club6.setAccessLevel(AccessLevel.ON_INVITE);
-            Address address6 = new Address();
-            address6.setStreet("Exclusive Blvd");
-            address6.setHouseNumber("13");
-            address6.setCity("Selectville");
-            address6.setPostalCode("44444");
-            club6.setAddress(address6);
-            club6.getMembers().add(profile3);
-            club6.getAdmins().add(profile3);
-            clubRepository.save(club6);
 
             ClubJoinRequest joinRequest = new ClubJoinRequest();
             joinRequest.setClub(club6);
