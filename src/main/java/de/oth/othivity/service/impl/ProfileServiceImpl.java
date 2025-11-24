@@ -55,7 +55,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage) {
-        profile.setProfileImageUrl(imageService.saveImageForProfile(uploadedImage));
+        if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile, uploadedImage));
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);
@@ -89,5 +89,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void deleteProfile(Profile profile) {
         userRepository.delete(profile.getUser());
+    }
+
+    @Override
+    public void deleteProfileImage(Profile profile) {
+        profile.setImage(null);
+        profileRepository.save(profile);
     }
 }

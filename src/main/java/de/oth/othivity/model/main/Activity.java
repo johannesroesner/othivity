@@ -3,14 +3,13 @@ package de.oth.othivity.model.main;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.enumeration.Tag;
-import de.oth.othivity.model.image.ActivityImage;
+import de.oth.othivity.model.helper.Image;
+import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ActivityReport;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Activity {
+public class Activity implements HasImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -46,8 +45,9 @@ public class Activity {
     @Column(nullable = false)
     private int groupSize;
 
-    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ActivityImage> images = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "started_by_profile_id")

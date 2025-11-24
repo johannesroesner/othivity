@@ -30,7 +30,7 @@ public class GlobalControllerAdvice {
     public void addCurrentProfileImage(HttpSession session, Model model) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) {
-            model.addAttribute("currentProfileImage", profile.getProfileImageUrl());
+            model.addAttribute("currentProfileImage", profile.getImage() != null ? profile.getImage().getUrl() : null);
             model.addAttribute("currentProfileInitials", profile.getInitials());
         }
     }
