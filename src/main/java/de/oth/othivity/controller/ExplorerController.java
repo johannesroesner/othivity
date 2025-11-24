@@ -2,7 +2,8 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.IExplorerService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.model.main.Activity;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,11 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Controller
 public class ExplorerController {
     private final ClubService clubService;
-    private final SessionService sessionService;
     private final IExplorerService explorerService;
 
     @GetMapping("/explorer")
@@ -31,13 +33,13 @@ public class ExplorerController {
             lon = 12.0968;
         }
 
-        var closestActivities = explorerService.getClosestActivities(lat, lon, 50);
+        List<Activity> closestActivities = explorerService.getClosestActivities(lat, lon, 50);
         model.addAttribute("closestActivities", closestActivities);
 
-        var soonestActivities = explorerService.getSoonestActivities(lat, lon, 50);
+        List<Activity> soonestActivities = explorerService.getSoonestActivities(50);
         model.addAttribute("soonestActivities", soonestActivities);
 
-        var bestMixActivities = explorerService.getBestMixActivities(lat, lon, 50);
+        List<Activity> bestMixActivities = explorerService.getBestMixActivities(lat, lon, 50);
         model.addAttribute("bestMixActivities", bestMixActivities);
 
         model.addAttribute("allActivities", explorerService.getAllFutureActivities());
