@@ -38,4 +38,6 @@ public interface ActivityService {
     Activity kickParticipant(Activity activity, Profile profile);
 
     void deleteActivity(Activity activity);
+
+    void removeProfileFromActivities(Profile profile);
 }

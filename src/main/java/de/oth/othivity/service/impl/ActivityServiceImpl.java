@@ -185,4 +185,16 @@ public class ActivityServiceImpl implements ActivityService {
     public void deleteActivity(Activity activity) {
         activityRepository.delete(activity);
     }
+
+    @Override
+    public void removeProfileFromActivities(Profile profile) {
+        List<Activity> participatingActivities = new ArrayList<>(profile.getParticipatingActivities());
+
+        for (Activity activity : participatingActivities) {
+            if (!activity.getStartedBy().getId().equals(profile.getId())) {
+                activity.getTakePart().remove(profile);
+                activityRepository.save(activity);
+            }
+        }
+    }
 }
