@@ -24,7 +24,7 @@ public class ExplorerServiceImpl implements IExplorerService {
         return activityRepository.findAll().stream()
                 .filter(a -> a.getDate().isAfter(now))
                 .filter(a -> a.getAddress() != null)
-                // .filter(a -> a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
+                .filter(a -> a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
                 .sorted(Comparator.comparingDouble(a -> calculateDistance(lat, lon, a.getAddress().getLatitude(), a.getAddress().getLongitude())))
                 .limit(limit)
                 .toList();
@@ -49,7 +49,7 @@ public class ExplorerServiceImpl implements IExplorerService {
         return activityRepository.findAll().stream()
                 .filter(a -> a.getDate().isAfter(now))
                 .filter(a -> a.getAddress() != null)
-                // .filter(a -> a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null )
+                .filter(a -> a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
                 .sorted(Comparator.comparingDouble(a -> {
                     double distance = calculateDistance(lat, lon, a.getAddress().getLatitude(), a.getAddress().getLongitude());
                     long minutesUntilStart = ChronoUnit.MINUTES.between(now, a.getDate());
