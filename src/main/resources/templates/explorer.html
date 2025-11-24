@@ -51,8 +51,8 @@
     </div>
     
     <div id="bestMixTable" th:insert="~{fragments/activity-table :: activityTable(title='Best Mix', activities=${bestMixActivities})}"></div>
-    <div id="soonestTable" th:insert="~{fragments/activity-table :: activityTable(title='Soonest', activities=${soonestActivities})}"></div>
-    <div id="closestTable" th:insert="~{fragments/activity-table :: activityTable(title='Closest', activities=${closestActivities})}"></div>
+    <div id="soonestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Soonest', activities=${soonestActivities})}"></div>
+    <div id="closestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Closest', activities=${closestActivities})}"></div>
 </div>
 
 <!-- content end -->
