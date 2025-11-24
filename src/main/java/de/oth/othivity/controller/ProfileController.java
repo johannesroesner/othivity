@@ -42,9 +42,6 @@ public class ProfileController {
         model.addAttribute("profile", profile);
         model.addAttribute("isOwnProfile", currentProfile.getId().equals(profile.getId()));
 
-        String returnUrl = sessionService.getReturnUrlFromSession(session, request);
-        if (returnUrl == null) returnUrl = "/dashboard";
-        model.addAttribute("returnUrl", returnUrl);
         model.addAttribute("canDelete", sessionService.canDelete(session, profile));
         model.addAttribute("canUpdate", sessionService.canUpdate(session, profile));
 
@@ -59,9 +56,6 @@ public class ProfileController {
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
         model.addAttribute("profile", profile);
-
-        String returnUrl = sessionService.getReturnUrlFromSession(session, request);
-        model.addAttribute("returnUrl", returnUrl);
 
         return "settings";
     }
