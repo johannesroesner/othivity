@@ -124,7 +124,7 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setAddress(geocodingService.geocode(activityDto.getAddress()));
         activity.setStartedBy(profile);
 
-        if(uploadedImage.getSize() != 0) {
+        if(uploadedImage != null && uploadedImage.getSize() != 0) {
             activity.setImage(imageService.saveImage(activity, uploadedImage));
             activityRepository.save(activity);
         }
