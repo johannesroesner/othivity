@@ -88,6 +88,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void deleteProfile(Profile profile) {
+        // TODO SBM delete profile not user - OAuth
         userRepository.delete(profile.getUser());
     }
 
