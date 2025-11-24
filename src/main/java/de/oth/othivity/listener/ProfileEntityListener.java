@@ -1,33 +1,23 @@
 package de.oth.othivity.listener;
 
-import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ActivityRepository;
+import de.oth.othivity.service.ActivityService;
 import jakarta.persistence.PreRemove;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 public class ProfileEntityListener {
-    private static ActivityRepository activityRepository;
+    private static ActivityService activityService;
 
     @Autowired
-    public void init(ActivityRepository activityRepository) {
-        ProfileEntityListener.activityRepository = activityRepository;
+    public void init(ActivityService activityService) {
+        ProfileEntityListener.activityService = activityService;
     }
 
     @PreRemove
     public void preRemoveProfile(Profile profile) {
-        List<Activity> participatingActivities = new ArrayList<>(profile.getParticipatingActivities());
-
-        for (Activity activity : participatingActivities) {
-            if (!activity.getStartedBy().getId().equals(profile.getId())) {
-                activity.getTakePart().remove(profile);
-                activityRepository.save(activity);
-            }
-        }
+        activityService.removeProfileFromActivities(profile);
     }
 }
