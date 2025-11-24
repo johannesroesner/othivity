@@ -87,21 +87,32 @@ public class ProfileController {
     }
 
     @PostMapping("/profile/edit/{username}")
-    public String updateProfile(@PathVariable("username") String username, @Valid @ModelAttribute("profileDto") ProfileDto profileDto, BindingResult bindingResult, @RequestParam(value = "uploadedImages", required = false) MultipartFile uploadedImage, HttpSession session, Model model) {
+    public String updateProfile(@PathVariable("username") String username, @Valid @ModelAttribute("profileDto") ProfileDto profileDto, BindingResult bindingResult, @RequestParam(value = "uploadedImage", required = false) MultipartFile uploadedImage, HttpSession session, Model model) {
         Profile profileToEdit = profileService.getProfileByUsername(username);
 
         if (profileToEdit == null) return "redirect:/dashboard";
         if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
 
-        if (bindingResult.hasErrors() || (uploadedImage != null && imageUploadValidator.validateOne(uploadedImage) != null)) {
-            model.addAttribute("imageFilesError", uploadedImage != null ? imageUploadValidator.validateOne(uploadedImage) : null);
+        if (bindingResult.hasErrors() || (uploadedImage != null && imageUploadValidator.validateNotRequired(uploadedImage) != null)) {
+            model.addAttribute("imageFileError", uploadedImage != null ? imageUploadValidator.validateNotRequired(uploadedImage) : null);
             model.addAttribute("profile", profileToEdit);
             return "profile-edit";
         }
 
-
         profileService.updateProfile(profileToEdit, profileDto, uploadedImage);
         return "redirect:/profile/" + profileToEdit.getUsername();
+    }
+
+    @PostMapping("/profile/deleteImage/{username}")
+    public String deleteProfileImage(@PathVariable String username, HttpSession session) {
+        Profile profileToEdit = profileService.getProfileByUsername(username);
+
+        if (profileToEdit == null) return "redirect:/dashboard";
+        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+
+        profileService.deleteProfileImage(profileToEdit);
+
+        return "redirect:/profile/edit/" + username;
     }
 
     @PostMapping("/profile/delete/{username}")

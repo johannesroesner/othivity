@@ -59,16 +59,16 @@ public class ActivityController {
     }
 
     @PostMapping("/activities/create")
-    public String createActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @RequestParam MultipartFile [] uploadedImages, HttpSession session, Model model) {
-        if (bindingResult.hasErrors() || imageUploadValidator.validateRequired(uploadedImages) != null ) {
-            model.addAttribute("imageFilesError", imageUploadValidator.validateRequired(uploadedImages));
+    public String createActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model) {
+        if (bindingResult.hasErrors() || imageUploadValidator.validateRequired(uploadedImage) != null ) {
+            model.addAttribute("imageFileError", imageUploadValidator.validateRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
             model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
             return "activity-edit";
         }
 
-        activityService.createActivity(activityDto, uploadedImages,session);
+        activityService.createActivity(activityDto, uploadedImage,session);
 
         return "redirect:/activities";
     }
@@ -78,7 +78,6 @@ public class ActivityController {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null) return "redirect:/activities";
         model.addAttribute("activity", activity);
-        model.addAttribute("images", activity.getImages());
         model.addAttribute("joinAble", sessionService.canJoin(session, activity));
         model.addAttribute("leaveAble", sessionService.canLeave(session, activity));
         model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
@@ -122,7 +121,7 @@ public class ActivityController {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
         model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
-        model.addAttribute("activityDto", activityService.activityToDto(activity));
+        model.addAttribute( "activityDto", activityService.activityToDto(activity));
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("allTags", Tag.values());
         model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
@@ -130,19 +129,19 @@ public class ActivityController {
     }
 
     @PostMapping("/activities/update/{activityId}")
-    public String updateActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @PathVariable("activityId") String activityId, HttpServletRequest request, @RequestParam MultipartFile [] uploadedImages, HttpSession session, Model model) {
+    public String updateActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @PathVariable("activityId") String activityId, HttpServletRequest request, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model) {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
-        if (bindingResult.hasErrors() || imageUploadValidator.validateNotRequired(uploadedImages) != null ) {
+        if (bindingResult.hasErrors() || imageUploadValidator.validateNotRequired(uploadedImage) != null ) {
             model.addAttribute("returnUrl", sessionService.getReturnUrlFromSession(session, request));
-            model.addAttribute("imageFilesError", imageUploadValidator.validateNotRequired(uploadedImages));
+            model.addAttribute("imageFileError", imageUploadValidator.validateNotRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
             model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
             return "activity-edit";
         }
 
-        activityService.updateActivity(activity, activityDto, uploadedImages, session);
+        activityService.updateActivity(activity, activityDto, uploadedImage, session);
 
         return "redirect:/activities/" + activityId;
     }

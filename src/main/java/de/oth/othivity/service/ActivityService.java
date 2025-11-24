@@ -23,9 +23,9 @@ public interface ActivityService {
 
     List<String> getActivityDatesForProfile(HttpSession session);
 
-    Activity createActivity(ActivityDto activityCreateRequest, MultipartFile [] uploadedImages, HttpSession session);
+    Activity createActivity(ActivityDto activityCreateRequest, MultipartFile uploadedImage, HttpSession session);
 
-    Activity updateActivity(Activity activity, ActivityDto activityUpdateRequest, MultipartFile [] uploadedImages, HttpSession session) ;
+    Activity updateActivity(Activity activity, ActivityDto activityUpdateRequest, MultipartFile uploadedImage, HttpSession session) ;
 
     Activity getActivityById(UUID activityId);
 

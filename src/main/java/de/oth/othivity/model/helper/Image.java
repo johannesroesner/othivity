@@ -1,14 +1,18 @@
-package de.oth.othivity.model.image;
+package de.oth.othivity.model.helper;
 
+import de.oth.othivity.listener.ImageEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
 
+@Entity
+@Table(name = "image")
+@EntityListeners(ImageEntityListener.class)
 @Getter
 @Setter
-@MappedSuperclass
-public abstract class BaseImage {
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -17,5 +21,5 @@ public abstract class BaseImage {
     private String url;
 
     @Column(nullable = false)
-    private int priority;
+    private String publicId;
 }

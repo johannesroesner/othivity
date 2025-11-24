@@ -1,12 +1,25 @@
-<div th:fragment="imageForm(required, multiple)" class="card bg-base-200 shadow-2xl p-6 space-y-2 h-full">
+<div th:fragment="imageForm(required, currentImage, deleteAction)" class="card bg-base-200 shadow-2xl p-6 space-y-2 h-full">
     <h2 class="text-xl font-bold flex items-center gap-2">
         <span>📸</span>
-        <span th:text="#{imageForm.images}"></span>
+        <span th:text="#{imageForm.image}"></span>
     </h2>
-    <label class="label"><span class="label-text text-sm" th:text="#{imageForm.uploadImages}"></span></label>
-    <input type="file" id="imageUpload" name="uploadedImages" class="file-input file-input-bordered w-full" th:classappend="${imageFilesError} ? 'input-error'" th:multiple="${multiple}" th:required="${required}">
-    <div class="text-error" th:if="${imageFilesError}" th:text="${imageFilesError}"></div>
 
+    <div th:if="${currentImage != null}" class="mb-4 p-4 bg-base-100 rounded-xl border border-base-300 relative">
+        <label class="label"><span class="label-text text-sm font-semibold" th:text="#{imageForm.currentImage}"></span></label>
+
+        <div class="relative w-full h-48 mx-auto flex justify-center rounded-lg overflow-hidden">
+            <img th:src="@{${currentImage.url}}" class="h-full object-contain" />
+
+            <button th:if="${deleteAction != null}" type="submit" th:formaction="${deleteAction}" formnovalidate th:onclick="|return confirm('#{imageForm.deleteMessage}')|" class="btn btn-circle btn-error btn-sm absolute top-2 right-2 shadow-lg border-2">
+                ✖
+            </button>
+        </div>
+    </div>
+
+    <label class="label"><span class="label-text text-sm" th:text="#{imageForm.uploadImage}"></span></label>
+    <input type="file" id="imageUpload" name="uploadedImage" class="file-input file-input-bordered w-full" th:classappend="${imageFileError} ? 'input-error'"th:required="${required}">
+
+    <div class="text-error" th:if="${imageFileError}" th:text="${imageFileError}"></div>
 
     <div id="imagePreview" class="grid grid-cols-2 gap-3 mt-3"></div>
 
@@ -16,7 +29,6 @@
 
         uploadInput.addEventListener("change", () => {
             preview.innerHTML = "";
-
             Array.from(uploadInput.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = function(event) {
@@ -25,7 +37,6 @@
                     img.className = "rounded border w-full h-20 object-cover";
                     preview.appendChild(img);
                 };
-
                 reader.readAsDataURL(file);
             });
         });
