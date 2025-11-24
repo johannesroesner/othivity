@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import de.oth.othivity.model.image.ActivityImage;
+import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Address;
 
 @Configuration
@@ -101,10 +101,10 @@ public class TestDataRunner {
             activity.setTakePart(participants1);
             activity.setLanguage(Language.GERMAN);
 
-            ActivityImage image1 = new ActivityImage();
+            Image image1 = new Image();
             image1.setUrl("https://picsum.photos/id/1/200/300");
-            image1.setActivity(activity);
-            activity.getImages().add(image1);
+            image1.setPublicId("1");
+            activity.setImage(image1);
 
             Address address1 = new Address();
             address1.setStreet("Michael-Buchberger-Straße");
@@ -131,10 +131,10 @@ public class TestDataRunner {
             otherActivity.setTakePart(participants2);
             otherActivity.setLanguage(Language.GERMAN);
 
-            ActivityImage image2 = new ActivityImage();
+            Image image2 = new Image();
             image2.setUrl("https://picsum.photos/id/2/200/300");
-            image2.setActivity(otherActivity);
-            otherActivity.getImages().add(image2);
+            image2.setPublicId("2");
+            otherActivity.setImage(image2);
 
             Address address2 = new Address();
             address2.setStreet("Am Gries");
@@ -161,10 +161,10 @@ public class TestDataRunner {
             bestActivity.setTakePart(participants3);
             bestActivity.setLanguage(Language.GERMAN);
 
-            ActivityImage image3 = new ActivityImage();
+            Image image3 = new Image();
             image3.setUrl("https://picsum.photos/id/3/200/300");
-            image3.setActivity(bestActivity);
-            bestActivity.getImages().add(image3);
+            image3.setPublicId("3");
+            bestActivity.setImage(image3);
 
             Address address3 = new Address();
             address3.setStreet("Brunhuberstraße");

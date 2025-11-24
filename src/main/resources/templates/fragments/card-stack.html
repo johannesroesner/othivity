@@ -5,8 +5,11 @@
          th:class="${cardClass}"
          th:classappend="${iter.index == 0} ? 'block' : 'hidden'">
         <a th:href="@{/activities/{id}(id=${activity.id})}" class="hover-3d w-full h-full bg-base-100">
-            <figure class="w-full h-full rounded-2xl bg-base-100">
-                <img th:src="${activity.images[0].url}" class="w-full h-full object-cover rounded-2xl" />
+            <figure class="w-80 rounded-2xl relative">
+                <img th:if="${activity.image != null}" 
+                     th:src="${activity.image.url}" 
+                     class="w-full h-full object-cover rounded-2xl aspect-[4/3]" 
+                     alt="Activity Image" />
                 <div class="absolute bottom-0 w-full bg-black/50 text-white p-2 text-center rounded-b-2xl backdrop-blur-sm">
                     <span th:text="${activity.title}" class="font-semibold">Title</span>
                 </div>
