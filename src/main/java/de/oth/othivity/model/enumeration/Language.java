@@ -10,12 +10,13 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public enum Language {
-    ENGLISH(1, "English", "🇬🇧"),
-    GERMAN(2, "German", "🇩🇪");
+    ENGLISH(1, "English", "🇬🇧", "en"),
+    GERMAN(2, "German", "🇩🇪", "de");
 
     private final int id;
     private final String name;
     private final String emoji;
+    private final String localeCode;
 
     public static Map<Language, String> getFlags() {
         return Arrays.stream(values())

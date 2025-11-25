@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
@@ -133,13 +134,16 @@ public class ProfileController {
     }
 
     @PostMapping("/change-language")
-    public String changeLanguage(@RequestParam("language") Language language, HttpSession session, HttpServletRequest request) {
+    public String changeLanguage(@RequestParam("language") Language language, HttpSession session, HttpServletRequest request, HttpServletResponse response) { 
+        // Response hinzufügen!
         Profile profile = sessionService.getProfileFromSession(session);
+        
         if (profile != null) {
             profileService.updateProfileLanguage(profile, language);
-            Profile updatedProfile = profileService.getProfileById(profile.getId());
-            session.setAttribute("profileId", updatedProfile.getId());
+            profile.setLanguage(language); 
+            sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
         }
+        
         return "redirect:/settings";
     }
 }

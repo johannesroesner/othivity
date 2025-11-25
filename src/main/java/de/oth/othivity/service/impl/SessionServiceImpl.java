@@ -7,19 +7,26 @@ import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.model.enumeration.AccessLevel;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.LocaleResolver;  
+
 import de.oth.othivity.model.main.Club;
 
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
 public class SessionServiceImpl implements SessionService {
 
     private final ProfileRepository profileRepository;
+    private final LocaleResolver localeResolver;
 
-    public SessionServiceImpl(ProfileRepository profileRepository) {
+    public SessionServiceImpl(ProfileRepository profileRepository, LocaleResolver localeResolver) {
         this.profileRepository = profileRepository;
+        this.localeResolver = localeResolver;
     }
 
     public Profile getProfileFromSession(HttpSession session) {
@@ -126,4 +133,13 @@ public class SessionServiceImpl implements SessionService {
         return returnUrl;
     }
 
+    @Override
+    public void updateLocaleResolverWithProfileLanguage(HttpServletRequest request, HttpServletResponse response, Profile profile) {
+        if (profile == null || profile.getLanguage() == null) {
+            return;
+        }
+        String languageCode = profile.getLanguage().getLocaleCode();
+        Locale targetLocale = Locale.forLanguageTag(languageCode);
+        localeResolver.setLocale(request, response, targetLocale);
+    }
 }
