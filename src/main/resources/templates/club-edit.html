@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{${pageTitle ?: 'clubCreate.pageTitle'}})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='clubs')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+
+    <form th:action="|/clubs/${clubDto.id != null ? 'edit/' + clubDto.id : 'create'}|" th:object="${clubDto}" method="post" enctype="multipart/form-data" class="space-y-6">
+        <input type="hidden" th:if="${clubDto.id != null}" th:field="*{id}" />
+        <div class="flex items-center mb-6">
+            <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
+            <h1 class="text-3xl font-bold ml-4" th:text="${clubDto.id != null} ? #{clubEdit.pageTitle} : #{clubCreate.pageTitle}"></h1>
+            <div class="ml-auto">
+                <button type="submit" class="btn btn-primary" th:text="${clubDto.id != null} ? #{clubEdit.submitButton} : #{clubCreate.submitButton}"></button>
+            </div>
+        </div>
+
+        <!-- grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="card bg-base-200 shadow-md p-6 space-y-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>🏛️</span>
+                        <span class="text-xl font-bold" th:text="${clubDto.id != null} ? #{clubEdit.details} : #{clubCreate.details}"></span>
+                    </h2>
+                    <div>
+                        <label class="label"><span class="label-text text-sm" th:text="${clubDto.id != null} ? #{clubEdit.name} : #{clubCreate.name}"></span></label>
+                        <input type="text" th:field="*{name}" th:placeholder="${clubDto.id != null} ? #{clubEdit.name} : #{clubCreate.name}" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('name')} ? 'input-error'" required>
+                        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-error text-xs mt-1"></p>
+                    </div>
+                    <div>
+                        <label class="label"><span class="label-text text-sm" th:text="${clubDto.id != null} ? #{clubEdit.description} : #{clubCreate.description}"></span></label>
+                        <textarea th:field="*{description}" th:placeholder="${clubDto.id != null} ? #{clubEdit.description} : #{clubCreate.description}" class="textarea textarea-bordered w-full" th:classappend="${#fields.hasErrors('description')} ? 'textarea-error'" required></textarea>
+                        <p th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-error text-xs mt-1"></p>
+                    </div>
+                    <div>
+                        <label class="label"><span class="label-text text-sm" th:text="${clubDto.id != null} ? #{clubEdit.accessLevel} : #{clubCreate.accessLevel}"></span></label>
+                        <select th:field="*{accessLevel}" class="select select-bordered w-full" th:classappend="${#fields.hasErrors('accessLevel')} ? 'select-error'" required>
+                            <option value="" disabled th:selected="${clubDto.accessLevel == null}" th:text="${clubDto.id != null} ? #{clubEdit.selectAccessLevel} : #{clubCreate.selectAccessLevel}"></option>
+                            <option th:each="level : ${accessLevels}" th:value="${level}" th:text="#{${level.key}}" th:selected="${level == clubDto.accessLevel}"></option>
+                        </select>
+                        <p th:if="${#fields.hasErrors('accessLevel')}" th:errors="*{accessLevel}" class="text-error text-xs mt-1"></p>
+                    </div>
+                </div>
+                <div th:insert="~{fragments/address-form :: addressForm}"></div>
+            </div>
+
+            <div class="lg:col-span-1 space-y-6">
+                <div th:insert="~{fragments/image-form :: imageForm(required=${clubDto.id == null}, multiple=false, currentImage=${clubDto.image}, deleteAction = null)}"></div>
+            </div>
+        </div>
+   </form>
+
+   <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>
