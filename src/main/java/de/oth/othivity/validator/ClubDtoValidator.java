@@ -8,8 +8,6 @@ import de.oth.othivity.dto.ClubDto;
 @Component
 public class ClubDtoValidator implements Validator {
 
-    private static final long MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 megabytes
-
     @Override
     public boolean supports(Class<?> clazz) {
         return ClubDto.class.equals(clazz);

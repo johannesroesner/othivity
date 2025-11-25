@@ -7,7 +7,7 @@
     <!-- content start -->
 
     <div class="flex items-center mb-6">
-        <a th:href="@{'/clubs/' + ${clubId}}" class="btn btn-ghost btn-xl">←</a>
+        <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
         <h1 class="text-3xl font-bold ml-4" th:text="#{clubJoinRequests.pageTitle}"></h1>
     </div>
 

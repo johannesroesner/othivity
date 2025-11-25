@@ -7,13 +7,13 @@
     <!-- content start -->
 
     <div class="flex items-center mb-6 space-x-2">
-        <a href="/clubs" class="btn btn-ghost btn-xl">←</a>
+        <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
         <h1 class="text-3xl font-bold" th:text="#{clubDetail.pageTitle}"></h1>
 
         <!-- Buttons -->
         <div class="ml-auto flex gap-4">
             <!-- Join Requests Button -->
-            <a th:if="${editMode}" th:href="@{'/clubs/join-requests/' + ${club.id}}" class="btn btn-info">
+            <a th:if="${editMode and inviteOnly}" th:href="@{'/clubs/join-requests/' + ${club.id}}" class="btn btn-info">
                 <span th:text="#{clubDetail.joinRequests}"></span>
             </a>
             

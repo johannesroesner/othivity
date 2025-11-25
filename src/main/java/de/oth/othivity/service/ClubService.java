@@ -25,7 +25,7 @@ public interface ClubService {
 
     List<Club> getClubsNotJoinedByProfile(HttpSession session);
 
-    Club createClubForProfile(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage);
+    Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage);
 
     Club updateClub(Club club, ClubDto clubDto, MultipartFile uploadedImage, HttpSession session);
 

@@ -9,16 +9,12 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
 import de.oth.othivity.service.ClubJoinRequestService;
-import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.dto.ClubJoinRequestDto;
 import de.oth.othivity.validator.ClubJoinRequestDtoValidator;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.WebDataBinder;
@@ -31,7 +27,6 @@ import jakarta.validation.Valid;
 @Controller
 public class ClubJoinRequestController {
     private final ClubJoinRequestService clubJoinRequestService;
-    private final ClubService clubService;
     private final SessionService sessionService;
     private final ClubJoinRequestDtoValidator clubJoinRequestDtoValidator;
 
@@ -45,6 +40,7 @@ public class ClubJoinRequestController {
         UUID clubUuid = UUID.fromString(clubId);
         model.addAttribute("clubId", clubId);
         model.addAttribute("requests", clubJoinRequestService.getJoinRequestsForClub(clubUuid));
+        model.addAttribute("returnUrl", "/clubs/" + clubId);
         return "club-join-requests";
     }
     
@@ -54,6 +50,7 @@ public class ClubJoinRequestController {
         clubJoinRequestDto.setClubId(UUID.fromString(clubId));
         model.addAttribute("clubJoinRequestDto", clubJoinRequestDto);
         model.addAttribute("clubId", clubId);
+        model.addAttribute("returnUrl", "/clubs/" + clubId);
         return "club-join-request-create";
     }
     
@@ -62,58 +59,32 @@ public class ClubJoinRequestController {
                                   @Valid @ModelAttribute("clubJoinRequestDto") ClubJoinRequestDto clubJoinRequestDto,
                                   BindingResult bindingResult,
                                   HttpSession session,
-                                  Model model,
-                                  RedirectAttributes redirectAttributes) {
+                                  Model model) {
         
-        // Set clubId in case it's not set correctly
         clubJoinRequestDto.setClubId(UUID.fromString(clubId));
         
         if (bindingResult.hasErrors()) {
             model.addAttribute("clubId", clubId);
             return "club-join-request-create";
         }
-        
-        try {
-            Profile currentProfile = sessionService.getProfileFromSession(session);
-            if (currentProfile == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "You must be logged in to send a join request.");
-                return "redirect:/login";
-            }
-            
-            clubJoinRequestService.createJoinRequest(clubJoinRequestDto, currentProfile);
-            
-            redirectAttributes.addFlashAttribute("successMessage", "Join request sent successfully!");
-            return "redirect:/clubs/" + clubId;
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to send join request: " + e.getMessage());
-            return "redirect:/clubs/join-requests/create/" + clubId;
-        }
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        clubJoinRequestService.createJoinRequest(clubJoinRequestDto, currentProfile);
+        return "redirect:/clubs/" + clubId;
     }
     @PostMapping("/clubs/join-requests/{clubId}/accept/{requestId}")
     public String acceptJoinRequest(@PathVariable("clubId") String clubId, 
-                                  @PathVariable("requestId") String requestId,
-                                  RedirectAttributes redirectAttributes) {
-        try {
-            UUID requestUuid = UUID.fromString(requestId);
-            clubJoinRequestService.acceptJoinRequest(requestUuid);
-            redirectAttributes.addFlashAttribute("successMessage", "Join request accepted successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to accept join request: " + e.getMessage());
-        }
+                                  @PathVariable("requestId") String requestId) {
+        
+        UUID requestUuid = UUID.fromString(requestId);
+        clubJoinRequestService.acceptJoinRequest(requestUuid);
         return "redirect:/clubs/join-requests/" + clubId;
     }
     
     @PostMapping("/clubs/join-requests/{clubId}/decline/{requestId}")
     public String declineJoinRequest(@PathVariable("clubId") String clubId,
-                                   @PathVariable("requestId") String requestId,
-                                   RedirectAttributes redirectAttributes) {
-        try {
-            UUID requestUuid = UUID.fromString(requestId);
-            clubJoinRequestService.rejectJoinRequest(requestUuid);
-            redirectAttributes.addFlashAttribute("successMessage", "Join request declined successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to decline join request: " + e.getMessage());
-        }
+                                   @PathVariable("requestId") String requestId) {
+        UUID requestUuid = UUID.fromString(requestId);
+        clubJoinRequestService.rejectJoinRequest(requestUuid);
         return "redirect:/clubs/join-requests/" + clubId;
     }
     

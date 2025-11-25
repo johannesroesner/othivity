@@ -83,6 +83,7 @@ public class ClubController {
         model.addAttribute("editMode", sessionService.canUpdate(session, club));
         model.addAttribute("leaveAble", sessionService.canLeave(session, club));
         model.addAttribute("joinAbleOnInvite", sessionService.canJoinOnInvite(session, club));
+        model.addAttribute("inviteOnly", club.getAccessLevel() == AccessLevel.ON_INVITE);
     
         model.addAttribute("clubMembers", clubService.getMembersOfClubWithoutAdmins(club));
         model.addAttribute("clubAdmins", club.getAdmins());
@@ -171,8 +172,8 @@ public class ClubController {
         
         model.addAttribute("club", club);
         model.addAttribute("clubMembers", isLeaving ? 
-            club.getMembers().stream().filter(m -> !m.equals(currentProfile)).toList() : 
-            club.getMembers());
+        club.getMembers().stream().filter(m -> !m.equals(currentProfile)).toList() : 
+        club.getMembers());
         model.addAttribute("isLeaving", isLeaving);
         return "club-select-admin";
     }
@@ -215,7 +216,4 @@ public class ClubController {
 
         return "redirect:/clubs/" + clubId;
     }
-
-    
-       
 }
