@@ -1,6 +1,7 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
@@ -52,7 +53,6 @@ public class TestDataRunner {
             profile.setUsername("gaudiSepp");
             profile.setEmail("a@a.com");
             profile.setAboutMe("Ich bin ein Testprofil.");
-            profile.setPhone("0123456789");
             profile.setRole(Role.USER);
             profile.setUser(user);
             profileRepository.save(profile);
@@ -68,7 +68,6 @@ public class TestDataRunner {
             profile2.setUsername("moesef");
             profile2.setEmail("sebastian@example.com");
             profile2.setAboutMe("Ich bin ein Testprofil.");
-            profile2.setPhone("0123456789");
             profile2.setRole(Role.USER);
             profile2.setUser(user2);
             profileRepository.save(profile2);
@@ -78,13 +77,16 @@ public class TestDataRunner {
             user3.setPassword(passwordEncoder.encode("jklöjklö"));
             userRepository.save(user3);
 
+
+            Phone phone = new Phone();
+            phone.setNumber("123");
             Profile profile3 = new Profile();
             profile3.setFirstName("Sebastian");
             profile3.setLastName("Moritz");
             profile3.setUsername("moe");
             profile3.setEmail("sebastian@moritz-furth.de");
             profile3.setAboutMe("Ich bin ein Testprofil.");
-            profile3.setPhone("0123456789");
+            profile3.setPhone(phone);
             profile3.setRole(Role.MODERATOR);
             profile3.setUser(user3);
             profileRepository.save(profile3);

@@ -25,13 +25,28 @@
     </div>
 
 
-    <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+    <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl mt-10" th:classappend="${profile.phone == null || profile.phone.number == null} ? 'opacity-50 pointer-events-none' : ''">
         <div class="flex flex-col space-y-4">
-            <h2 class="text-xl font-bold text-error" th:text="#{settings.dangerZone}">Danger Zone</h2>
-            <p class="text-base-content/70" th:text="#{settings.deleteProfile}">Once you delete your profile, there is no going back. Please be certain.</p>
- herere
-            <form th:action="@{/profile/delete/{username}(username=${currentUsername})}" method="post" th:onsubmit="|return confirm('#{settings.confirmDelete}');|">
-                <button type="submit" class="btn btn-error text-white" th:text="#{settings.deleteProfileButton}">Delete Profile</button>
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold" th:text="#{settings.phoneVerification}"></h2>
+                <div th:if="${profile.phone != null && profile.phone.number != null}">
+                    <span th:if="${profile.phone.verified}" class="badge badge-success gap-2" th:text="#{settings.verifyStatusGood}"></span>
+                    <span th:unless="${profile.phone.verified}" class="badge badge-warning gap-2" th:text="#{settings.verifyStatusBad}"></span>
+                </div>
+            </div>
+
+            <p class="text-base-content/70">
+                <span th:text="#{settings.currentPhone}"></span>
+                <span class="font-mono font-bold" th:text="${profile.phone?.number ?: '-'}"></span>
+            </p>
+
+            <div th:if="${profile.phone == null || profile.phone.number == null}" class="shadow-2xl">
+                <span th:text="#{settings.phoneVerificationMessage}"></span>
+            </div>
+
+            <form th:if="${profile.phone != null && profile.phone.number != null}" th:action="@{/profile/phone/verify}" method="get">
+                <button type="submit" class="btn btn-primary" th:disabled="${profile.phone.verified}" th:text="#{settings.verifyButton}">
+                </button>
             </form>
         </div>
     </div>
