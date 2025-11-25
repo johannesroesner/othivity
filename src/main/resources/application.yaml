@@ -1,6 +1,17 @@
 spring:
   application:
     name: othivity
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: othivity@gmail.com
+    password: lsdiodfbznricrig
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   thymeleaf:
     cache: false
   messages:

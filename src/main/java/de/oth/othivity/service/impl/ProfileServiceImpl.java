@@ -1,5 +1,6 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.model.enumeration.NotificationType;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
@@ -14,6 +15,8 @@ import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.service.ImageService;
+import de.oth.othivity.service.IEmailService;
+import de.oth.othivity.service.INotificationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final ActivityRepository activityRepository;
     private final ClubRepository clubRepository;
     private final ImageService imageService;
+    private final INotificationService notificationService;
 
     @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
@@ -59,6 +63,9 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);
+
+        // SBM entferne test
+        notificationService.sendNotification(NotificationType.EMAIL, profile, profile, "notification.profile.updated");
     }
 
     @Override
