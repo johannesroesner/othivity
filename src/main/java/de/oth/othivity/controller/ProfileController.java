@@ -21,6 +21,7 @@ import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.model.enumeration.Language;
 
 @AllArgsConstructor
 @Controller
@@ -56,7 +57,7 @@ public class ProfileController {
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
         model.addAttribute("profile", profile);
-
+        model.addAttribute("languages", Language.values());
         return "settings";
     }
 
@@ -129,5 +130,16 @@ public class ProfileController {
             session.invalidate();
         }
         return "redirect:/login";
+    }
+
+    @PostMapping("/change-language")
+    public String changeLanguage(@RequestParam("language") Language language, HttpSession session, HttpServletRequest request) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile != null) {
+            profileService.updateProfileLanguage(profile, language);
+            Profile updatedProfile = profileService.getProfileById(profile.getId());
+            session.setAttribute("profileId", updatedProfile.getId());
+        }
+        return "redirect:/settings";
     }
 }

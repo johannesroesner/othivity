@@ -1,6 +1,7 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
@@ -49,6 +50,7 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(registerDto.getEmail());
         profile.setRole(Role.USER);
+        profile.setLanguage(Language.ENGLISH);
         
         return profileRepository.save(profile);
     }
@@ -58,6 +60,12 @@ public class ProfileServiceImpl implements ProfileService {
         if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile, uploadedImage));
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
+        profileRepository.save(profile);
+    }
+
+    @Override
+    public void updateProfileLanguage(Profile profile, Language language) {
+        profile.setLanguage(language);
         profileRepository.save(profile);
     }
 
