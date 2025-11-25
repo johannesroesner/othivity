@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,20 +33,13 @@ public class SecurityConfig {
                 )
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // TODO delete when H2 not needed anymore
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/process-login")
-                        .usernameParameter("email")  // Use email field as username
-                        .defaultSuccessUrl("/dashboard", true) //(... , true) to always redirect to dashboard
-                        .successHandler((request, response, authentication) -> {
-                            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-                            request.getSession().setAttribute("profileId", userDetails.getProfileId());
-                            if (userDetails.getUser().getProfile() != null) {
-                                request.getSession().setAttribute("role", userDetails.getUser().getProfile().getRole());
-                            }
-                            response.sendRedirect("/dashboard");
-                        })
-                        .permitAll()
-                )
+                .loginPage("/login")
+                .loginProcessingUrl("/process-login")
+                .usernameParameter("email")
+                .successHandler(successHandler) 
+                
+                .permitAll()
+            )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
