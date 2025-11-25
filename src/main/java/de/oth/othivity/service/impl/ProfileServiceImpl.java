@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -41,8 +42,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile createProfileFromUser(User user, RegisterDto registerDto) {
-        // Implementation here
+    public Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale) {
         Profile profile = new Profile();
         profile.setUser(user);
         profile.setFirstName(registerDto.getFirstName());
@@ -50,8 +50,11 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(registerDto.getEmail());
         profile.setRole(Role.USER);
-        profile.setLanguage(Language.ENGLISH);
-        
+        if (clientLocale != null && clientLocale.getLanguage().equals(Locale.GERMAN.getLanguage())) {
+        profile.setLanguage(Language.GERMAN);
+        } else {
+            profile.setLanguage(Language.ENGLISH);
+        }
         return profileRepository.save(profile);
     }
 

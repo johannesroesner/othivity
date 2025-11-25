@@ -135,7 +135,6 @@ public class ProfileController {
 
     @PostMapping("/change-language")
     public String changeLanguage(@RequestParam("language") Language language, HttpSession session, HttpServletRequest request, HttpServletResponse response) { 
-        // Response hinzufügen!
         Profile profile = sessionService.getProfileFromSession(session);
         
         if (profile != null) {
