@@ -21,28 +21,21 @@
             <input type="hidden" th:field="*{clubId}" />
             
             <!-- Info Message -->
-            <div class="alert alert-info">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+            <div class="text-sm text-gray-600">
                 <span th:text="#{clubJoinRequestCreate.infoMessage}"></span>
             </div>
             
             <!-- Message Field -->
             <div class="form-control">
-                <label class="label">
-                    <span class="label-text text-lg font-medium" th:text="#{clubJoinRequestCreate.messageLabel}"></span>
-                    <span class="label-text-alt text-error">*</span>
-                </label>
                 <textarea 
                     th:field="*{text}" 
                     th:placeholder="#{clubJoinRequestCreate.messagePlaceholder}"
-                    class="textarea textarea-bordered h-32 resize-none" 
+                    class="textarea textarea-bordered h-32 resize-none w-full" 
                     th:classappend="${#fields.hasErrors('text')} ? 'textarea-error'"
                     required
                     maxlength="500"></textarea>
                 <div class="label">
-                    <span class="label-text-alt" th:text="#{clubJoinRequestCreate.messageHint}"></span>
+                    <span class="label-text-alt"></span>
                     <span class="label-text-alt text-gray-500">0/500</span>
                 </div>
                 <p th:if="${#fields.hasErrors('text')}" th:errors="*{text}" class="text-error text-xs mt-1"></p>
@@ -54,7 +47,6 @@
                     <span th:text="#{clubJoinRequestCreate.cancel}"></span>
                 </a>
                 <button type="submit" class="btn btn-primary">
-                    <span>📤</span>
                     <span th:text="#{clubJoinRequestCreate.sendButton}"></span>
                 </button>
             </div>
@@ -72,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const counter = document.querySelector('.label-text-alt.text-gray-500');
     
     if (textarea && counter) {
-        // Update counter on page load in case there's already text
         updateCounter();
         
         textarea.addEventListener('input', updateCounter);

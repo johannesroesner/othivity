@@ -39,7 +39,7 @@
                         <label class="label"><span class="label-text text-sm" th:text="${clubDto.id != null} ? #{clubEdit.accessLevel} : #{clubCreate.accessLevel}"></span></label>
                         <select th:field="*{accessLevel}" class="select select-bordered w-full" th:classappend="${#fields.hasErrors('accessLevel')} ? 'select-error'" required>
                             <option value="" disabled th:selected="${clubDto.accessLevel == null}" th:text="${clubDto.id != null} ? #{clubEdit.selectAccessLevel} : #{clubCreate.selectAccessLevel}"></option>
-                            <option th:each="level : ${accessLevels}" th:value="${level}" th:text="${level}" th:selected="${level == clubDto.accessLevel}"></option>
+                            <option th:each="level : ${accessLevels}" th:value="${level}" th:text="#{${level.key}}" th:selected="${level == clubDto.accessLevel}"></option>
                         </select>
                         <p th:if="${#fields.hasErrors('accessLevel')}" th:errors="*{accessLevel}" class="text-error text-xs mt-1"></p>
                     </div>
