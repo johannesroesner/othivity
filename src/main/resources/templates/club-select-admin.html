@@ -29,8 +29,8 @@
             
             <div th:if="${clubMembers != null and !#lists.isEmpty(clubMembers)}" class="space-y-3">
                 <div th:each="member : ${clubMembers}" class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4">
-                    <span th:if="${member.profileImageUrl == null}" class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg font-medium" th:text="${member.initials}"></span>
-                    <img th:if="${member.profileImageUrl != null}" th:src="${member.profileImageUrl}" alt="Avatar" class="w-12 h-12 rounded-full object-cover"/>
+                    <span th:if="${member.image == null}" class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg font-medium" th:text="${member.initials}"></span>
+                    <img th:if="${member.image != null}" th:src="${member.image.url}" alt="Avatar" class="w-12 h-12 rounded-full object-cover"/>
                     <div class="flex flex-col flex-1">
                         <span class="text-sm text-gray-500">Mitglied</span>
                         <a th:href="@{'/profile/' + ${member.username}}" class="text-lg font-medium hover:underline" th:text="${member.username}"></a>

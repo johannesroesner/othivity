@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.enumeration.AccessLevel;
+import de.oth.othivity.model.helper.Image;
 
 
 @Data
@@ -20,5 +21,5 @@ public class ClubDto {
     private String description;
     private AccessLevel accessLevel;
     private Address address;
-    private MultipartFile [] uploadedImages;
+    private Image image;
 }

@@ -53,21 +53,16 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <div class="flex flex-col items-center lg:col-span-1 w-full">
-            <!-- Carousel -->
-            <div class="carousel w-full h-64 shadow-2xl relative overflow-hidden">
-                <div th:each="img, i : ${clubImages}" th:id="'slide-' + ${i.index}"
-                     class="carousel-item w-full h-full absolute top-0 left-0 transition-opacity duration-500"
-                     th:classappend="${i.index == 0} ? 'opacity-100 z-10' : 'opacity-0 z-0'">
-                    <img th:src="@{${img.url}}" class="w-full h-full object-cover rounded-box"/>
-
-                    <!-- Pfeile -->
-                    <button type="button"
-                            class="absolute left-2 top-1/2 transform -translate-y-1/2 btn btn-circle"
-                            th:onclick="'prevSlide()'">❮</button>
-                    <button type="button"
-                            class="absolute right-2 top-1/2 transform -translate-y-1/2 btn btn-circle"
-                            th:onclick="'nextSlide()'">❯</button>
-                </div>
+            <!-- Club Image -->
+            <div class="w-full h-64 shadow-2xl bg relative overflow-hidden">
+               <img th:if="${club.image != null}" 
+                    th:src="@{${club.image.url}}" 
+                    th:alt="${club.name}"
+                    class="w-full h-full object-cover rounded-2xl">
+               <div th:if="${club.image == null}" 
+                    class="w-full h-full bg-base-200 flex items-center justify-center rounded-2xl">
+                    <i class="fas fa-users fa-3x text-gray-400"></i>
+               </div>
             </div>
 
             <!-- Members Block -->
@@ -76,8 +71,8 @@
 
                 <!-- Admins -->
                 <div th:each="admin : ${clubAdmins}" class="p-4 rounded-xl shadow-sm flex items-center gap-3 mb-2 border-l-4 border-primary">
-                    <span th:if="${admin.profileImageUrl == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${admin.initials}"></span>
-                    <img th:if="${admin.profileImageUrl != null}" th:src="${admin.profileImageUrl}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
+                    <span th:if="${admin.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${admin.initials}"></span>
+                    <img th:if="${admin.image != null}" th:src="${admin.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
                     <div class="flex flex-col">
                         <span class="text-xs text-gray-500">Admin</span>
                         <a th:href="@{'/profile/' + ${admin.username}}" class="text-sm font-medium hover:underline" th:text="${admin.username}"></a>
@@ -87,8 +82,8 @@
                 <!-- Members -->
                 <div class="flex-1 overflow-y-auto space-y-2" style="max-height: 300px;">
                     <div th:each="member : ${clubMembers}" class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3">
-                        <span th:if="${member.profileImageUrl == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${member.initials}"></span>
-                        <img th:if="${member.profileImageUrl != null}" th:src="${member.profileImageUrl}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
+                        <span th:if="${member.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${member.initials}"></span>
+                        <img th:if="${member.image != null}" th:src="${member.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
                         <div class="flex flex-col flex-1">
                             <span class="text-xs text-gray-500">Mitglied</span>
                             <a th:href="@{'/profile/' + ${member.username}}" class="text-sm font-medium hover:underline" th:text="${member.username}"></a>

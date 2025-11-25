@@ -57,7 +57,7 @@ public class ClubServiceImpl implements ClubService {
         return allClubs;
     }
     @Override
-    public Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile[] uploadedImages) {
+    public Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) { return null; }
         Club club = new Club();
@@ -68,13 +68,14 @@ public class ClubServiceImpl implements ClubService {
     
         club.getMembers().add(profile);
         club.getAdmins().add(profile);
+        
+        club.setImage(imageService.saveImage(club, uploadedImage));
         Club savedClub = clubRepository.save(club);
-        imageService.saveImagesForClub(savedClub, uploadedImages);
         
         return savedClub;
     }
     @Override
-    public Club updateClub(Club club, ClubDto clubDto, MultipartFile[] uploadedImages, HttpSession session) {
+    public Club updateClub(Club club, ClubDto clubDto, MultipartFile uploadedImage, HttpSession session) {
         if (club == null) {
             return null;
         }
@@ -82,9 +83,11 @@ public class ClubServiceImpl implements ClubService {
         club.setDescription(clubDto.getDescription());
         club.setAccessLevel(clubDto.getAccessLevel());
         club.setAddress(clubDto.getAddress());
+
+        if(uploadedImage != null && uploadedImage.getSize()>0){
+            club.setImage(imageService.saveImage(club, uploadedImage));
+        }
         Club updatedClub = clubRepository.save(club);
-        imageService.deleteImagesForClub(club);
-        imageService.saveImagesForClub(updatedClub, uploadedImages);
         return updatedClub;
     }
 
@@ -103,6 +106,7 @@ public class ClubServiceImpl implements ClubService {
         clubDto.setDescription(club.getDescription());
         clubDto.setAccessLevel(club.getAccessLevel());
         clubDto.setAddress(club.getAddress());
+        clubDto.setImage(club.getImage());
         return clubDto;
     }
     @Override

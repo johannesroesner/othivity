@@ -48,7 +48,7 @@
             </div>
 
             <div class="lg:col-span-1 space-y-6">
-                <div th:insert="~{fragments/image-form :: imageForm(required=${clubDto.id == null}, multiple=true)}"></div>
+                <div th:insert="~{fragments/image-form :: imageForm(required=${clubDto.id == null}, multiple=false, currentImage=${clubDto.image}, deleteAction = null)}"></div>
             </div>
         </div>
    </form>
