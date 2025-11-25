@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum Language {
     ENGLISH(1, "English", "🇬🇧", "en"),
-    GERMAN(2, "German", "🇩🇪", "de");
+    GERMAN(2, "German", "🇩🇪", "de"),
+    FRENCH(3, "French", "🇫🇷", "fr"),
+    SPANISH(4, "Spanish", "🇪🇸", "es");
 
     private final int id;
     private final String name;

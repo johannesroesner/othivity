@@ -50,10 +50,22 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(registerDto.getEmail());
         profile.setRole(Role.USER);
-        if (clientLocale != null && clientLocale.getLanguage().equals(Locale.GERMAN.getLanguage())) {
-        profile.setLanguage(Language.GERMAN);
-        } else {
-            profile.setLanguage(Language.ENGLISH);
+        if (clientLocale != null) {
+            String langCode = clientLocale.getLanguage();
+            switch (langCode) {
+                case "de":
+                    profile.setLanguage(Language.GERMAN);
+                    break;
+                case "fr":
+                    profile.setLanguage(Language.FRENCH);
+                    break;
+                case "es":
+                    profile.setLanguage(Language.SPANISH);
+                    break;
+                default:
+                    profile.setLanguage(Language.ENGLISH);
+                    break;
+            }
         }
         return profileRepository.save(profile);
     }
