@@ -15,11 +15,11 @@
             <tbody>
             <tr th:each="club : ${clubs}">
                 <td th:text="${club.name}"></td>
-                <td th:text="${club.accessLevel}"></td>
+                <td th:text="#{${club.accessLevel.key}}"></td>
                 <td>
                     <a class="btn btn-primary btn-xs"
-                       th:href="@{'/clubs/' + ${club.id}}">
-                        Details
+                       th:href="@{'/clubs/' + ${club.id}}"
+                       th:text="#{clubTable.details}">
                     </a>
                 </td>
             </tr>

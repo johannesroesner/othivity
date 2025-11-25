@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{clubSelectAdmin.pageTitle})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='clubs')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+
+    <div class="flex items-center mb-6">
+        <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
+        <h1 class="text-3xl font-bold ml-4" th:text="#{clubSelectAdmin.pageTitle}"></h1>
+    </div>
+
+    <div class="card bg-base-200 shadow-md p-6">
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span>👑</span>
+            <span th:text="#{clubSelectAdmin.selectNewAdmin}"></span>
+        </h2>
+        
+        <div class="alert alert-warning mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.956-.833-2.726 0L3.088 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <span th:text="#{clubSelectAdmin.lastAdminLeft}"></span>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-lg font-semibold" th:text="#{clubSelectAdmin.availableMembers}"></h3>
+            
+            <div th:if="${clubMembers != null and !#lists.isEmpty(clubMembers)}" class="space-y-3">
+                <div th:each="member : ${clubMembers}" class="bg-white p-6 rounded-xl shadow-sm flex items-center gap-4">
+                    <span th:if="${member.image == null}" class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg font-medium" th:text="${member.initials}"></span>
+                    <img th:if="${member.image != null}" th:src="${member.image.url}" alt="Avatar" class="w-12 h-12 rounded-full object-cover"/>
+                    <div class="flex flex-col flex-1">
+                        <span class="text-sm text-gray-500">Mitglied</span>
+                        <a th:href="@{'/profile/' + ${member.username}}" class="text-lg font-medium hover:underline" th:text="${member.username}"></a>
+                    </div>
+                    
+                    <!-- Make Admin Button -->
+                    <div class="flex gap-2">
+                        <form th:action="${isLeaving} ? @{'/clubs/makeAdmin/' + ${club.id} + '/' + ${member.id} + '?leaving=true'} : @{'/clubs/makeAdmin/' + ${club.id} + '/' + ${member.id}}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-primary">
+                                <span>👑</span>
+                                <span th:text="#{clubSelectAdmin.makeAdmin}"></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${clubMembers == null or #lists.isEmpty(clubMembers)}" class="text-center py-8 text-gray-500">
+                <span th:text="#{clubSelectAdmin.noMembersAvailable}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>

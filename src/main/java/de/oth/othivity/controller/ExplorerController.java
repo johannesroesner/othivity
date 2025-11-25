@@ -23,9 +23,10 @@ public class ExplorerController {
     public String clubs(HttpSession session, Model model,
                         @RequestParam(required = false) Double lat,
                         @RequestParam(required = false) Double lon) {
-        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfileNotPrivate(session));
-        model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(session));
-        model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(session));
+        //TODO: remove clubs if not needed rename method
+        // model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(session));
+        // model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(session));
+        // model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(session));
 
         // Default location: OTH Regensburg
         if (lat == null || lon == null) {

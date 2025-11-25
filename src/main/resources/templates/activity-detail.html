@@ -37,7 +37,14 @@
 
             <div class="w-full h-64 shadow-2xl overflow-hidden rounded-2xl bg-base-100">
                 <figure class="w-full h-full rounded-2xl bg-base-100">
-                    <img th:src="@{${activity.image.url}}" class="w-full h-full object-cover rounded-2xl"/>
+                    <img th:if="${activity.image != null}" 
+                         th:src="@{${activity.image.url}}" 
+                         th:alt="${activity.title}"
+                         class="w-full h-full object-cover rounded-2xl"/>
+                    <div th:if="${activity.image == null}" 
+                         class="w-full h-full bg-gray-200 flex items-center justify-center rounded-2xl">
+                        <i class="fas fa-calendar-alt fa-3x text-gray-400"></i>
+                    </div>
                 </figure>
             </div>
 

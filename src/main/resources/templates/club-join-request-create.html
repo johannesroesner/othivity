@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{clubJoinRequestCreate.pageTitle})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='clubs')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+
+    <div class="flex items-center mb-6">
+        <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
+        <h1 class="text-3xl font-bold ml-4" th:text="#{clubJoinRequestCreate.pageTitle}"></h1>
+    </div>
+
+    <div class="card bg-base-200 shadow-md p-6 max-w-2xl mx-auto">
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span>📝</span>
+            <span th:text="#{clubJoinRequestCreate.sendRequest}"></span>
+        </h2>
+        
+        <form th:action="@{'/clubs/join-requests/create/' + ${clubId}}" th:object="${clubJoinRequestDto}" method="post" class="space-y-6">
+            <input type="hidden" th:field="*{clubId}" />
+            
+            <!-- Info Message -->
+            <div class="text-sm text-gray-600">
+                <span th:text="#{clubJoinRequestCreate.infoMessage}"></span>
+            </div>
+            
+            <!-- Message Field -->
+            <div class="form-control">
+                <textarea 
+                    th:field="*{text}" 
+                    th:placeholder="#{clubJoinRequestCreate.messagePlaceholder}"
+                    class="textarea textarea-bordered h-32 resize-none w-full" 
+                    th:classappend="${#fields.hasErrors('text')} ? 'textarea-error'"
+                    required
+                    maxlength="500"></textarea>
+                <div class="label">
+                    <span class="label-text-alt"></span>
+                    <span class="label-text-alt text-gray-500">0/500</span>
+                </div>
+                <p th:if="${#fields.hasErrors('text')}" th:errors="*{text}" class="text-error text-xs mt-1"></p>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex gap-4 justify-end pt-4">
+                <a th:href="@{'/clubs/' + ${clubId}}" class="btn btn-ghost">
+                    <span th:text="#{clubJoinRequestCreate.cancel}"></span>
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="#{clubJoinRequestCreate.sendButton}"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+
+<script>
+// Character counter for textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.querySelector('textarea[name="text"]');
+    const counter = document.querySelector('.label-text-alt.text-gray-500');
+    
+    if (textarea && counter) {
+        updateCounter();
+        
+        textarea.addEventListener('input', updateCounter);
+        
+        function updateCounter() {
+            const length = textarea.value.length;
+            counter.textContent = length + '/500';
+            
+            if (length > 450) {
+                counter.classList.add('text-warning');
+                counter.classList.remove('text-gray-500');
+            } else {
+                counter.classList.remove('text-warning');
+                counter.classList.add('text-gray-500');
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
