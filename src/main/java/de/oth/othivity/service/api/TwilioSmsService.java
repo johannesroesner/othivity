@@ -17,9 +17,19 @@ public class TwilioSmsService implements SmsService {
 
     @PostConstruct
     public void init() {
-        Twilio.init(System.getProperty("TWILIO_ACCOUNT_SID"), System.getProperty("TWILIO_AUTH_TOKEN"));
-        this.twilioPhoneNumber = new PhoneNumber(System.getProperty("TWILIO_TRIAL_NUMBER"));
-        this.verifyServiceSid = System.getProperty("TWILIO_VERIFY_SERVICE_SID");
+
+        String accountSid = System.getProperty("TWILIO_ACCOUNT_SID");
+        String authToken = System.getProperty("TWILIO_AUTH_TOKEN");
+        String trialNumber = System.getProperty("TWILIO_TRIAL_NUMBER");
+        String verifyServiceSid = System.getProperty("TWILIO_VERIFY_SERVICE_SID");
+        if(accountSid == null || authToken == null || trialNumber == null || verifyServiceSid == null) {
+            System.err.println("Twilio environment variables are not set properly");
+            return;
+        }
+
+        Twilio.init(accountSid, authToken);
+        this.twilioPhoneNumber = new PhoneNumber(trialNumber);
+        this.verifyServiceSid = verifyServiceSid;
     }
 
     @Override

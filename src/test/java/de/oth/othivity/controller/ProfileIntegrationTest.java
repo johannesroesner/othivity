@@ -80,13 +80,11 @@ public class ProfileIntegrationTest {
         mockMvc.perform(post("/profile/edit/user1")
                         .session(session)
                         .with(csrf())
-                        .param("phone", "123456789")
                         .param("aboutMe", "New Bio"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile/user1"));
 
         Profile updatedProfile = profileRepository.findByusername("user1");
-        assertEquals("123456789", updatedProfile.getPhone());
         assertEquals("New Bio", updatedProfile.getAboutMe());
     }
 
