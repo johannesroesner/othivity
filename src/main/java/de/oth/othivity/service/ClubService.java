@@ -41,7 +41,7 @@ public interface ClubService {
 
     boolean wouldLeaveRequireAdminSelection(HttpSession session, Club club);
 
-    void deleteClub(Club club, HttpSession session);
+    void deleteClub(Club club, Profile profile);
 
     void makeProfileAdminOfClub(Profile profile, Club club, HttpSession session);
 

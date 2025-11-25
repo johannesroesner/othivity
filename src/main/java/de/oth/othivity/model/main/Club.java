@@ -43,6 +43,9 @@ public class Club implements HasImage {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Activity> organizedActivities = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(
             name = "club_members",
