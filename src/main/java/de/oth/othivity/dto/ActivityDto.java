@@ -3,6 +3,7 @@ package de.oth.othivity.dto;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.helper.Address;
+import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.main.Club;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,5 +38,5 @@ public class ActivityDto {
 
     private Address address;
 
-    private MultipartFile [] uploadedImages;
+    private Image image;
 }

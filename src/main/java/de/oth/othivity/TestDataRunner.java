@@ -28,6 +28,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import de.oth.othivity.model.helper.Image;
+import de.oth.othivity.model.helper.Address;
+
 @Configuration
 public class TestDataRunner {
 
@@ -113,9 +116,9 @@ public class TestDataRunner {
             profileRepository.save(profile4);
 
             Activity activity = new Activity();
-            activity.setTitle("my activity");
-            activity.setDescription("test description");
-            activity.setDate(LocalDateTime.now());
+            activity.setTitle("Soonest Activity");
+            activity.setDescription("This activity is happening very soon in Furth im Wald.");
+            activity.setDate(LocalDateTime.now().plusDays(1));
             activity.setGroupSize(10);
             activity.setStartedBy(profile);
             // Teilnehmerliste korrekt setzen
@@ -123,6 +126,22 @@ public class TestDataRunner {
             participants1.add(profile);
             activity.setTakePart(participants1);
             activity.setLanguage(Language.GERMAN);
+
+            Image image1 = new Image();
+            image1.setUrl("https://picsum.photos/id/1/200/300");
+            image1.setPublicId("1");
+            activity.setImage(image1);
+
+            Address address1 = new Address();
+            address1.setStreet("Michael-Buchberger-Straße");
+            address1.setHouseNumber("7");
+            address1.setCity("Furth im Wald");
+            address1.setPostalCode("93437");
+            address1.setCountry("Germany");
+            address1.setLatitude(49.3085);
+            address1.setLongitude(12.8425);
+            activity.setAddress(address1);
+
             activityRepository.save(activity);
 
             Club club6 = new Club();
@@ -141,9 +160,9 @@ public class TestDataRunner {
 
 
             Activity otherActivity = new Activity();
-            otherActivity.setTitle("other activity");
-            otherActivity.setDescription("test description");
-            otherActivity.setDate(LocalDateTime.now());
+            otherActivity.setTitle("Closest Activity");
+            otherActivity.setDescription("This activity is very close to OTH Regensburg.");
+            otherActivity.setDate(LocalDateTime.now().plusDays(3));
             otherActivity.setGroupSize(10);
             otherActivity.setOrganizer(club6);
             otherActivity.setStartedBy(profile2);
@@ -153,6 +172,22 @@ public class TestDataRunner {
             participants2.add(profile);
             otherActivity.setTakePart(participants2);
             otherActivity.setLanguage(Language.GERMAN);
+
+            Image image2 = new Image();
+            image2.setUrl("https://picsum.photos/id/2/200/300");
+            image2.setPublicId("2");
+            otherActivity.setImage(image2);
+
+            Address address2 = new Address();
+            address2.setStreet("Am Gries");
+            address2.setHouseNumber("1");
+            address2.setCity("Regensburg");
+            address2.setPostalCode("93059");
+            address2.setCountry("Germany");
+            address2.setLatitude(49.0225);
+            address2.setLongitude(12.0983);
+            otherActivity.setAddress(address2);
+
             activityRepository.save(otherActivity);
 
             Club club = new Club();
@@ -184,6 +219,35 @@ public class TestDataRunner {
             club2.getMembers().add(profile);
             club2.getMembers().add(profile2);
             club2.getAdmins().add(profile);
+            Activity bestActivity = new Activity();
+            bestActivity.setTitle("Best Mix Activity");
+            bestActivity.setDescription("Good balance of distance and time.");
+            bestActivity.setDate(LocalDateTime.now().plusDays(2));
+            bestActivity.setGroupSize(10);
+            bestActivity.setStartedBy(profile2);
+            // Teilnehmerliste korrekt setzen
+            List<Profile> participants3 = new ArrayList<>();
+            participants3.add(profile2);
+            participants3.add(profile);
+            bestActivity.setTakePart(participants3);
+            bestActivity.setLanguage(Language.GERMAN);
+
+            Image image3 = new Image();
+            image3.setUrl("https://picsum.photos/id/3/200/300");
+            image3.setPublicId("3");
+            bestActivity.setImage(image3);
+
+            Address address3 = new Address();
+            address3.setStreet("Brunhuberstraße");
+            address3.setHouseNumber("14");
+            address3.setCity("Regensburg");
+            address3.setPostalCode("93053");
+            address3.setCountry("Germany");
+            address3.setLatitude(49.0085);
+            address3.setLongitude(12.1105);
+            bestActivity.setAddress(address3);
+
+            activityRepository.save(bestActivity);
             clubRepository.save(club2);
 
             Club club3 = new Club();

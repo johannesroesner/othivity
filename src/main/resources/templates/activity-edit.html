@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            <div th:insert="~{fragments/image-form :: imageForm(required=${activityDto.id == null}, multiple=true)}"></div>
+            <div th:insert="~{fragments/image-form ::imageForm(required=false, currentImage=${activityDto.image}, deleteAction = null)}"></div>
 
             <div class="space-y-6 flex flex-col">
                 <div th:insert="~{fragments/address-form :: addressForm}"></div>

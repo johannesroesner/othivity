@@ -29,6 +29,4 @@ public class ProfileDto {
     private String aboutMe;
 
     private String phone;
-
-    private MultipartFile[] uploadedImages;
 }

@@ -1,6 +1,9 @@
 package de.oth.othivity.model.main;
 
+import de.oth.othivity.listener.ProfileEntityListener;
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.helper.Image;
+import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ProfileReport;
 import de.oth.othivity.model.helper.ClubJoinRequest;
 import de.oth.othivity.model.security.User;
@@ -13,11 +16,12 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "profile")
+@EntityListeners(ProfileEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Profile {
+public class Profile implements HasImage {
     // profile attributes
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,7 +46,9 @@ public class Profile {
     @Column(length = 3000)
     private String aboutMe;
 
-    private String profileImageUrl;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     private String phone;
 

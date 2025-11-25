@@ -26,8 +26,8 @@
         <div class="flex flex-col items-center lg:col-span-1">
             <div class="avatar">
                 <div class="w-100 rounded-full bg-base-200 flex items-center justify-center shadow-2xl">
-                    <img th:if="${profile.profileImageUrl != null}" th:src="@{${profile.profileImageUrl}}" class="object-cover" />
-                    <span th:if="${profile.profileImageUrl == null}" class="text-3xl font-semibold text-base-content/60" th:text="${profile.initials}"></span>
+                    <img th:if="${profile.image != null}" th:src="@{${profile.image.url}}" class="object-cover" />
+                    <span th:if="${profile.image == null}" class="text-3xl font-semibold text-base-content/60" th:text="${profile.initials}"></span>
                 </div>
             </div>
         </div>
@@ -78,7 +78,7 @@
                 <!-- About Me -->
                 <div class="space-y-1">
                     <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.aboutMe}"></p>
-                    <div class="bg-base-100 p-4 rounded-xl shadow-sm whitespace-pre-line leading-relaxed">
+                    <div class="bg-base-100 p-4 rounded-xl shadow-sm">
                         <span th:text="${profile.aboutMe}"></span>
                     </div>
                 </div>
