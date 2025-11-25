@@ -1,4 +1,4 @@
-package de.oth.othivity.service.impl;
+package de.oth.othivity.service.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @Service
-public class GeocodingServiceImpl implements GeocodingService {
+public class NominatimGeocodingService implements GeocodingService {
 
     private static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
     private final RestTemplate restTemplate = new RestTemplate();

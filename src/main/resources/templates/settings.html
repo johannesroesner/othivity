@@ -9,15 +9,27 @@
     <div class="flex items-center mb-6 space-x-2 justify-between">
         <div class="flex items-center space-x-2">
             <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
-            <h1 class="text-3xl font-bold" th:text="#{settings.title}">Settings</h1>
+            <h1 class="text-3xl font-bold" th:text="#{settings.title}"></h1>
         </div>
     </div>
 
     <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
         <div class="flex flex-col space-y-4">
+            <h2 class="text-xl font-bold text-error" th:text="#{settings.dangerZone}"></h2>
+            <p class="text-base-content/70" th:text="#{settings.deleteProfile}"></p>
+            
+            <form th:action="@{/profile/delete/{username}(username=${currentUsername})}" method="post" th:onsubmit="|return confirm('#{settings.confirmDelete}');|">
+                <button type="submit" class="btn btn-error text-white" th:text="#{settings.deleteProfileButton}"></button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+        <div class="flex flex-col space-y-4">
             <h2 class="text-xl font-bold text-error" th:text="#{settings.dangerZone}">Danger Zone</h2>
             <p class="text-base-content/70" th:text="#{settings.deleteProfile}">Once you delete your profile, there is no going back. Please be certain.</p>
-            
+ herere
             <form th:action="@{/profile/delete/{username}(username=${currentUsername})}" method="post" th:onsubmit="|return confirm('#{settings.confirmDelete}');|">
                 <button type="submit" class="btn btn-error text-white" th:text="#{settings.deleteProfileButton}">Delete Profile</button>
             </form>
