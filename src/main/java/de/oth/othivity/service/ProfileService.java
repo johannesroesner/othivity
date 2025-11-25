@@ -1,6 +1,7 @@
 package de.oth.othivity.service;
 
 import de.oth.othivity.model.main.Club;
+import de.oth.othivity.model.enumeration.Language;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
@@ -11,15 +12,19 @@ import de.oth.othivity.model.security.User;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.dto.ProfileDto;
+import java.util.Locale;
+
 
 @Service
 public interface ProfileService {
 
     List<Club> allJoinedClubsByProfile(HttpSession session);
 
-    Profile createProfileFromUser(User user, RegisterDto registerDto);
+    Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale);
     
     void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage);
+
+    void updateProfileLanguage(Profile profile, Language language);
 
     boolean isUsernameTaken(String userName);
 

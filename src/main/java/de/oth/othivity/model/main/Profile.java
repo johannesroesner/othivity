@@ -8,6 +8,7 @@ import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ProfileReport;
 import de.oth.othivity.model.helper.ClubJoinRequest;
 import de.oth.othivity.model.security.User;
+import de.oth.othivity.model.enumeration.Language;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,6 +48,10 @@ public class Profile implements HasImage {
 
     @Column(length = 3000)
     private String aboutMe;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Language language;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")

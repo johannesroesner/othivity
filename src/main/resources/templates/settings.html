@@ -17,7 +17,23 @@
         <div class="flex flex-col space-y-4">
             <h2 class="text-xl font-bold text-error" th:text="#{settings.dangerZone}"></h2>
             <p class="text-base-content/70" th:text="#{settings.deleteProfile}"></p>
-            
+            <h2 class="text-xl font-bold" th:text="#{settings.languageSettings}"></h2>
+            <form th:action="@{/change-language}" method="post" th:object="${profile}">
+                <div class="flex flex-col space-y-4 items-start">
+                    <select th:field="*{language}" class="select select-bordered" required>
+                        <option th:each="lang : ${languages}" th:value="${lang.name()}"
+                            th:selected="${profile.language == lang}"
+                            th:text="${lang.emoji + ' ' + lang.name}">
+                        </option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" th:text="#{settings.changeLanguage}"></button>
+                </div>
+            </form>
+        </div>
+        <div class="flex flex-col space-y-4">
+            <h2 class="text-xl font-bold text-error" th:text="#{settings.dangerZone}">Danger Zone</h2>
+            <p class="text-base-content/70" th:text="#{settings.deleteProfile}">Once you delete your profile, there is no going back. Please be certain.</p>
+
             <form th:action="@{/profile/delete/{username}(username=${currentUsername})}" method="post" th:onsubmit="|return confirm('#{settings.confirmDelete}');|">
                 <button type="submit" class="btn btn-error text-white" th:text="#{settings.deleteProfileButton}"></button>
             </form>

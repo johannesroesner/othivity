@@ -60,6 +60,7 @@ public class TestDataRunner {
             profile.setEmail("a@a.com");
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setRole(Role.USER);
+            profile.setLanguage(Language.ENGLISH);
             profile.setUser(user);
             profileRepository.save(profile);
 
@@ -75,6 +76,7 @@ public class TestDataRunner {
             profile2.setEmail("sebastian@example.com");
             profile2.setAboutMe("Ich bin ein Testprofil.");
             profile2.setRole(Role.USER);
+            profile2.setLanguage(Language.ENGLISH);
             profile2.setUser(user2);
             profileRepository.save(profile2);
 
@@ -90,6 +92,7 @@ public class TestDataRunner {
             profile3.setEmail("moritz@example.com");
             profile3.setAboutMe("Ich bin ein Testprofil.");
             profile3.setRole(Role.USER);
+            profile3.setLanguage(Language.ENGLISH);
             profile3.setUser(user3);
             profileRepository.save(profile3);
 
@@ -106,6 +109,7 @@ public class TestDataRunner {
             profile4.setEmail("sebastian@moritz-furth.de");
             profile4.setAboutMe("Ich bin ein Testprofil.");
             profile4.setRole(Role.MODERATOR);
+            profile4.setLanguage(Language.ENGLISH);
             profile4.setUser(user4);
             profileRepository.save(profile4);
 

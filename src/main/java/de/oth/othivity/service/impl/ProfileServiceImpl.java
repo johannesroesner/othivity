@@ -2,6 +2,7 @@ package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -41,8 +43,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile createProfileFromUser(User user, RegisterDto registerDto) {
-        // Implementation here
+    public Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale) {
         Profile profile = new Profile();
         profile.setUser(user);
         profile.setFirstName(registerDto.getFirstName());
@@ -50,7 +51,23 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(registerDto.getEmail());
         profile.setRole(Role.USER);
-        
+        if (clientLocale != null) {
+            String langCode = clientLocale.getLanguage();
+            switch (langCode) {
+                case "de":
+                    profile.setLanguage(Language.GERMAN);
+                    break;
+                case "fr":
+                    profile.setLanguage(Language.FRENCH);
+                    break;
+                case "es":
+                    profile.setLanguage(Language.SPANISH);
+                    break;
+                default:
+                    profile.setLanguage(Language.ENGLISH);
+                    break;
+            }
+        }
         return profileRepository.save(profile);
     }
 
@@ -59,6 +76,12 @@ public class ProfileServiceImpl implements ProfileService {
         if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile, uploadedImage));
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
+        profileRepository.save(profile);
+    }
+
+    @Override
+    public void updateProfileLanguage(Profile profile, Language language) {
+        profile.setLanguage(language);
         profileRepository.save(profile);
     }
 
