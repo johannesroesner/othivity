@@ -3,6 +3,7 @@ package de.oth.othivity.model.main;
 import de.oth.othivity.listener.ProfileEntityListener;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Image;
+import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ProfileReport;
 import de.oth.othivity.model.security.User;
@@ -48,6 +49,10 @@ public class Profile implements HasImage {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "notification_id")
+    private List<Notification> notifications = new ArrayList<>();
 
     private String phone;
 
