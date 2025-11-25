@@ -1,8 +1,9 @@
 package de.oth.othivity.controller;
 
+import de.oth.othivity.validator.ProfileDtoValidator;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,9 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
@@ -29,8 +27,15 @@ import de.oth.othivity.model.enumeration.Language;
 public class ProfileController {
 
     private final ProfileService profileService;
-    private final ImageUploadValidator imageUploadValidator;
     private final SessionService sessionService;
+
+    private final ImageUploadValidator imageUploadValidator;
+    private final ProfileDtoValidator profileDtoValidator;
+
+    @InitBinder("profileDto")
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(profileDtoValidator);
+    }
 
     @GetMapping("/profile/{username}")
     public String getProfileDetail(@PathVariable("username") String username, Model model, HttpSession session, HttpServletRequest request) {
@@ -65,20 +70,10 @@ public class ProfileController {
     @GetMapping("/profile/edit/{username}")
     public String editProfile(@PathVariable("username") String username, Model model, HttpSession session) {
         Profile profileToEdit = profileService.getProfileByUsername(username);
-        if (profileToEdit == null) {
-            return "redirect:/dashboard";
-        }
-
-        if (!sessionService.canUpdate(session, profileToEdit)) {
-            return "redirect:/profile/" + username;
-        }
-
-        ProfileDto profileDto = new ProfileDto();
-        profileDto.setPhone(profileToEdit.getPhone());
-        profileDto.setAboutMe(profileToEdit.getAboutMe());
-        
+        if (profileToEdit == null) return "redirect:/dashboard";
+        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
         model.addAttribute("profile", profileToEdit);
-        model.addAttribute("profileDto", profileDto);
+        model.addAttribute("profileDto", profileService.profileToDto(profileToEdit));
         return "profile-edit";
     }
 

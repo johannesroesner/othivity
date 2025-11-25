@@ -39,4 +39,6 @@ public interface ProfileService {
     void deleteProfile(Profile profile);
 
     void deleteProfileImage(Profile profile);
+
+    ProfileDto profileToDto(Profile profile);
 }

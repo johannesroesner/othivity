@@ -1,6 +1,7 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
@@ -119,5 +120,17 @@ public class ProfileServiceImpl implements ProfileService {
     public void deleteProfileImage(Profile profile) {
         profile.setImage(null);
         profileRepository.save(profile);
+    }
+
+    @Override
+    public ProfileDto profileToDto(Profile profile) {
+        ProfileDto profileDto = new ProfileDto();
+        if (profile.getPhone() == null){
+            profileDto.setPhone(new Phone());
+        } else {
+            profileDto.setPhone(profile.getPhone());
+        }
+        profileDto.setAboutMe(profile.getAboutMe());
+        return profileDto;
     }
 }

@@ -161,8 +161,7 @@ public class ClubServiceImpl implements ClubService {
     }
     
     @Override
-    public void deleteClub(Club club, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public void deleteClub(Club club, Profile profile) {
         if (profile == null || club == null) {
             return;
         }

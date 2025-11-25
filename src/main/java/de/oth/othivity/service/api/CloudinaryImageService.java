@@ -1,4 +1,4 @@
-package de.oth.othivity.service.impl;
+package de.oth.othivity.service.api;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 @AllArgsConstructor
 @Service
-public class ImageServiceImpl implements ImageService {
+public class CloudinaryImageService implements ImageService {
 
     private final Cloudinary cloudinary;
     private final ImageRepository imageRepository;

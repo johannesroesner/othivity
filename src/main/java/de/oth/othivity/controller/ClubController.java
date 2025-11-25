@@ -183,7 +183,7 @@ public class ClubController {
         Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) return "redirect:/clubs";
 
-        clubService.deleteClub(club, session);
+        clubService.deleteClub(club, sessionService.getProfileFromSession(session));
 
         return "redirect:/clubs";
     }
