@@ -1,8 +1,7 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
-import de.oth.othivity.model.helper.Address;
-import de.oth.othivity.model.helper.ClubJoinRequest;
+import de.oth.othivity.model.helper.*;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
@@ -28,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Address;
 
 @Configuration
@@ -61,7 +59,6 @@ public class TestDataRunner {
             profile.setUsername("gaudiSepp");
             profile.setEmail("a@a.com");
             profile.setAboutMe("Ich bin ein Testprofil.");
-            profile.setPhone("0123456789");
             profile.setRole(Role.USER);
             profile.setUser(user);
             profileRepository.save(profile);
@@ -77,7 +74,6 @@ public class TestDataRunner {
             profile2.setUsername("moesef");
             profile2.setEmail("sebastian@example.com");
             profile2.setAboutMe("Ich bin ein Testprofil.");
-            profile2.setPhone("0123456789");
             profile2.setRole(Role.USER);
             profile2.setUser(user2);
             profileRepository.save(profile2);
@@ -93,7 +89,6 @@ public class TestDataRunner {
             profile3.setUsername("moritz");
             profile3.setEmail("moritz@example.com");
             profile3.setAboutMe("Ich bin ein Testprofil.");
-            profile3.setPhone("0123456789");
             profile3.setRole(Role.USER);
             profile3.setUser(user3);
             profileRepository.save(profile3);
@@ -110,7 +105,6 @@ public class TestDataRunner {
             profile4.setUsername("moe");
             profile4.setEmail("sebastian@moritz-furth.de");
             profile4.setAboutMe("Ich bin ein Testprofil.");
-            profile4.setPhone("0123456789");
             profile4.setRole(Role.MODERATOR);
             profile4.setUser(user4);
             profileRepository.save(profile4);
