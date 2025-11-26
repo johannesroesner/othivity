@@ -12,4 +12,6 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
     List<Notification> findByProfile(Profile profile);
 
+    int countByProfileAndIsReadFalse(Profile profile);
+
 }

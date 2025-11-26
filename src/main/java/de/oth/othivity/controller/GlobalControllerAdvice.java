@@ -2,6 +2,7 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.INotificationService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class GlobalControllerAdvice {
 
     private final SessionService sessionService;
+    private final INotificationService notificationService;
 
     @ModelAttribute
     public void addCurrentUsername(HttpSession session, Model model) {
@@ -45,5 +47,15 @@ public class GlobalControllerAdvice {
         String returnUrl = sessionService.getReturnUrlFromSession(session, request);
         if (returnUrl != null) model.addAttribute("returnUrl", returnUrl);
         else model.addAttribute("returnUrl", "/dashboard");
+    }
+
+    @ModelAttribute
+    public void addUnreadNotificationCount(HttpSession session, HttpServletRequest request, Model model) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        int count = 0;
+        if (profile != null) {
+            count = notificationService.getCountOfUnreadNotifications(profile);
+        }
+        model.addAttribute("unreadNotificationCount", count);
     }
 }

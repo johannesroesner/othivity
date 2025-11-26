@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.UUID;
@@ -27,26 +28,41 @@ public class NotificationController {
     private final SessionService sessionService;
 
     @GetMapping("/notifications")
-    public String clubs(HttpSession session, Model model) {
+    public String clubs(HttpSession session, Model model, @RequestParam(required = false) UUID selectId) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) {
             return "redirect:/dashboard";
+        }
+        if(selectId != null) {
+            model.addAttribute("selectedNotification", notificationService.getNotificationById(selectId));
         }
         model.addAttribute("notifications", notificationService.getNotificaitonsForProfile(profile));        
 
         return "notifications";
     }
 
-    // NotificationController.java
-
-    @PostMapping("/notification/{id}/read")
-    @ResponseBody // Wichtig, da wir kein HTML, sondern nur Status 200 zurückgeben wollen
-    public ResponseEntity<Void> markAsRead(@PathVariable UUID id) {
-        // Hier deinen Service aufrufen
+    @PostMapping("/notification/read/{id}")
+    public String markAsRead(@PathVariable UUID id) {
         Notification notification = notificationService.getNotificationById(id);
         notificationService.setReadStatus(notification, true);
         
-        return ResponseEntity.ok().build();
+        return "redirect:/notifications?selectId=" + id;
+    }
+
+    @PostMapping("/notification/unread/{id}")
+    public String markAsUnread(@PathVariable UUID id) {
+        Notification notification = notificationService.getNotificationById(id);
+        notificationService.setReadStatus(notification, false);
+        
+        return "redirect:/notifications?selectId=" + id;
+    }
+
+    @PostMapping("/notification/delete/{id}")
+    public String deleteNotification(@PathVariable UUID id) {
+        Notification notification = notificationService.getNotificationById(id);
+        notificationService.deleteNotification(notification);
+        
+        return "redirect:/notifications";
     }
     
 }

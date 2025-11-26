@@ -17,6 +17,7 @@ import de.oth.othivity.repository.helper.NotificationRepository;
 
 import org.springframework.context.MessageSource;
 
+import java.util.Comparator;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -84,7 +85,13 @@ public class NotificationServiceImpl implements INotificationService {
     public List<Notification> getNotificaitonsForProfile(Profile profile) {
         if (profile == null) return List.of();
 
-        return notificationRepository.findByProfile(profile);
+            return notificationRepository.findByProfile(profile)
+                .stream()
+                .sorted(
+                    Comparator.comparing(Notification::getIsRead)
+                    .thenComparing(Notification::getCreatedAt, Comparator.reverseOrder())
+                )
+                .toList();
     }
 
     @Override
@@ -98,6 +105,21 @@ public class NotificationServiceImpl implements INotificationService {
             notification.setIsRead(isRead);
             notificationRepository.save(notification);
         }
+    }
+
+    @Override
+    public void deleteNotification(Notification notification) {
+        if (notification != null) {
+            notificationRepository.delete(notification);
+        }
+    }
+
+    @Override
+    public int getCountOfUnreadNotifications(Profile profile) {
+        if (profile != null) {
+            return notificationRepository.countByProfileAndIsReadFalse(profile);
+        }
+        return 0;
     }
 
     public String getSubject(String message) {

@@ -24,4 +24,8 @@ public interface INotificationService {
 
     void setReadStatus(Notification notification, boolean isRead);
 
+    void deleteNotification(Notification notification);
+
+    int getCountOfUnreadNotifications(Profile profile);
+
 }

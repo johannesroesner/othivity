@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head('Benachrichtigungen')}">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-</head>
+<head th:insert="~{layout/head :: head(#{notifications.pageTitle})}"></head>
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='notifications')}"></nav>
 
 <div class="container mx-auto px-6 py-8 grow">
     
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-bold">Benachrichtigungen</h1>
+        <h1 class="text-3xl font-bold" th:text="#{notifications.title}"></h1>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)] min-h-[500px]">
@@ -18,188 +15,89 @@
         <div class="lg:col-span-1 w-full bg-base-200 shadow-xl p-4 rounded-2xl flex flex-col overflow-hidden">
             
             <div class="flex justify-between items-center mb-4 px-2">
-                <p class="text-sm font-semibold text-base-content/70">Posteingang</p>
+                <p class="text-sm font-semibold text-base-content/70" th:text="#{notifications.inbox}">Inbox</p>
                 <span class="badge badge-ghost" th:text="${notifications.size()}">0</span>
             </div>
             
             <div class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                 
-                <th:block th:each="notification, iter : ${notifications}">
-                    
-                    <div th:id="'notif-item-' + ${iter.index}"
-                         th:onclick="'selectNotification(' + ${iter.index} + ')'"
-                         th:attr="data-id=${notification.id},
-                                  data-is-read=${notification.isRead},
-                                  data-subject=${notification.subject},
-                                  data-created=${#temporals.format(notification.createdAt, 'dd.MM.yyyy HH:mm')}"
-                         class="group relative cursor-pointer p-4 rounded-r-xl rounded-l-sm bg-base-100 shadow-sm border-l-4 border-transparent hover:bg-base-300 transition-all duration-200">
-                        
-                        <div class="flex justify-between items-start mb-1 gap-2">
-                            <span class="text-sm truncate pr-2 w-full" 
-                                  th:classappend="${!notification.isRead} ? 'font-bold text-base-content' : 'font-medium text-base-content/70'"
-                                  th:text="${notification.subject}">Betreff</span>
-                            
-                            <span th:if="${!notification.isRead}" class="badge-indicator w-3 h-3 rounded-full bg-primary shrink-0 mt-1"></span>
-                        </div>
-                        
-                        <div class="flex justify-between items-end mt-2">
-                            <span class="text-[10px] uppercase font-bold tracking-wider opacity-50">System</span>
-                            <span class="text-[10px] opacity-50" th:text="${#temporals.format(notification.createdAt, 'dd.MM HH:mm')}">Datum</span>
-                        </div>
-
-                    </div>
-
-                    <div th:id="'notif-content-' + ${iter.index}" class="hidden" th:utext="${notification.message}"></div>
-                    
-                </th:block>
                 <div th:if="${notifications.isEmpty()}" class="text-center py-10 opacity-50">
-                    <p>Keine Nachrichten</p>
+                    <p th:text="#{notifications.noMessages}"></p>
                 </div>
+
+                <a th:each="notification : ${notifications}"
+                   th:href="@{/notifications(selectId=${notification.id})}"
+                   class="group relative block p-4 rounded-r-xl rounded-l-sm shadow-sm border-l-4 transition-all duration-200"
+                   
+                   th:classappend="${selectedNotification != null and selectedNotification.id == notification.id} ? 'border-primary bg-base-200' : 'border-transparent bg-base-100 hover:bg-base-300'">
+                    
+                    <div class="flex justify-between items-start mb-1 gap-2">
+                        <span class="text-sm truncate pr-2 w-full" 
+                              th:classappend="${!notification.isRead} ? 'font-bold text-base-content' : 'font-medium text-base-content/70'"
+                              th:text="${notification.subject}"></span>
+                        
+                        <span th:if="${!notification.isRead}" class="w-3 h-3 rounded-full bg-primary shrink-0 mt-1"></span>
+                    </div>
+                    
+                    <div class="flex justify-between items-end mt-2">
+                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-50" th:text="#{notifications.issuer}"></span>
+                        <span class="text-[10px] opacity-50" th:text="${#temporals.format(notification.createdAt, 'dd.MM HH:mm')}"></span>
+                    </div>
+                </a>
+
             </div>
         </div>
 
 
         <div class="lg:col-span-2 bg-base-200 shadow-xl p-8 rounded-2xl flex flex-col relative">
             
-            <div id="empty-view" class="flex flex-col items-center justify-center h-full opacity-30">
+            <div th:if="${selectedNotification == null}" class="flex flex-col items-center justify-center h-full opacity-30">
                 <span class="text-6xl mb-4">📨</span>
-                <p class="text-xl font-bold">Wähle eine Nachricht</p>
+                <p class="text-xl font-bold" th:text="#{notifications.selectMessage}"></p>
             </div>
 
-            <div id="detail-view" class="hidden flex-col h-full animate-fade-in">
+            <div th:if="${selectedNotification != null}" class="flex flex-col h-full animate-fade-in">
                 
                 <div class="flex items-center gap-4 mb-6 pb-6 border-b border-base-content/10">
-                    <div class="avatar placeholder">
-                        <div class="bg-neutral text-neutral-content rounded-full w-12 h-12 flex items-center justify-center">
-                            <span class="text-xl font-bold">S</span>
-                        </div>
-                    </div>
                     <div>
-                        <h2 class="text-2xl font-bold" id="detail-subject">Lade...</h2>
+                        <h2 class="text-2xl font-bold" th:text="${selectedNotification.subject}"></h2>
                         <p class="text-sm text-base-content/60 mt-1">
-                            Empfangen am <span id="detail-date" class="font-medium">...</span>
+                            Empfangen am <span class="font-medium" th:text="${#temporals.format(selectedNotification.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
                         </p>
                     </div>
                 </div>
 
                 <div class="bg-base-100 p-8 rounded-xl shadow-sm grow overflow-y-auto border border-base-content/5">
-                    <div id="detail-message" class="prose max-w-none text-base leading-relaxed [&_a]:text-primary [&_a]:font-bold [&_a]:underline">
+                    <div class="prose max-w-none text-base leading-relaxed [&_a]:text-primary [&_a]:font-bold [&_a]:underline"
+                         th:utext="${selectedNotification.message}">
                     </div>
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <button class="btn btn-ghost text-error btn-sm" onclick="alert('Löschen...')">Löschen</button>
+                    <form th:action="@{'/notification/delete/' + ${selectedNotification.id}}" method="post">
+                        <button type="submit" class="btn btn-error text-white" th:text="#{notifications.delete}">
+                        </button>
+                    </form>
                     
-                    <button id="btn-mark-read" class="btn btn-primary btn-sm" onclick="markAsRead()">
-                        Als gelesen markieren
-                    </button>
+                    <form th:if="${!selectedNotification.isRead}" 
+                          th:action="@{'/notification/read/' + ${selectedNotification.id}}" 
+                          method="post">
+                        <button type="submit" class="btn btn-primary" th:text="#{notifications.markAsRead}">
+                        </button>
+                    </form>
+                    
+                    <form th:if="${selectedNotification.isRead}" 
+                          th:action="@{'/notification/unread/' + ${selectedNotification.id}}" 
+                          method="post">
+                        <button type="submit" class="btn btn-primary" th:text="#{notifications.markAsUnread}">
+                        </button>
+                    </form>
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-
-<script th:inline="javascript">
-    let currentIdx = null;
-    let currentId = null;
-
-    function selectNotification(index) {
-        // UI RESET
-        document.querySelectorAll('[id^="notif-item-"]').forEach(el => {
-            el.classList.remove('border-primary', 'bg-base-200');
-            el.classList.add('border-transparent', 'bg-base-100');
-        });
-
-        const item = document.getElementById('notif-item-' + index);
-        if(!item) return;
-
-        // UI ACTIVE SETZEN
-        item.classList.remove('border-transparent', 'bg-base-100');
-        item.classList.add('border-primary', 'bg-base-200');
-
-        // DATEN LADEN
-        currentIdx = index;
-        currentId = item.getAttribute('data-id');
-        const subject = item.getAttribute('data-subject');
-        const date = item.getAttribute('data-created');
-        const isRead = item.getAttribute('data-is-read') === 'true';
-        const htmlContent = document.getElementById('notif-content-' + index).innerHTML;
-
-        // DETAIL ANSICHT
-        document.getElementById('empty-view').classList.add('hidden');
-        const detailView = document.getElementById('detail-view');
-        detailView.classList.remove('hidden');
-        detailView.classList.add('flex');
-
-        document.getElementById('detail-subject').textContent = subject;
-        document.getElementById('detail-date').textContent = date;
-        document.getElementById('detail-message').innerHTML = htmlContent;
-
-        // BUTTON CHECK
-        const btn = document.getElementById('btn-mark-read');
-        if(!isRead) {
-            btn.style.display = 'inline-flex';
-            btn.disabled = false;
-            btn.textContent = 'Als gelesen markieren';
-        } else {
-            btn.style.display = 'none';
-        }
-    }
-
-    async function markAsRead() {
-        if(!currentId || currentIdx === null) return;
-
-        // CSRF Token holen
-        const csrfTokenMeta = document.querySelector('meta[name="_csrf"]');
-        const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
-        
-        const headers = { 'Content-Type': 'application/json' };
-        
-        if (csrfTokenMeta && csrfHeaderMeta) {
-            headers[csrfHeaderMeta.content] = csrfTokenMeta.content;
-        }
-
-        try {
-            // BACKEND CALL
-            const response = await fetch('/notification/' + currentId + '/read', {
-                method: 'POST',
-                headers: headers
-            });
-
-            if (response.ok) {
-                // ERFOLG -> UI Updaten
-                updateUiAsRead();
-            } else {
-                // FEHLER
-                console.error("Server Error:", response);
-                alert('Fehler: Konnte nicht gespeichert werden (Status ' + response.status + ').\nExistiert der Controller?');
-            }
-        } catch (error) {
-            console.error('Netzwerkfehler:', error);
-            alert('Netzwerkfehler: Backend nicht erreichbar.');
-        }
-    }
-
-    function updateUiAsRead() {
-        const item = document.getElementById('notif-item-' + currentIdx);
-        item.setAttribute('data-is-read', 'true');
-
-        const dot = item.querySelector('.badge-indicator');
-        if(dot) dot.remove();
-
-        const textSpan = item.querySelector('span[class*="font-bold"]');
-        if(textSpan) {
-            textSpan.classList.remove('font-bold', 'text-base-content');
-            textSpan.classList.add('font-medium', 'text-base-content/70');
-        }
-
-        const btn = document.getElementById('btn-mark-read');
-        btn.textContent = 'Erledigt ✓';
-        btn.disabled = true;
-        setTimeout(() => { btn.style.display = 'none'; }, 800);
-    }
-</script>
 
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>
