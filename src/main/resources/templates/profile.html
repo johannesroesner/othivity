@@ -30,6 +30,13 @@
                     <span th:if="${profile.image == null}" class="text-3xl font-semibold text-base-content/60" th:text="${profile.initials}"></span>
                 </div>
             </div>
+
+            <div th:if="${canMessage}" th:unless="${isOwnProfile}" class="mt-6">
+                <a th:href="@{'/chat/' + ${chatId}}" class="btn btn-primary text-white btn-lg w-full">
+                    <span class="text-xl mr-1">💬</span>
+                    <span th:text="#{profileDetail.sendMessage}"></span>
+                </a>
+            </div>
         </div>
 
         <div class="lg:col-span-2">

@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
     ClubController.class,
     DashboardController.class,
     ProfileController.class,
-    ExplorerController.class
+    ExplorerController.class,
+    ChatController.class,
 })
 public class GlobalControllerAdvice {
 
@@ -27,6 +28,12 @@ public class GlobalControllerAdvice {
     public void addCurrentUsername(HttpSession session, Model model) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) model.addAttribute("currentUsername", profile.getUsername());
+    }
+
+    @ModelAttribute
+    public void addCurrentProfileId(HttpSession session, Model model) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile != null) model.addAttribute("currentProfileId", profile.getId().toString());
     }
 
     @ModelAttribute

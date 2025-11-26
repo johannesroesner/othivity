@@ -9,8 +9,8 @@ import de.oth.othivity.model.enumeration.AccessLevel;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.LocaleResolver;  
 
 import de.oth.othivity.model.main.Club;
@@ -18,16 +18,12 @@ import de.oth.othivity.model.main.Club;
 import java.util.Locale;
 import java.util.UUID;
 
+@AllArgsConstructor
 @Service
 public class SessionServiceImpl implements SessionService {
 
     private final ProfileRepository profileRepository;
     private final LocaleResolver localeResolver;
-
-    public SessionServiceImpl(ProfileRepository profileRepository, LocaleResolver localeResolver) {
-        this.profileRepository = profileRepository;
-        this.localeResolver = localeResolver;
-    }
 
     public Profile getProfileFromSession(HttpSession session) {
         return profileRepository.findById((UUID) session.getAttribute("profileId")).orElse(null);
@@ -93,6 +89,11 @@ public class SessionServiceImpl implements SessionService {
             return profile.getClubs().stream().noneMatch(c -> c.getId().equals(club.getId())) && (club.getAccessLevel().equals(AccessLevel.ON_INVITE));
         }
         return false;
+    }
+
+    @Override
+    public Boolean canMessage(HttpSession session, Profile profile) {
+        return !getProfileFromSession(session).getId().equals(profile.getId());
     }
 
     @Override
