@@ -148,13 +148,16 @@
 
             </div>
 
-            <!-- Message Form -->
-            <form th:action="@{'/chat/send/' + ${chat.urlId}}" method="post"
-                  class="flex p-4 border-t border-gray-300" th:object="${chatMessageDto}">
+            <form th:if="${chat != null}"
+                  th:action="@{'/chat/send/' + ${chat.urlId}}"
+                  method="post"
+                  class="flex p-4 border-t border-gray-300"
+                  th:object="${chatMessageDto}">
 
                 <input type="text" th:field="*{content}"
                        class="flex-grow border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none"
-                       th:classappend="${#fields.hasErrors('content')} ? 'input-error'" required/>
+                       th:classappend="${#fields.hasErrors('content')} ? 'input-error'"
+                       required/>
 
                 <button type="submit" class="bg-primary text-white px-4 py-2 rounded-r-lg">
                     Senden

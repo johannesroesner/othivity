@@ -7,6 +7,7 @@ import de.oth.othivity.model.chat.ChatId;
 import de.oth.othivity.model.chat.ChatMessage;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ChatService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.validator.ChatMessageDtoValidator;
@@ -32,6 +33,20 @@ public class ChatController {
     @InitBinder("chatMessageDto")
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(chatMessageDtoValidator);
+    }
+
+    @GetMapping("/chat")
+    public String getChatOverview(HttpSession session, Model model) {
+
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        if (currentProfile == null) return "redirect:/login";
+
+        model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
+        model.addAttribute("chat", null);
+        model.addAttribute("chatMessageDto", new ChatMessageDto());
+        model.addAttribute("returnUrl", "/dashboard");
+
+        return "chat";
     }
 
     @GetMapping("/chat/{id}")
