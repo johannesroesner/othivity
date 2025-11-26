@@ -81,9 +81,6 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setPhone(profileDto.getPhone());
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);
-
-        // SBM entferne test
-        notificationService.sendNotification(NotificationType.EMAIL, profile, profile, "notification.profile.updated");
     }
 
     @Override
