@@ -20,4 +20,7 @@ public interface ChatService {
 
     void addMessageToChat(ChatMessageDto chatMessageDto, Chat chat, Profile currentProfile);
 
+    void setMessagesReadTrue(Chat chat, HttpSession session);
+
+    long getUnreadMessageCountForProfile(HttpSession session);
 }

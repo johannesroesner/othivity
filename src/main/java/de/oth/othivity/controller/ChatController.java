@@ -35,7 +35,7 @@ public class ChatController {
         binder.addValidators(chatMessageDtoValidator);
     }
 
-    @GetMapping("/chat")
+    @GetMapping("/chats")
     public String getChatOverview(HttpSession session, Model model) {
 
         Profile currentProfile = sessionService.getProfileFromSession(session);
@@ -53,10 +53,13 @@ public class ChatController {
     public String getChat(HttpSession session, Model model, @PathVariable("id") String id) {
         ChatId chatId = ChatId.fromUrlString(id);
         if(chatId == null) return "redirect:/dashbaord";
+        Chat chat = chatService.getOrCreateChatById(chatId);
 
         model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
         model.addAttribute("chatMessageDto", new ChatMessageDto());
-        model.addAttribute("chat", chatService.getOrCreateChatById(chatId));
+        model.addAttribute("chat", chat);
+
+        chatService.setMessagesReadTrue(chat, session);
         return "chat";
     }
 

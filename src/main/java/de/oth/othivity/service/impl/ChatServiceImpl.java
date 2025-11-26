@@ -5,6 +5,7 @@ import de.oth.othivity.model.chat.Chat;
 import de.oth.othivity.model.chat.ChatId;
 import de.oth.othivity.model.chat.ChatMessage;
 import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.repository.chat.ChatMessageRepository;
 import de.oth.othivity.repository.chat.ChatRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
@@ -26,6 +27,7 @@ public class ChatServiceImpl implements ChatService {
     private final SessionService sessionService;
 
     private final ChatRepository chatRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final ProfileRepository profileRepository;
 
     @Override
@@ -72,6 +74,7 @@ public class ChatServiceImpl implements ChatService {
         ChatMessage message = new ChatMessage();
         message.setContent(chatMessageDto.getContent());
         message.setChat(chat);
+        message.setRead(false);
         message.setTimestamp(LocalDateTime.now());
 
         message.setSender(currentProfile);
@@ -80,6 +83,29 @@ public class ChatServiceImpl implements ChatService {
         chat.getMessages().add(message);
 
         chatRepository.save(chat);
+    }
+
+    @Override
+    public void setMessagesReadTrue(Chat chat, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if(profile==null) return;
+
+        List<ChatMessage> unreadMessages = chatMessageRepository.findByChatAndReceiverAndIsReadFalse(chat, profile);
+        for (ChatMessage message : unreadMessages) {
+            message.setRead(true);
+        }
+
+        if (!unreadMessages.isEmpty()) {
+            chatMessageRepository.saveAll(unreadMessages);
+        }
+
+    }
+
+    @Override
+    public long getUnreadMessageCountForProfile(HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if(profile==null) return 0;
+        return chatMessageRepository.countByReceiverAndIsReadFalse(profile);
     }
 
 }

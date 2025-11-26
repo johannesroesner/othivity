@@ -1,6 +1,7 @@
 package de.oth.othivity.controller;
 
 import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.service.ChatService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.service.INotificationService;
 
@@ -28,6 +29,7 @@ public class GlobalControllerAdvice {
 
     private final SessionService sessionService;
     private final INotificationService notificationService;
+    private final ChatService chatService;
 
     @ModelAttribute
     public void addCurrentUsername(HttpSession session, Model model) {
@@ -65,5 +67,10 @@ public class GlobalControllerAdvice {
             count = notificationService.getCountOfUnreadNotifications(profile);
         }
         model.addAttribute("unreadNotificationCount", count);
+    }
+
+    @ModelAttribute
+    public void addUnreadChatCount(HttpSession session, HttpServletRequest request, Model model) {
+        model.addAttribute("unreadMessageCount", chatService.getUnreadMessageCountForProfile(session));
     }
 }

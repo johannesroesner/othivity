@@ -33,6 +33,10 @@ public class ChatMessage {
     @JoinColumn(name = "receiver_id", nullable = false)
     private Profile receiver;
 
+    // receiver perspective
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
+
     @Column(nullable = false, length = 500)
     private String content;
 
