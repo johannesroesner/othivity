@@ -3,6 +3,7 @@ package de.oth.othivity.service.impl;
 import lombok.AllArgsConstructor;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.repository.helper.NotificationRepository;
 
 import org.springframework.context.MessageSource;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -32,25 +35,23 @@ public class NotificationServiceImpl implements INotificationService {
     @Override
     public <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField, Profile issuer) {
         // get profile language
-        String message = messageSource.getMessage(messageField, null, Locale.GERMAN);
+        String content = messageSource.getMessage(messageField, null, Locale.GERMAN);
 
-        String subject = "";
         String formattedMessage = "";
         String formattedMessageWithLink = "";
 
-        String[] parts = message.split("\\|", 2);
-        subject = parts.length > 0 ? parts[0] : "";
-        message = parts.length > 1 ? parts[1] : "";
+        String subject = getSubject(content);
+        String message = getMessage(content);
 
         if (issuer == null) {
             formattedMessage = MessageFormat.format(message, recipient.getFirstName(), getName(entity));
             formattedMessageWithLink = MessageFormat.format(message, recipient.getFirstName(), setLink(entity));
         } else {
             formattedMessage = MessageFormat.format(message, recipient.getFirstName(), issuer.getFirstName() + " " + issuer.getLastName(), getName(entity));
-            formattedMessageWithLink = MessageFormat.format(message, setLink(recipient), setLink(issuer), setLink(entity));
+            formattedMessageWithLink = MessageFormat.format(message, recipient.getFirstName(), setLink(issuer), setLink(entity));
         }
 
-        createNotification(recipient, formattedMessageWithLink);
+        createNotification(recipient, subject, formattedMessage);
 
         if(type == NotificationType.SMS) {
             // send email - forrmattedMessage
@@ -71,11 +72,42 @@ public class NotificationServiceImpl implements INotificationService {
     }
 
     @Override
-    public void createNotification(Profile profile, String message) {
+    public void createNotification(Profile profile, String subject, String message) {
         Notification notification = new Notification();
         notification.setProfile(profile);
+        notification.setSubject(subject);
         notification.setMessage(message);
         notificationRepository.save(notification);
+    }
+
+    @Override
+    public List<Notification> getNotificaitonsForProfile(Profile profile) {
+        if (profile == null) return List.of();
+
+        return notificationRepository.findByProfile(profile);
+    }
+
+    @Override
+    public Notification getNotificationById(UUID id) {
+        return notificationRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void setReadStatus(Notification notification, boolean isRead) {
+        if (notification != null) {
+            notification.setIsRead(isRead);
+            notificationRepository.save(notification);
+        }
+    }
+
+    public String getSubject(String message) {
+        String[] parts = message.split("\\|", 2);
+        return parts.length > 0 ? parts[0] : "";
+    }
+
+    public String getMessage(String message) {
+        String[] parts = message.split("\\|", 2);
+        return parts.length > 1 ? parts[1] : "";
     }
 
     private <T> String getName(T entity) {

@@ -2,6 +2,7 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.SessionService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
     ClubController.class,
     DashboardController.class,
     ProfileController.class,
-    ExplorerController.class
+    ExplorerController.class,
+    NotificationController.class
 })
 public class GlobalControllerAdvice {
 
