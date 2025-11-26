@@ -5,19 +5,28 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.service.SessionService;
+import de.oth.othivity.model.enumeration.AccessLevel;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.LocaleResolver;  
 
+import de.oth.othivity.model.main.Club;
+
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
 public class SessionServiceImpl implements SessionService {
 
     private final ProfileRepository profileRepository;
+    private final LocaleResolver localeResolver;
 
-    public SessionServiceImpl(ProfileRepository profileRepository) {
+    public SessionServiceImpl(ProfileRepository profileRepository, LocaleResolver localeResolver) {
         this.profileRepository = profileRepository;
+        this.localeResolver = localeResolver;
     }
 
     public Profile getProfileFromSession(HttpSession session) {
@@ -34,6 +43,10 @@ public class SessionServiceImpl implements SessionService {
             Profile currentProfile = getProfileFromSession(session);
             if (currentProfile == null) return false;
             return currentProfile.getId().equals(((Profile) entity).getId()) || currentProfile.getRole().equals(Role.MODERATOR);
+        }else if (entity instanceof Club) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+            return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(((Club) entity).getId())|| profile.getRole().equals(Role.MODERATOR));
         }
         return false;
     }
@@ -48,6 +61,10 @@ public class SessionServiceImpl implements SessionService {
             Profile currentProfile = getProfileFromSession(session);
             if (currentProfile == null) return false;
             return currentProfile.getId().equals(((Profile) entity).getId()) || currentProfile.getRole().equals(Role.MODERATOR);
+        }else if (entity instanceof Club) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+            return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(((Club) entity).getId())|| profile.getRole().equals(Role.MODERATOR));
         }
         return false;
     }
@@ -60,6 +77,20 @@ public class SessionServiceImpl implements SessionService {
             boolean isNotCreator = !activity.getStartedBy().getId().equals(profile.getId());
             boolean hasNotJoined = activity.getTakePart().stream().noneMatch(p -> p.getId().equals(profile.getId()));
             return isNotCreator && hasNotJoined && activity.getTakePart().size() < activity.getGroupSize();
+        }else if( entity instanceof Club club) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+            return profile.getClubs().stream().noneMatch(c -> c.getId().equals(club.getId()))&& (club.getAccessLevel().equals(AccessLevel.OPEN));
+        }
+        return false;
+    }
+
+    @Override
+    public <T> Boolean canJoinOnInvite(HttpSession session, T entity) {
+        if (entity instanceof Club club) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+            return profile.getClubs().stream().noneMatch(c -> c.getId().equals(club.getId())) && (club.getAccessLevel().equals(AccessLevel.ON_INVITE));
         }
         return false;
     }
@@ -74,6 +105,10 @@ public class SessionServiceImpl implements SessionService {
             boolean isParticipant = activity.getTakePart().stream().anyMatch(p -> p.getId().equals(profile.getId()));
 
             return !isCreator && isParticipant;
+        }else if( entity instanceof Club club) {
+            Profile profile = getProfileFromSession(session);
+            if (profile == null) return false;
+            return profile.getClubs().stream().anyMatch(c -> c.getId().equals(club.getId()));
         }
         return false;
     }
@@ -98,4 +133,13 @@ public class SessionServiceImpl implements SessionService {
         return returnUrl;
     }
 
+    @Override
+    public void updateLocaleResolverWithProfileLanguage(HttpServletRequest request, HttpServletResponse response, Profile profile) {
+        if (profile == null || profile.getLanguage() == null) {
+            return;
+        }
+        String languageCode = profile.getLanguage().getLocaleCode();
+        Locale targetLocale = Locale.forLanguageTag(languageCode);
+        localeResolver.setLocale(request, response, targetLocale);
+    }
 }

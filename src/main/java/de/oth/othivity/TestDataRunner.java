@@ -1,9 +1,11 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.helper.*;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.User;
+import de.oth.othivity.repository.helper.ClubJoinRequestRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
@@ -25,11 +27,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Address;
 
 @Configuration
 public class TestDataRunner {
+
+    private final ClubJoinRequestRepository clubJoinRequestRepository;
+
+    TestDataRunner(ClubJoinRequestRepository clubJoinRequestRepository) {
+        this.clubJoinRequestRepository = clubJoinRequestRepository;
+    }
 
     @Bean
     CommandLineRunner loadTestData(ProfileRepository profileRepository,
@@ -52,8 +59,8 @@ public class TestDataRunner {
             profile.setUsername("gaudiSepp");
             profile.setEmail("a@a.com");
             profile.setAboutMe("Ich bin ein Testprofil.");
-            profile.setPhone("0123456789");
             profile.setRole(Role.USER);
+            profile.setLanguage(Language.ENGLISH);
             profile.setUser(user);
             profileRepository.save(profile);
 
@@ -68,26 +75,43 @@ public class TestDataRunner {
             profile2.setUsername("moesef");
             profile2.setEmail("sebastian@example.com");
             profile2.setAboutMe("Ich bin ein Testprofil.");
-            profile2.setPhone("0123456789");
             profile2.setRole(Role.USER);
+            profile2.setLanguage(Language.ENGLISH);
             profile2.setUser(user2);
             profileRepository.save(profile2);
 
             User user3 = new User();
-            user3.setEmail("Sebastian@moritz-furth.de");
-            user3.setPassword(passwordEncoder.encode("jklöjklö"));
+            user3.setEmail("moritz@example.com");
+            user3.setPassword(passwordEncoder.encode("password"));
             userRepository.save(user3);
 
             Profile profile3 = new Profile();
-            profile3.setFirstName("Sebastian");
-            profile3.setLastName("Moritz");
-            profile3.setUsername("moe");
-            profile3.setEmail("sebastian@moritz-furth.de");
+            profile3.setFirstName("Moritz");
+            profile3.setLastName("Semmelmann");
+            profile3.setUsername("moritz");
+            profile3.setEmail("moritz@example.com");
             profile3.setAboutMe("Ich bin ein Testprofil.");
-            profile3.setPhone("0123456789");
-            profile3.setRole(Role.MODERATOR);
+            profile3.setRole(Role.USER);
+            profile3.setLanguage(Language.ENGLISH);
             profile3.setUser(user3);
             profileRepository.save(profile3);
+
+
+            User user4 = new User();
+            user4.setEmail("Sebastian@moritz-furth.de");
+            user4.setPassword(passwordEncoder.encode("jklöjklö"));
+            userRepository.save(user4);
+
+            Profile profile4 = new Profile();
+            profile4.setFirstName("Sebastian");
+            profile4.setLastName("Moritz");
+            profile4.setUsername("moe");
+            profile4.setEmail("sebastian@moritz-furth.de");
+            profile4.setAboutMe("Ich bin ein Testprofil.");
+            profile4.setRole(Role.MODERATOR);
+            profile4.setLanguage(Language.ENGLISH);
+            profile4.setUser(user4);
+            profileRepository.save(profile4);
 
             Activity activity = new Activity();
             activity.setTitle("Soonest Activity");
@@ -118,11 +142,27 @@ public class TestDataRunner {
 
             activityRepository.save(activity);
 
+            Club club6 = new Club();
+            club6.setName("Invite Only Club");
+            club6.setDescription("Ein weiterer exklusiver Club, der nur auf Einladung beitretbar ist.");
+            club6.setAccessLevel(AccessLevel.ON_INVITE);
+            Address address6 = new Address();
+            address6.setStreet("Exclusive Blvd");
+            address6.setHouseNumber("13");
+            address6.setCity("Selectville");
+            address6.setPostalCode("44444");
+            club6.setAddress(address6);
+            club6.getMembers().add(profile3);
+            club6.getAdmins().add(profile3);
+            clubRepository.save(club6);
+
+
             Activity otherActivity = new Activity();
             otherActivity.setTitle("Closest Activity");
             otherActivity.setDescription("This activity is very close to OTH Regensburg.");
             otherActivity.setDate(LocalDateTime.now().plusDays(3));
             otherActivity.setGroupSize(10);
+            otherActivity.setOrganizer(club6);
             otherActivity.setStartedBy(profile2);
             // Teilnehmerliste korrekt setzen
             List<Profile> participants2 = new ArrayList<>();
@@ -148,6 +188,35 @@ public class TestDataRunner {
 
             activityRepository.save(otherActivity);
 
+            Club club = new Club();
+            club.setName("Test Club");
+            club.setDescription("Dies ist ein Test Club.");
+            club.setAccessLevel(AccessLevel.OPEN);
+            Address address = new Address();
+            address.setStreet("Musterstraße");
+            address.setHouseNumber("1");
+            address.setCity("Musterstadt");
+            address.setPostalCode("12345");
+            club.setAddress(address);
+            club.getMembers().add(profile);
+            club.getMembers().add(profile2);
+            club.getMembers().add(profile3);
+            club.getAdmins().add(profile3);
+            clubRepository.save(club);
+
+            Club club2 = new Club();
+            club2.setName("Exclusive Club");
+            club2.setDescription("Ein exklusiver Club nur für geladene Gäste.");
+            club2.setAccessLevel(AccessLevel.CLOSED);
+            Address address4 = new Address();
+            address4.setStreet("Exclusive Street");
+            address4.setHouseNumber("99");
+            address4.setCity("Elite City");
+            address4.setPostalCode("54321");
+            club2.setAddress(address4);
+            club2.getMembers().add(profile);
+            club2.getMembers().add(profile2);
+            club2.getAdmins().add(profile);
             Activity bestActivity = new Activity();
             bestActivity.setTitle("Best Mix Activity");
             bestActivity.setDescription("Good balance of distance and time.");
@@ -177,6 +246,62 @@ public class TestDataRunner {
             bestActivity.setAddress(address3);
 
             activityRepository.save(bestActivity);
+            clubRepository.save(club2);
+
+            Club club3 = new Club();
+            club3.setName("Open Community");
+            club3.setDescription("Ein offener Club für alle Interessierten.");
+            club3.setAccessLevel(AccessLevel.OPEN);
+            Address address8 = new Address();
+            address8.setStreet("Brunhuberstraße");
+            address8.setHouseNumber("14");
+            address8.setCity("Regensburg");
+            address8.setPostalCode("93053");
+            address8.setCountry("Germany");
+            address8.setLatitude(49.0085);
+            address8.setLongitude(12.1105);
+            club3.setAddress(address8);
+            club3.getMembers().add(profile);
+            club3.getMembers().add(profile2);
+            club3.getAdmins().add(profile2);
+            clubRepository.save(club3);
+
+            Club club4 = new Club();
+            club4.setName("Social Hub");
+            club4.setDescription("Ein sozialer Club für gemeinsame Aktivitäten.");
+            club4.setAccessLevel(AccessLevel.CLOSED);
+            Address address7 = new Address();
+            address7.setStreet("Social Avenue");
+            address7.setHouseNumber("17");
+            address7.setCity("Friendlytown");
+            address7.setPostalCode("22222");
+            club4.setAddress(address7);
+            club4.getMembers().add(profile);
+            club4.getMembers().add(profile2);
+            club4.getMembers().add(profile3);
+            club4.getAdmins().add(profile);
+            club4.getAdmins().add(profile2);
+            clubRepository.save(club4);
+
+            Club club5 = new Club();
+            club5.setName("Only on invite Club");
+            club5.setDescription("Ein exklusiver Club, der nur auf Einladung beitretbar ist.");
+            club5.setAccessLevel(AccessLevel.ON_INVITE);
+            Address address5 = new Address();
+            address5.setStreet("Invite Lane");
+            address5.setHouseNumber("7");
+            address5.setCity("Invitetown");
+            address5.setPostalCode("33333");
+            club5.setAddress(address5);
+            club5.getMembers().add(profile);
+            club5.getAdmins().add(profile);
+            clubRepository.save(club5);
+
+            ClubJoinRequest joinRequest = new ClubJoinRequest();
+            joinRequest.setClub(club6);
+            joinRequest.setProfile(profile);
+            joinRequest.setText("Ich würde gerne diesem exklusiven Club beitreten.");
+            clubJoinRequestRepository.save(joinRequest);
         };
     }
 }

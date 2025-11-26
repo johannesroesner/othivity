@@ -68,10 +68,10 @@
                 </div>
                 
                 <!-- Phone -->
-                <div class="space-y-1" th:if="${profile.phone != null and !profile.phone.isEmpty()}">
+                <div class="space-y-1" th:if="${profile.phone != null and #strings.isEmpty(profile.phone.number) == false}">
                     <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.phone}"></p>
                     <div class="bg-base-100 p-4 rounded-xl shadow-sm">
-                        <span class="text-base font-medium" th:text="${profile.phone}"></span>
+                        <span class="text-base font-medium" th:text="${profile.phone.number}"></span>
                     </div>
                 </div>
 

@@ -40,7 +40,7 @@
                             <span class="text-base font-medium" th:text="${profile.firstName}"></span>
                         </div>
                     </div>
-                    
+
                     <!-- Last Name (Read-only) -->
                     <div class="space-y-1">
                         <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.lastName}"></p>
@@ -56,7 +56,7 @@
                             <span class="text-base font-medium" th:text="${profile.username}"></span>
                         </div>
                     </div>
-                    
+
                     <!-- Email (Read-only) -->
                     <div class="space-y-1">
                         <p class="text-sm font-semibold text-base-content/70" th:text="#{profileDetail.email}"></p>
@@ -64,11 +64,12 @@
                             <span class="text-base font-medium" th:text="${profile.email}"></span>
                         </div>
                     </div>
-                    
+
                     <!-- Phone (Editable) -->
                     <div class="space-y-1">
                         <label class="label"><span class="label-text text-sm font-semibold text-base-content/70" th:text="#{profileDetail.phone}"></span></label>
-                        <input type="text" th:field="*{phone}" class="input input-bordered w-full" />
+                        <input type="text" th:field="*{phone.number}" class="input input-bordered w-full" th:classappend="${#fields.hasErrors('phone.number')} ? 'input-error'" />
+                        <p th:if="${#fields.hasErrors('phone.number')}" th:errors="*{phone.number}" class="text-error text-xs mt-1"></p>
                     </div>
 
                     <!-- About Me (Editable) -->

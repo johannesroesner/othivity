@@ -23,6 +23,7 @@ import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.validator.LoginDtoValidator;
 import de.oth.othivity.validator.RegisterDtoValidator;
 import de.oth.othivity.service.IUserService;
+import java.util.Locale;
 
 @AllArgsConstructor
 @Controller
@@ -55,13 +56,13 @@ public class UserController {
     }
 
     @PostMapping("/process-register")
-    public String registerUserAccount(@ModelAttribute("registerDto") @Valid RegisterDto registerDto, BindingResult bindingResult) {
+    public String registerUserAccount(@ModelAttribute("registerDto") @Valid RegisterDto registerDto, BindingResult bindingResult, HttpServletRequest request) {
 
         if (bindingResult.hasErrors()) {
             return "register";
         }
 
-        userService.registerNewUserAccount(registerDto);
+        userService.registerNewUserAccount(registerDto, request.getLocale());
         return "redirect:/login?registered";
     }
 }

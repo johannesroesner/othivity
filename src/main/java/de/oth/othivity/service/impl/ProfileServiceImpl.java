@@ -2,6 +2,8 @@ package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.enumeration.NotificationType;
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -44,8 +47,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile createProfileFromUser(User user, RegisterDto registerDto) {
-        // Implementation here
+    public Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale) {
         Profile profile = new Profile();
         profile.setUser(user);
         profile.setFirstName(registerDto.getFirstName());
@@ -53,7 +55,23 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(registerDto.getEmail());
         profile.setRole(Role.USER);
-        
+        if (clientLocale != null) {
+            String langCode = clientLocale.getLanguage();
+            switch (langCode) {
+                case "de":
+                    profile.setLanguage(Language.GERMAN);
+                    break;
+                case "fr":
+                    profile.setLanguage(Language.FRENCH);
+                    break;
+                case "es":
+                    profile.setLanguage(Language.SPANISH);
+                    break;
+                default:
+                    profile.setLanguage(Language.ENGLISH);
+                    break;
+            }
+        }
         return profileRepository.save(profile);
     }
 
@@ -66,6 +84,12 @@ public class ProfileServiceImpl implements ProfileService {
 
         // SBM entferne test
         notificationService.sendNotification(NotificationType.EMAIL, profile, profile, "notification.profile.updated");
+    }
+
+    @Override
+    public void updateProfileLanguage(Profile profile, Language language) {
+        profile.setLanguage(language);
+        profileRepository.save(profile);
     }
 
     @Override
@@ -103,5 +127,17 @@ public class ProfileServiceImpl implements ProfileService {
     public void deleteProfileImage(Profile profile) {
         profile.setImage(null);
         profileRepository.save(profile);
+    }
+
+    @Override
+    public ProfileDto profileToDto(Profile profile) {
+        ProfileDto profileDto = new ProfileDto();
+        if (profile.getPhone() == null){
+            profileDto.setPhone(new Phone());
+        } else {
+            profileDto.setPhone(profile.getPhone());
+        }
+        profileDto.setAboutMe(profile.getAboutMe());
+        return profileDto;
     }
 }

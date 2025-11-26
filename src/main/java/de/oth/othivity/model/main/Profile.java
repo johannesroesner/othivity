@@ -3,10 +3,13 @@ package de.oth.othivity.model.main;
 import de.oth.othivity.listener.ProfileEntityListener;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Image;
+import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ProfileReport;
+import de.oth.othivity.model.helper.ClubJoinRequest;
 import de.oth.othivity.model.security.User;
+import de.oth.othivity.model.enumeration.Language;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile implements HasImage {
+
     // profile attributes
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -46,6 +50,10 @@ public class Profile implements HasImage {
     @Column(length = 3000)
     private String aboutMe;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Language language;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
@@ -54,6 +62,8 @@ public class Profile implements HasImage {
     @JoinColumn(name = "notification_id")
     private List<Notification> notifications = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "phone_id")
     private String phone;
 
     @OneToOne(optional = false)
@@ -78,4 +88,7 @@ public class Profile implements HasImage {
     public String getInitials() {
         return (firstName.substring(0,1) + lastName.substring(0,1)).toUpperCase();
     }
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClubJoinRequest> clubJoinRequests = new ArrayList<>();
 }

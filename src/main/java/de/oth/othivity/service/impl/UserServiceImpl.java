@@ -5,6 +5,9 @@ import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.service.IUserService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.model.main.Profile;
+
+import java.util.Locale;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +25,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public User registerNewUserAccount(RegisterDto registerDto) {
+    public User registerNewUserAccount(RegisterDto registerDto, Locale locale) {
 
         User user = new User();
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
@@ -30,7 +33,7 @@ public class UserServiceImpl implements IUserService {
         
         User savedUser = userRepository.save(user);
         
-        Profile profile = profileService.createProfileFromUser(savedUser, registerDto);
+        Profile profile = profileService.createProfileFromUser(savedUser, registerDto, locale);
 
         savedUser.setProfile(profile);
         userRepository.save(savedUser);

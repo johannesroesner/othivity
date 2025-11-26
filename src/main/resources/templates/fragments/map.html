@@ -16,7 +16,7 @@
         const mapElement = document.getElementById('map');
         const mapContainer = document.getElementById('map-container');
 
-        if (latitude === 0 && longitude === 0) {
+        if (!latitude || !longitude) {
             mapElement.style.display = 'none';
 
             mapContainer.innerHTML = `

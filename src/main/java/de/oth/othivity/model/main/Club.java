@@ -5,6 +5,7 @@ import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ClubReport;
+import de.oth.othivity.model.helper.ClubJoinRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,9 @@ public class Club implements HasImage {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Activity> organizedActivities = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(
             name = "club_members",
@@ -61,4 +65,7 @@ public class Club implements HasImage {
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClubReport> reports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClubJoinRequest> joinRequests = new ArrayList<>();
 }
