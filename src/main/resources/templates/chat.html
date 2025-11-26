@@ -17,7 +17,7 @@
 
             <div class="overflow-y-auto">
                 <ul>
-                    <li th:each="c : ${allChats}" class="p-4 border-b border-gray-200 hover:bg-gray-100" th:classappend="${c != null and #strings.equals(c.urlId, chat.urlId)} ? 'bg-primary/10 font-semibold'">
+                    <li th:each="c : ${allChats}" class="p-4 border-b border-gray-200 hover:bg-gray-100" th:classappend="${#strings.equals(c?.urlId, chat?.urlId)} ? 'bg-primary/10 font-semibold'">
                         <a th:href="@{'/chat/' + ${c.urlId}}" class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-white font-bold overflow-hidden">
                                 <img th:if="${ #strings.equals(c.profileA.id, currentProfileId) ? c.profileB.image != null : c.profileA.image != null}" th:src="${#strings.equals(c.profileA.id, currentProfileId)? c.profileB.image.url: c.profileA.image.url}" class="w-full h-full object-cover"/>
@@ -27,6 +27,7 @@
                                 <span th:text="${#strings.equals(c.profileA.id, currentProfileId)? c.profileB.username: c.profileA.username}" class="font-semibold"></span>
                                 <span th:text="${c.latestMessage != null ? c.latestMessage.content : #messages.msg('chat.noMessages')}" class="text-sm text-gray-500 truncate"></span>
                             </div>
+                            <div th:if="${c.unreadStatusForCurrentUser}" class="flex-shrink-0 ml-auto w-2 h-2 rounded-full bg-red-500"></div>
                         </a>
                     </li>
                 </ul>
@@ -38,7 +39,7 @@
             <div class="flex items-center gap-3 p-4 border-b border-gray-300" th:if="${chat != null}">
                 <div class="w-12 h-12 rounded-full flex items-center justify-center bg-gray-300 text-white font-bold overflow-hidden">
                     <img th:if="${#strings.equals(chat.profileA.id, currentProfileId)? chat.profileB.image != null: chat.profileA.image != null}" th:src="${#strings.equals(chat.profileA.id, currentProfileId)? chat.profileB.image.url: chat.profileA.image.url}" class="w-full h-full object-cover"/>
-                    <span th:unless="${#strings.equals(chat.profileA.id, currentProfileId) ? chat.profileB.image != null: chat.profileA.image != null}" th:text="${#strings.equals(chat.profileA.id, currentProfileId)? chat.profileB.initials: chat.profileA.initials}"></span>
+                    <span th:unless="${#strings.equals(chat.profileA.id, currentProfileId)? chat.profileB.image != null: chat.profileA.image != null}" th:text="${#strings.equals(chat.profileA.id, currentProfileId)? chat.profileB.initials: chat.profileA.initials}"></span>
                 </div>
                 <h2 class="text-xl font-bold" th:text="${#strings.equals(chat.profileA.id, currentProfileId)? chat.profileB.username : chat.profileA.username}"></h2>
             </div>

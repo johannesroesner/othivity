@@ -38,6 +38,9 @@ public class ChatServiceImpl implements ChatService {
         List<Chat> allChats = new ArrayList<>();
         if (profile.getChatAsA() != null) allChats.addAll(profile.getChatAsA());
         if (profile.getChatAsB() != null) allChats.addAll(profile.getChatAsB());
+        for (Chat chat : allChats) {
+            chat.setUnreadStatusForCurrentUser(hasUnreadMessages(chat, profile));
+        }
         return allChats;
     }
 
@@ -106,6 +109,17 @@ public class ChatServiceImpl implements ChatService {
         Profile profile = sessionService.getProfileFromSession(session);
         if(profile==null) return 0;
         return chatMessageRepository.countByReceiverAndIsReadFalse(profile);
+    }
+
+    @Override
+    public boolean hasUnreadMessages(Chat chat, Profile profile) {;
+        if(profile==null || chat == null || chat.getMessages() == null) return false;
+
+        return chat.getMessages().stream()
+                .anyMatch(message ->
+                        !message.getSender().getId().equals(profile.getId()) &&
+                                !message.isRead()
+       );
     }
 
 }

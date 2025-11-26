@@ -23,4 +23,6 @@ public interface ChatService {
     void setMessagesReadTrue(Chat chat, HttpSession session);
 
     long getUnreadMessageCountForProfile(HttpSession session);
+
+    boolean hasUnreadMessages(Chat chat, Profile profile);
 }

@@ -36,6 +36,9 @@ public class Chat {
     private List<ChatMessage> messages = new ArrayList<>();
 
     // view helper
+    @Transient
+    boolean unreadStatusForCurrentUser;
+
     public String getUrlId(){
         return id.getProfileAId() + "_" + id.getProfileBId();
     }
