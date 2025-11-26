@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{layout/head :: head(#{dashboard.pageTitle})}"></head>
+<head th:insert="~{layout/head :: head(#{explorer.pageTitle})}"></head>
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='explorer')}"></nav>
 
@@ -25,35 +25,39 @@
 <div class="container mx-auto px-6 py-8 grow relative overflow-hidden">
 <!-- content start -->
 
-<button onclick="rotateCards()" class="absolute right-4 top-64 btn btn-circle btn-ghost z-20 hover:bg-base-200 shadow-lg bg-base-100/50 backdrop-blur-sm">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-    </svg>
-</button>
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold" th:text="#{explorer.title}"></h1>
+    </div>
 
-<div class="flex flex-wrap justify-center gap-10 py-10">
-    <div th:replace="~{fragments/card-stack :: cardStack('Best Mix', ${bestMixActivities}, 'bestmix-card')}"></div>
-    <div th:replace="~{fragments/card-stack :: cardStack('Soonest', ${soonestActivities}, 'soonest-card')}"></div>
-    <div th:replace="~{fragments/card-stack :: cardStack('Closest', ${closestActivities}, 'closest-card')}"></div>
-</div>
+    <button onclick="rotateCards()" class="absolute right-4 top-64 btn btn-circle btn-ghost z-20 hover:bg-base-200 shadow-lg bg-base-100/50 backdrop-blur-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+    </button>
 
-<div class="mt-12">
-    <div class="mb-2">
-        <div role="tablist" class="tabs tabs-border flex space-x-2">
-            <a role="tab" class="tab tab-active" id="bestMixTab">Best Mix</a>
-            <a role="tab" class="tab" id="soonestTab">Soonest</a>
-            <a role="tab" class="tab" id="closestTab">Closest</a>
+    <div class="flex flex-wrap justify-center gap-10 py-10">
+        <div th:replace="~{fragments/card-stack :: cardStack(#{explorer.bestmix}, ${bestMixActivities}, #{explorer.bestmix})}"></div>
+        <div th:replace="~{fragments/card-stack :: cardStack(#{explorer.soonest}, ${soonestActivities}, #{explorer.soonest})}"></div>
+        <div th:replace="~{fragments/card-stack :: cardStack(#{explorer.closest}, ${closestActivities}, #{explorer.closest})}"></div>
+    </div>
+
+    <div class="mt-12">
+        <div class="mb-2">
+            <div role="tablist" class="tabs tabs-border flex space-x-2">
+                <a role="tab" class="tab tab-active" id="bestMixTab" th:text="#{explorer.bestmix}"></a>
+                <a role="tab" class="tab" id="soonestTab" th:text="#{explorer.soonest}"></a>
+                <a role="tab" class="tab" id="closestTab" th:text="#{explorer.closest}"></a>
+            </div>
         </div>
-    </div>
 
-    <div class="flex justify-end mb-2">
-        <input type="text" id="activitySearch" placeholder="Search activities..." class="input input-bordered input-sm w-full max-w-xs" onkeyup="filterActivities()" />
+        <div class="flex justify-end mb-2">
+            <input type="text" id="activitySearch" placeholder="Search activities..." class="input input-bordered input-sm w-full max-w-xs" onkeyup="filterActivities()" />
+        </div>
+        
+        <div id="bestMixTable" th:insert="~{fragments/activity-table :: activityTable(title='Best Mix', activities=${bestMixActivities})}"></div>
+            <div id="soonestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Soonest', activities=${soonestActivities})}"></div>
+        <div id="closestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Closest', activities=${closestActivities})}"></div>
     </div>
-    
-    <div id="bestMixTable" th:insert="~{fragments/activity-table :: activityTable(title='Best Mix', activities=${bestMixActivities})}"></div>
-    <div id="soonestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Soonest', activities=${soonestActivities})}"></div>
-    <div id="closestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(title='Closest', activities=${closestActivities})}"></div>
-</div>
 
 <!-- content end -->
 </div>
