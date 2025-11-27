@@ -5,9 +5,11 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.model.weather.WeatherSnapshot;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IWeatherService;
 import de.oth.othivity.validator.ActivityDtoValidator;
 import de.oth.othivity.validator.ImageUploadValidator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +32,7 @@ public class ActivityController {
     private final ActivityService activityService;
     private final ProfileService profileService;
     private final SessionService sessionService;
+    private final IWeatherService weatherService;
 
     private final ActivityDtoValidator activityDtoValidator;
     private final ImageUploadValidator imageUploadValidator;
@@ -82,6 +85,18 @@ public class ActivityController {
         model.addAttribute("leaveAble", sessionService.canLeave(session, activity));
         model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
         model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
+        try {
+        WeatherSnapshot weather = weatherService.getForecastForTime(
+            activity.getAddress().getLatitude(), 
+            activity.getAddress().getLongitude(), 
+            activity.getDate()
+        );
+        model.addAttribute("weather", weather);
+    } catch (Exception e) {
+        model.addAttribute("weather", null);
+    }
+
+    model.addAttribute("activity", activity);
         return "activity-detail";
     }
 

@@ -154,7 +154,9 @@
             </div>
         </div>
 
-        <div class="bg-base-200 lg:col-span-2 shadow-2xl h-full rounded-2xl flex items-center justify-center text-6xl">☀️</div>
+        <div class="lg:col-span-2 h-full">
+            <div th:replace="~{fragments/weather :: weatherCard(${weather})}"></div>
+        </div>
 
 
         <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
