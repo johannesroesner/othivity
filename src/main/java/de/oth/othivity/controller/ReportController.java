@@ -112,36 +112,36 @@ public class ReportController {
     public String acceptClubReport(@PathVariable("reportId") String reportId) {
         UUID reportUuid = UUID.fromString(reportId);
         reportService.acceptClubReport(reportUuid);
-        return "redirect:/reports";
+        return "redirect:/reports?tab=club";
     }
     @PostMapping("/reports/accept/activity/{reportId}")
     public String acceptActivityReport(@PathVariable("reportId") String reportId) {
         UUID reportUuid = UUID.fromString(reportId);
         reportService.acceptActivityReport(reportUuid);
-        return "redirect:/reports";
+        return "redirect:/reports?tab=activity";
     }
     @PostMapping("/reports/accept/profile/{reportId}")
     public String acceptProfileReport(@PathVariable("reportId") String reportId) {
         UUID reportUuid = UUID.fromString(reportId);
         reportService.acceptProfileReport(reportUuid);
-        return "redirect:/reports";
+        return "redirect:/reports?tab=profile";
     }
     @PostMapping("/reports/reject/club/{reportId}")
     public String rejectClubReport(@PathVariable("reportId") String reportId) {
         UUID reportUuid = UUID.fromString(reportId);
         reportService.rejectClubReport(reportUuid);
-        return "redirect:/reports";
+        return "redirect:/reports?tab=club";
     }
     @PostMapping("/reports/reject/activity/{reportId}")
     public String rejectActivityReport(@PathVariable("reportId") String reportId) {
         UUID reportUuid = UUID.fromString(reportId);
         reportService.rejectActivityReport(reportUuid);
-        return "redirect:/reports";
+        return "redirect:/reports?tab=activity";
     }
     @PostMapping("/reports/reject/profile/{reportId}")
     public String rejectProfileReport(@PathVariable("reportId") String reportId) {
         UUID reportUuid = UUID.fromString(reportId);
         reportService.rejectProfileReport(reportUuid);
-        return "redirect:/reports";
+        return "redirect:/reports?tab=profile";
     }
 }

@@ -6,6 +6,7 @@ import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.report.ActivityReportRepository;
 import de.oth.othivity.repository.report.ProfileReportRepository;
+import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.service.IReportService;
 import lombok.AllArgsConstructor;
 import de.oth.othivity.model.report.ActivityReport;
@@ -29,6 +30,7 @@ public class ReportServiceImpl implements IReportService {
     private final ClubReportRepository clubReportRepository;
     private final ActivityReportRepository activityReportRepository;
     private final ProfileReportRepository profileReportRepository;
+    private final INotificationService notificationService;
 
     @Override
     public List<ClubReport> getAllClubReports() {
@@ -71,26 +73,45 @@ public class ReportServiceImpl implements IReportService {
     }
     @Override
     public void acceptClubReport(UUID reportId) {
+
+        Club club = clubReportRepository.findById(reportId).orElseThrow().getClub();
+        Profile profile = clubReportRepository.findById(reportId).orElseThrow().getIssuer();
+        notificationService.sendNotification(null, club, profile,"notification.report.club.accepted");
         clubReportRepository.deleteById(reportId);
     }
     @Override
     public void acceptActivityReport(UUID reportId) {
+        Activity activity = activityReportRepository.findById(reportId).orElseThrow().getActivity();
+        Profile profile = activityReportRepository.findById(reportId).orElseThrow().getIssuer();
+        notificationService.sendNotification(null, activity, profile,"notification.report.activity.accepted");
         activityReportRepository.deleteById(reportId);
     }
     @Override
     public void acceptProfileReport(UUID reportId) {
+        Profile reportedProfile = profileReportRepository.findById(reportId).orElseThrow().getProfile();
+        Profile issuerProfile = profileReportRepository.findById(reportId).orElseThrow().getIssuer();
+        notificationService.sendNotification(null, reportedProfile, issuerProfile,"notification.report.profile.accepted");
         profileReportRepository.deleteById(reportId);
     }
     @Override
     public void rejectClubReport(UUID reportId) {
+        Club club = clubReportRepository.findById(reportId).orElseThrow().getClub();
+        Profile profile = clubReportRepository.findById(reportId).orElseThrow().getIssuer();
+        notificationService.sendNotification(null, club, profile,"notification.report.club.rejected");
         clubReportRepository.deleteById(reportId);
     }
     @Override
     public void rejectActivityReport(UUID reportId) {
+        Activity activity = activityReportRepository.findById(reportId).orElseThrow().getActivity();
+        Profile profile = activityReportRepository.findById(reportId).orElseThrow().getIssuer();
+        notificationService.sendNotification(null, activity, profile,"notification.report.activity.rejected");
         activityReportRepository.deleteById(reportId);
     }
     @Override
     public void rejectProfileReport(UUID reportId) {
+        Profile reportedProfile = profileReportRepository.findById(reportId).orElseThrow().getProfile();
+        Profile issuerProfile = profileReportRepository.findById(reportId).orElseThrow().getIssuer();
+        notificationService.sendNotification(null, reportedProfile, issuerProfile,"notification.report.profile.rejected");
         profileReportRepository.deleteById(reportId);
     }
     @Override

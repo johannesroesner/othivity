@@ -224,32 +224,35 @@
     const activityReports = document.getElementById("activityReports");
     const profileReports = document.getElementById("profileReports");
 
-    clubTab.onclick = () => {
-        clubTab.classList.add("tab-active");
-        activityTab.classList.remove("tab-active");
-        profileTab.classList.remove("tab-active");
-        clubReports.classList.remove("hidden");
-        activityReports.classList.add("hidden");
-        profileReports.classList.add("hidden");
-    };
-
-    activityTab.onclick = () => {
-        activityTab.classList.add("tab-active");
-        clubTab.classList.remove("tab-active");
-        profileTab.classList.remove("tab-active");
-        activityReports.classList.remove("hidden");
-        clubReports.classList.add("hidden");
-        profileReports.classList.add("hidden");
-    };
-
-    profileTab.onclick = () => {
-        profileTab.classList.add("tab-active");
+    function activateTab(tab) {
         clubTab.classList.remove("tab-active");
         activityTab.classList.remove("tab-active");
-        profileReports.classList.remove("hidden");
+        profileTab.classList.remove("tab-active");
         clubReports.classList.add("hidden");
         activityReports.classList.add("hidden");
-    };
+        profileReports.classList.add("hidden");
+        if (tab === "club") {
+            clubTab.classList.add("tab-active");
+            clubReports.classList.remove("hidden");
+        } else if (tab === "activity") {
+            activityTab.classList.add("tab-active");
+            activityReports.classList.remove("hidden");
+        } else if (tab === "profile") {
+            profileTab.classList.add("tab-active");
+            profileReports.classList.remove("hidden");
+        }
+    }
+
+    clubTab.onclick = () => activateTab("club");
+    activityTab.onclick = () => activateTab("activity");
+    profileTab.onclick = () => activateTab("profile");
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get("tab");
+    if (tabParam === "club" || tabParam === "activity" || tabParam === "profile") {
+        activateTab(tabParam);
+    } else {
+        activateTab("activity");
+    }
 </script>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>

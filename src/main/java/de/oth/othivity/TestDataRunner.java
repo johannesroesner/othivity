@@ -315,9 +315,15 @@ public class TestDataRunner {
             // --- Test Reports ---
             ClubReport clubReport = new ClubReport();
             clubReport.setClub(club);
-            clubReport.setIssuer(profile2);
+            clubReport.setIssuer(profile3);
             clubReport.setComment("Test-Report für Club.");
             clubReportRepository.save(clubReport);
+
+            ClubReport clubReport2 = new ClubReport();
+            clubReport2.setClub(club);
+            clubReport2.setIssuer(profile3);
+            clubReport2.setComment("Test-Report für Club.");
+            clubReportRepository.save(clubReport2);
 
             ActivityReport activityReport = new ActivityReport();
             activityReport.setActivity(activity);
@@ -325,15 +331,9 @@ public class TestDataRunner {
             activityReport.setComment("Test-Report für Aktivität.");
             activityReportRepository.save(activityReport);
 
-            ProfileReport profileReport = new ProfileReport();
-            profileReport.setProfile(profile);
-            profileReport.setIssuer(profile4);
-            profileReport.setComment("Test-Report für Profil.");
-            profileReportRepository.save(profileReport);
-
             ActivityReport activityReport2 = new ActivityReport();
             activityReport2.setActivity(otherActivity);
-            activityReport2.setIssuer(profile2);
+            activityReport2.setIssuer(profile3);
             activityReport2.setComment("Test-Report für Aktivität2 mit langem Text um das Text Fenster zu testen uwgeoffgwouegf zowugefougwo ef ugwo egfo wgeo fzgwe ozfgwou egzfoue wg zfouzg wfzgwo fugw oeufh oweuf hpwehfi ohuw eofi hOLU.");
             activityReportRepository.save(activityReport2);
 
@@ -342,6 +342,18 @@ public class TestDataRunner {
             activityReport3.setIssuer(profile4);
             activityReport3.setComment("Test-Report für Aktivität3");
             activityReportRepository.save(activityReport3);
+
+            ProfileReport profileReport = new ProfileReport();
+            profileReport.setProfile(profile);
+            profileReport.setIssuer(profile3);
+            profileReport.setComment("Test-Report für Profil.");
+            profileReportRepository.save(profileReport);
+            
+            ProfileReport profileReport2 = new ProfileReport();
+            profileReport2.setProfile(profile);
+            profileReport2.setIssuer(profile3);
+            profileReport2.setComment("Test-Report für Profil.");
+            profileReportRepository.save(profileReport2);
         };
     }
 }
