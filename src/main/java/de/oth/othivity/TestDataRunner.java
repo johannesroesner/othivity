@@ -91,7 +91,7 @@ public class TestDataRunner {
             profile3.setUsername("moritz");
             profile3.setEmail("moritz@example.com");
             profile3.setAboutMe("Ich bin ein Testprofil.");
-            profile3.setRole(Role.USER);
+            profile3.setRole(Role.MODERATOR);
             profile3.setLanguage(Language.ENGLISH);
             profile3.setUser(user3);
             profileRepository.save(profile3);

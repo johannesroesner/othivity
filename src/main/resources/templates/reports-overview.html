@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head('Reports Overview')}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='reports')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+    <h1 class="text-3xl font-bold mb-6">Reports Overview</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
+        <div class="lg:col-span-3 mb-8 lg:mb-0">
+            <div class="flex justify-between items-center mb-6">
+                <div role="tablist" class="tabs tabs-border flex space-x-2">
+                    <a role="tab" class="tab tab-active" id="clubTab">Club Reports</a>
+                    <a role="tab" class="tab" id="activityTab">Activity Reports</a>
+                    <a role="tab" class="tab" id="profileTab">Profile Reports</a>
+                </div>
+            </div>
+
+            <!-- Club Reports Table -->
+            <div id="clubTable">
+                <h2 class="text-xl font-semibold mb-3">Club Reports</h2>
+                <div class="overflow-x-auto rounded-xl shadow">
+                    <table class="table w-full">
+                        <thead>
+                        <tr class="bg-base-200">
+                            <th>Issuer</th>
+                            <th>Comment</th>
+                            <th>Club Name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="report : ${clubReports}">
+                            <td th:text="${report.issuer.username}"></td>
+                            <td th:text="${report.comment}"></td>
+                            <td th:text="${report.club.name}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Activity Reports Table -->
+            <div id="activityTable" class="hidden">
+                <h2 class="text-xl font-semibold mb-3">Activity Reports</h2>
+                <div class="overflow-x-auto rounded-xl shadow">
+                    <table class="table w-full">
+                        <thead>
+                        <tr class="bg-base-200">
+                            <th>Issuer</th>
+                            <th>Comment</th>
+                            <th>Activity Name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="report : ${activityReports}">
+                            <td th:text="${report.issuer.username}"></td>
+                            <td th:text="${report.comment}"></td>
+                            <td th:text="${report.activity.title}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Profile Reports Table -->
+            <div id="profileTable" class="hidden">
+                <h2 class="text-xl font-semibold mb-3">Profile Reports</h2>
+                <div class="overflow-x-auto rounded-xl shadow">
+                    <table class="table w-full">
+                        <thead>
+                        <tr class="bg-base-200">
+                            <th>Issuer</th>
+                            <th>Comment</th>
+                            <th>Profile Username</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="report : ${profileReports}">
+                            <td th:text="${report.issuer.username}"></td>
+                            <td th:text="${report.comment}"></td>
+                            <td th:text="${report.profile.username}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- content end -->
+</div>
+<script th:inline="javascript">
+    const clubTab = document.getElementById("clubTab");
+    const activityTab = document.getElementById("activityTab");
+    const profileTab = document.getElementById("profileTab");
+    const clubTable = document.getElementById("clubTable");
+    const activityTable = document.getElementById("activityTable");
+    const profileTable = document.getElementById("profileTable");
+
+    clubTab.onclick = () => {
+        clubTab.classList.add("tab-active");
+        activityTab.classList.remove("tab-active");
+        profileTab.classList.remove("tab-active");
+        clubTable.classList.remove("hidden");
+        activityTable.classList.add("hidden");
+        profileTable.classList.add("hidden");
+    };
+
+    activityTab.onclick = () => {
+        activityTab.classList.add("tab-active");
+        clubTab.classList.remove("tab-active");
+        profileTab.classList.remove("tab-active");
+        activityTable.classList.remove("hidden");
+        clubTable.classList.add("hidden");
+        profileTable.classList.add("hidden");
+    };
+
+    profileTab.onclick = () => {
+        profileTab.classList.add("tab-active");
+        clubTab.classList.remove("tab-active");
+        activityTab.classList.remove("tab-active");
+        profileTable.classList.remove("hidden");
+        clubTable.classList.add("hidden");
+        activityTable.classList.add("hidden");
+    };
+</script>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>

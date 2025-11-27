@@ -12,6 +12,10 @@
 
         <!-- Buttons -->
         <div class="ml-auto flex gap-4">
+            <!-- Report Button -->
+            <a th:href="@{'/reports/create/club/' + ${club.id}}" class="btn btn-error">
+                <span th:text="#{clubDetail.reportButton}">Report</span>
+            </a>
             <!-- Join Requests Button -->
             <a th:if="${editMode and inviteOnly}" th:href="@{'/clubs/join-requests/' + ${club.id}}" class="btn btn-info">
                 <span th:text="#{clubDetail.joinRequests}"></span>
