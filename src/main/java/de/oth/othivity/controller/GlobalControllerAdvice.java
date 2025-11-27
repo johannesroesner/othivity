@@ -1,6 +1,7 @@
 package de.oth.othivity.controller;
 
 import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.service.ChatService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.service.INotificationService;
 
@@ -20,17 +21,26 @@ import org.springframework.web.bind.annotation.ModelAttribute;
     DashboardController.class,
     ProfileController.class,
     ExplorerController.class,
+    ChatController.class,
+    ExplorerController.class,
     NotificationController.class
 })
 public class GlobalControllerAdvice {
 
     private final SessionService sessionService;
     private final INotificationService notificationService;
+    private final ChatService chatService;
 
     @ModelAttribute
     public void addCurrentUsername(HttpSession session, Model model) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) model.addAttribute("currentUsername", profile.getUsername());
+    }
+
+    @ModelAttribute
+    public void addCurrentProfileId(HttpSession session, Model model) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile != null) model.addAttribute("currentProfileId", profile.getId().toString());
     }
 
     @ModelAttribute
@@ -57,5 +67,10 @@ public class GlobalControllerAdvice {
             count = notificationService.getCountOfUnreadNotifications(profile);
         }
         model.addAttribute("unreadNotificationCount", count);
+    }
+
+    @ModelAttribute
+    public void addUnreadChatCount(HttpSession session, HttpServletRequest request, Model model) {
+        model.addAttribute("unreadMessageCount", chatService.getUnreadMessageCountForProfile(session));
     }
 }

@@ -1,5 +1,6 @@
 package de.oth.othivity.controller;
 
+import de.oth.othivity.service.ChatService;
 import de.oth.othivity.validator.ProfileDtoValidator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -31,6 +32,7 @@ public class ProfileController {
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
+    private final ChatService chatService;
 
     @InitBinder("profileDto")
     protected void initBinder(WebDataBinder binder) {
@@ -46,9 +48,13 @@ public class ProfileController {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
+
         model.addAttribute("profile", profile);
         model.addAttribute("isOwnProfile", currentProfile.getId().equals(profile.getId()));
 
+        model.addAttribute("chatId", chatService.buildChatId(profile, currentProfile));
+
+        model.addAttribute("canMessage", sessionService.canMessage(session,profile));
         model.addAttribute("canDelete", sessionService.canDelete(session, profile));
         model.addAttribute("canUpdate", sessionService.canUpdate(session, profile));
 
