@@ -10,4 +10,6 @@ public interface IUserService {
 
     User registerNewUserAccount(RegisterDto registerDto , Locale locale);
 
+    User getUserByEmail(String email);
+
 }

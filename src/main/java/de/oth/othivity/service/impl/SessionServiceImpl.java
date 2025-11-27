@@ -29,8 +29,18 @@ public class SessionServiceImpl implements SessionService {
         this.localeResolver = localeResolver;
     }
 
+    @Override
     public Profile getProfileFromSession(HttpSession session) {
-        return profileRepository.findById((UUID) session.getAttribute("profileId")).orElse(null);
+        // 1. ID aus der Session holen
+        UUID profileId = (UUID) session.getAttribute("profileId");
+
+        // 2. WICHTIG: Prüfen ob sie null ist!
+        if (profileId == null) {
+            return null; // Wenn keine ID da ist, geben wir einfach "nichts" zurück, statt abzustürzen
+        }
+
+        // 3. Erst jetzt die Datenbank fragen
+        return profileRepository.findById(profileId).orElse(null);
     }
 
     @Override
