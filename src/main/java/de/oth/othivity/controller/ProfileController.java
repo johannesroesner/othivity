@@ -151,7 +151,7 @@ public class ProfileController {
     }
     
     @PostMapping("/profile/username/update")
-    public String updateUsername(@ModelAttribute UsernameDto usernameDto, BindingResult bindingResult, Model model, HttpSession session) {
+    public String updateUsername(@ModelAttribute UsernameDto usernameDto, BindingResult bindingResult, Model model, HttpSession session , HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return "setup";
         }
@@ -162,7 +162,7 @@ public class ProfileController {
             // Weiterleitung zu Login oder Fehlerseite
             return "redirect:/login";
         }
-
+        profileService.updateProfileLanguage(profile, request.getLocale());
         profileService.setUsername(profile, usernameDto.getUsername());
 
         return "redirect:/dashboard";

@@ -17,6 +17,7 @@ import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ClubRepository;
+import de.oth.othivity.model.enumeration.Language;
 
 import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.IEmailService;
@@ -65,21 +66,7 @@ public class ProfileServiceImpl implements ProfileService {
         }
         profile.setRole(Role.USER);
         if (clientLocale != null) {
-            String langCode = clientLocale.getLanguage();
-            switch (langCode) {
-                case "de":
-                    profile.setLanguage(Language.GERMAN);
-                    break;
-                case "fr":
-                    profile.setLanguage(Language.FRENCH);
-                    break;
-                case "es":
-                    profile.setLanguage(Language.SPANISH);
-                    break;
-                default:
-                    profile.setLanguage(Language.ENGLISH);
-                    break;
-            }
+            profile.setLanguage(localeToLanguage(clientLocale));
         }
         return profileRepository.save(profile);
     }
@@ -95,6 +82,12 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void updateProfileLanguage(Profile profile, Language language) {
         profile.setLanguage(language);
+        profileRepository.save(profile);
+    }
+
+    @Override
+    public void updateProfileLanguage(Profile profile, Locale clientLocale) {
+        profile.setLanguage(localeToLanguage(clientLocale));
         profileRepository.save(profile);
     }
 
@@ -168,5 +161,17 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public boolean isSetupComplete(Profile profile) {
         return profile.getSetupComplete();
+    }
+
+    private Language localeToLanguage(Locale locale) {
+        if (locale == null) return Language.ENGLISH;
+        String languageTag = locale.getLanguage();
+        return switch (languageTag) {
+            case "de" -> Language.GERMAN;
+            case "en" -> Language.ENGLISH;
+            case "fr" -> Language.FRENCH;
+            case "es" -> Language.SPANISH;
+            default -> Language.ENGLISH;
+        };
     }
 }

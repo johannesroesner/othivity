@@ -24,6 +24,8 @@ public interface ProfileService {
     
     void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage);
 
+    void updateProfileLanguage(Profile profile, Locale clientLocale);
+
     void updateProfileLanguage(Profile profile, Language language);
 
     boolean isUsernameTaken(String userName);

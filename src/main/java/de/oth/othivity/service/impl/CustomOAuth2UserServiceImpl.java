@@ -39,7 +39,7 @@ public class CustomOAuth2UserServiceImpl extends OidcUserService {
 
             RegisterDto registerDto = new RegisterDto();
             registerDto.setEmail(emailAddress);
-            registerDto.setUsername(emailAddress.split("@")[0]);
+            registerDto.setUsername(UUID.randomUUID().toString());
             registerDto.setFirstName(name != null && name.contains(" ") ? name.split(" ")[0] : name);
             registerDto.setLastName(name != null && name.contains(" ") ? name.substring(name.indexOf(" ") + 1) : "");
             registerDto.setPassword(UUID.randomUUID().toString());
