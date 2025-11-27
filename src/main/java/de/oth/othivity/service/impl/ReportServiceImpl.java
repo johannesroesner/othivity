@@ -93,4 +93,11 @@ public class ReportServiceImpl implements IReportService {
     public void rejectProfileReport(UUID reportId) {
         profileReportRepository.deleteById(reportId);
     }
+    @Override
+    public int countReports() {
+        int clubReports = (int) clubReportRepository.count();
+        int activityReports = (int) activityReportRepository.count();
+        int profileReports = (int) profileReportRepository.count();
+        return clubReports + activityReports + profileReports;
+    }
 }

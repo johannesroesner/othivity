@@ -22,11 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.validation.BindingResult;
 import de.oth.othivity.dto.ReportDto;
 import de.oth.othivity.service.SessionService;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
-
-
+import de.oth.othivity.model.enumeration.Role;
 
 @AllArgsConstructor
 @Controller
@@ -41,6 +37,10 @@ public class ReportController {
     @GetMapping("/reports")
     public String getMethodName(Model model, HttpSession session) {
 
+        Profile profile = sessionService.getProfileFromSession(session);
+        if(profile == null || !profile.getRole().equals(Role.MODERATOR)) {
+            return "redirect:/";
+        }
         model.addAttribute("clubReports", reportService.getAllClubReports());
         model.addAttribute("activityReports", reportService.getAllActivityReports());
         model.addAttribute("profileReports", reportService.getAllProfileReports());

@@ -33,10 +33,12 @@ public interface IReportService {
     void acceptActivityReport(UUID reportId);
 
     void acceptProfileReport(UUID reportId);
-    
+
     void rejectClubReport(UUID reportId);
 
     void rejectActivityReport(UUID reportId);
 
     void rejectProfileReport(UUID reportId);
+
+    int countReports();
 }
