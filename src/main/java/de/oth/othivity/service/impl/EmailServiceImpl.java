@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import de.oth.othivity.service.IEmailService;
 import jakarta.mail.internet.MimeMessage;
 import de.oth.othivity.model.main.Profile;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service

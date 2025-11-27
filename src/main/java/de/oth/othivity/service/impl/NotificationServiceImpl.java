@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.stereotype.Service;
+
+import de.oth.othivity.model.helper.VerificationToken;
+import de.oth.othivity.repository.helper.VerificationTokenRepository;
 import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.model.enumeration.NotificationType;
 import de.oth.othivity.model.main.Profile;
@@ -23,6 +26,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Service
 public class NotificationServiceImpl implements INotificationService {
+
+    private final VerificationTokenRepository verificationTokenRepository;
 
     private final MessageSource messageSource;
     private final NotificationRepository notificationRepository;
@@ -120,6 +125,17 @@ public class NotificationServiceImpl implements INotificationService {
             return notificationRepository.countByProfileAndIsReadFalse(profile);
         }
         return 0;
+    }
+
+    @Override
+    public String sendVerificationEmail(Profile recipient) {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(token, recipient);
+        verificationTokenRepository.save(verificationToken);
+
+        emailService.sendEmail(recipient, "Verification Email", "Please verify your email using this token: " + token);
+
+        return token;
     }
 
     public String getSubject(String message) {

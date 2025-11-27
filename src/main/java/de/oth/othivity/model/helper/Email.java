@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.UUID;
 
+import de.oth.othivity.model.main.Profile;
+
 @Entity
 @Table(name = "email")
 @Getter

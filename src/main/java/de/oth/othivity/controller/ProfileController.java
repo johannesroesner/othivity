@@ -1,6 +1,10 @@
 package de.oth.othivity.controller;
 
 import de.oth.othivity.validator.ProfileDtoValidator;
+import de.oth.othivity.validator.EmailVerificationDtoValidator;
+
+import java.util.Calendar;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +26,12 @@ import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.dto.UsernameDto;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.enumeration.Language;
+import de.oth.othivity.model.helper.VerificationToken;
+import de.oth.othivity.repository.helper.VerificationTokenRepository;
+import de.oth.othivity.dto.EmailVerificationDto;
+import de.oth.othivity.service.INotificationService;
+
+
 
 
 @AllArgsConstructor
@@ -30,9 +40,12 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final SessionService sessionService;
+    private final INotificationService notificationService;
+    private final VerificationTokenRepository tokenRepository;
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
+    private final EmailVerificationDtoValidator emailVerificationDtoValidator;
 
     @InitBinder("profileDto")
     protected void initBinder(WebDataBinder binder) {
@@ -167,4 +180,58 @@ public class ProfileController {
 
         return "redirect:/dashboard";
     }
+
+    @GetMapping("/verify-email")
+    public String verifyEmail(Model model, HttpSession session) {
+
+        model.addAttribute("emailVerificationDto", new EmailVerificationDto());
+
+        notificationService.sendVerificationEmail(sessionService.getProfileFromSession(session));
+
+        return "verify-email";
+    }
+    
+
+    @PostMapping("/profile/email/verify")
+    public String verifyUser(@ModelAttribute EmailVerificationDto emailVerificationDto, Model model, HttpSession session) {
+
+        VerificationToken verificationToken = tokenRepository.findByToken(emailVerificationDto.getToken());
+        Profile profile = sessionService.getProfileFromSession(session);
+
+        if (emailVerificationDto.getToken() != null) {
+            System.out.println("Original token: '" + emailVerificationDto.getToken() + "'");
+            //emailVerificationDto.setToken(emailVerificationDto.getToken().trim()); 
+        }else {
+            model.addAttribute("message", "Token darf nicht leer sein.");
+            System.out.println("Token is null");
+            return "verify-email";
+        }
+
+        
+        if (verificationToken == null) {
+            model.addAttribute("message", "Ungültiger Token.");
+            System.out.println("Invalid token");
+            return "verify-email";
+        }
+
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            model.addAttribute("message", "Token ist abgelaufen.");
+            System.out.println("Token expired");
+            return "verify-email";
+        }
+
+        if (verificationToken.getProfile() == null || !verificationToken.getProfile().getId().equals(profile.getId())) {
+            model.addAttribute("message", "Token gehört nicht zum aktuellen Benutzer.");
+            System.out.println("Token does not belong to current user");
+            return "verify-email";
+        }
+
+        profileService.setVerificationForEmail(profile);
+
+        tokenRepository.delete(verificationToken);
+
+        return "redirect:/dashboard";
+    }
+    
 }
