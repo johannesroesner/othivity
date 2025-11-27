@@ -314,7 +314,7 @@ public class TestDataRunner {
                     "Schillerstraße", "Goethestraße", "Ahornweg", "Lindenweg", "Kirchplatz"
             };
 
-            for (int i = 0; i < 15; i++) {
+            for (int i = 0; i < 2000; i++) {
                 Activity a = new Activity();
                 a.setTitle("Generated Activity " + (i + 1));
                 a.setDescription("Automatically generated test activity #" + (i + 1));

@@ -5,7 +5,7 @@
 
         <form method="get" th:action="@{/activities}" class="flex items-center gap-2">
             <input type="hidden" name="activeTab" th:value="${activeTab}"/>
-            <span class="text-xs text-gray-500">Zeige:</span>
+            <span class="text-xs text-gray-500" th:text="#{activityOverview.Show}"></span>
             <select name="size" class="select select-bordered select-xs" onchange="this.form.submit()">
                 <option value="5" th:selected="${size == 5}">5</option>
                 <option value="10" th:selected="${size == 10}">10</option>
@@ -48,42 +48,30 @@
     <div th:if="${activities.totalPages > 1}" class="flex justify-center my-4">
         <div class="join">
 
-            <a class="join-item btn btn-square"
-               th:classappend="${activities.first} ? 'btn-disabled'"
-               th:href="@{/activities(
-                   ${pageParam}=${activities.number - 1},
-                   activeTab=${activeTab},
-                   size=${size}
-               )}">
+            <a class="join-item btn btn-square" th:classappend="${activities.first} ? 'btn-disabled'" th:href="@{/activities(${pageParam}=0,activeTab=${activeTab},size=${size})}">
                 «
+            </a>
+
+            <a class="join-item btn btn-square" th:classappend="${activities.first} ? 'btn-disabled'" th:href="@{/activities(${pageParam}=${activities.number - 1},activeTab=${activeTab},size=${size})}">
+                ‹
             </a>
 
             <th:block th:with="maxDisplayPages=5, startPage=${T(java.lang.Math).max(-2, activities.number - 2)}, endPage=${T(java.lang.Math).min(activities.totalPages + 2, activities.number + 2)}, actualButtonsCount=${T(java.lang.Math).min(activities.totalPages, endPage - startPage + 1)}">
 
                 <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">
-                    <input  th:if="${i >= 0 && i < activities.totalPages}"
-                            class="join-item btn btn-square"
-                            th:classappend="${i == activities.number} ? 'btn-active bg-primary text-white'"
-                            type="radio"
-                            name="options"
-                            th:aria-label="${i + 1}"
-                            th:checked="${i == activities.number}"
-                            th:onclick="|window.location.href='@{/activities((${pageParam})=${i}, activeTab=${activeTab}, size=${size})}'|"
+                    <input  th:if="${i >= 0 && i < activities.totalPages}" class="join-item btn btn-square" th:classappend="${i == activities.number} ? 'btn-active bg-primary text-white'" type="radio" name="options" th:aria-label="${i + 1}" th:checked="${i == activities.number}" th:onclick="|window.location.href='@{/activities((${pageParam})=${i}, activeTab=${activeTab}, size=${size})}'|"
                     />
                     <span th:unless="${i >= 0 && i < activities.totalPages}" class="join-item btn btn-square"></span>
                 </th:block>
             </th:block>
 
-            <a class="join-item btn btn-square"
-               th:classappend="${activities.last} ? 'btn-disabled'"
-               th:href="@{/activities(
-                   ${pageParam}=${activities.number + 1},
-                   activeTab=${activeTab},
-                   size=${size}
-               )}">
-                »
+            <a class="join-item btn btn-square" th:classappend="${activities.last} ? 'btn-disabled'" th:href="@{/activities(${pageParam}=${activities.number + 1},activeTab=${activeTab},size=${size})}">
+                ›
             </a>
 
+            <a class="join-item btn btn-square" th:classappend="${activities.last} ? 'btn-disabled'" th:href="@{/activities(${pageParam}=${activities.totalPages - 1},activeTab=${activeTab},size=${size})}">
+                »
+            </a>
         </div>
     </div>
 </div>
