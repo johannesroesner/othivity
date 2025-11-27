@@ -1,8 +1,21 @@
-<div th:fragment="activityTable(title, activities)">
+<div th:fragment="activityTable(title, activities, pageParam, activeTab, size)">
 
-    <h2 class="text-xl font-semibold mb-3" th:text="${title}"></h2>
+    <div class="flex justify-between items-center mb-3">
+        <h2 class="text-xl font-semibold" th:text="${title}"></h2>
 
-    <div class="overflow-x-auto rounded-xl shadow-2xl">
+        <form method="get" th:action="@{/activities}" class="flex items-center gap-2">
+            <input type="hidden" name="activeTab" th:value="${activeTab}"/>
+            <span class="text-xs text-gray-500">Zeige:</span>
+            <select name="size" class="select select-bordered select-xs" onchange="this.form.submit()">
+                <option value="5" th:selected="${size == 5}">5</option>
+                <option value="10" th:selected="${size == 10}">10</option>
+                <option value="20" th:selected="${size == 20}">20</option>
+                <option value="50" th:selected="${size == 50}">50</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl shadow-2xl mb-4">
         <table class="table w-full">
             <thead>
             <tr class="bg-base-200">
@@ -14,22 +27,63 @@
                 <th></th>
             </tr>
             </thead>
-
             <tbody>
-            <tr th:each="a : ${activities}">
+            <tr th:each="a : ${activities.content}">
                 <td th:text="${a.title}"></td>
                 <td><span th:each="tag : ${a.tags}" th:text="${tag.emoji} + ' '"></span></td>
                 <td th:text="${#temporals.format(a.date, 'dd.MM.yyyy')}"></td>
                 <td th:text="${a.timeString}"></td>
                 <td th:text="${a.participantStatus}"></td>
                 <td>
-                    <a class="btn btn-primary btn-xs"
-                       th:href="@{'/activities/' + ${a.id}}">
-                        Details
-                    </a>
+                    <a class="btn btn-primary btn-xs" th:href="@{'/activities/' + ${a.id}}">Details</a>
                 </td>
+            </tr>
+            <tr th:if="${activities.empty}">
+                <td colspan="6" class="text-center italic text-gray-500">Keine Aktivitäten gefunden.</td>
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <div th:if="${activities.totalPages > 1}" class="flex justify-center my-4">
+        <div class="join">
+
+            <a class="join-item btn btn-square"
+               th:classappend="${activities.first} ? 'btn-disabled'"
+               th:href="@{/activities(
+                   ${pageParam}=${activities.number - 1},
+                   activeTab=${activeTab},
+                   size=${size}
+               )}">
+                «
+            </a>
+
+            <th:block th:with="maxDisplayPages=5, startPage=${T(java.lang.Math).max(-2, activities.number - 2)}, endPage=${T(java.lang.Math).min(activities.totalPages + 2, activities.number + 2)}, actualButtonsCount=${T(java.lang.Math).min(activities.totalPages, endPage - startPage + 1)}">
+
+                <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">
+                    <input  th:if="${i >= 0 && i < activities.totalPages}"
+                            class="join-item btn btn-square"
+                            th:classappend="${i == activities.number} ? 'btn-active bg-primary text-white'"
+                            type="radio"
+                            name="options"
+                            th:aria-label="${i + 1}"
+                            th:checked="${i == activities.number}"
+                            th:onclick="|window.location.href='@{/activities((${pageParam})=${i}, activeTab=${activeTab}, size=${size})}'|"
+                    />
+                    <span th:unless="${i >= 0 && i < activities.totalPages}" class="join-item btn btn-square"></span>
+                </th:block>
+            </th:block>
+
+            <a class="join-item btn btn-square"
+               th:classappend="${activities.last} ? 'btn-disabled'"
+               th:href="@{/activities(
+                   ${pageParam}=${activities.number + 1},
+                   activeTab=${activeTab},
+                   size=${size}
+               )}">
+                »
+            </a>
+
+        </div>
     </div>
 </div>

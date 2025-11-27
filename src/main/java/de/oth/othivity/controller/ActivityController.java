@@ -6,6 +6,7 @@ import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ActivityService;
+import de.oth.othivity.service.PagingService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.validator.ActivityDtoValidator;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +32,7 @@ public class ActivityController {
     private final ActivityService activityService;
     private final ProfileService profileService;
     private final SessionService sessionService;
+    private final PagingService pagingService;
 
     private final ActivityDtoValidator activityDtoValidator;
     private final ImageUploadValidator imageUploadValidator;
@@ -40,12 +43,24 @@ public class ActivityController {
     }
 
     @GetMapping("/activities")
-    public String activities(HttpSession session, Model model) {
+    public String activities(HttpSession session, Model model,
+                             @RequestParam(defaultValue = "0") int myPage,
+                             @RequestParam(defaultValue = "0") int createdPage,
+                             @RequestParam(defaultValue = "0") int allPage,
+                             @RequestParam(defaultValue = "10") int size,
+                             @RequestParam(defaultValue = "my") String activeTab) {
+
+        Pageable myPageable = pagingService.createPageable(myPage, size, "date");
+        Pageable createdPageable = pagingService.createPageable(createdPage, size, "date");
+        Pageable allPageable = pagingService.createPageable(allPage, size, "date");
 
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
-        model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session));
-        model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session));
-        model.addAttribute("allActivities", activityService.getActivitiesNotCreatedOrNotJoinedByProfile(session));
+        model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session,myPageable));
+        model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session,createdPageable));
+        model.addAttribute("allActivities", activityService.getActivitiesNotCreatedOrNotJoinedByProfile(session,allPageable));
+
+        model.addAttribute("activeTab", activeTab);
+        model.addAttribute("currentSize", size);
         return "activity-overview";
     }
 

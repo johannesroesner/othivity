@@ -302,6 +302,57 @@ public class TestDataRunner {
             joinRequest.setProfile(profile);
             joinRequest.setText("Ich würde gerne diesem exklusiven Club beitreten.");
             clubJoinRequestRepository.save(joinRequest);
+
+            // ---- Additional 100 Activities ----
+            List<Activity> extraActivities = new ArrayList<>();
+            Profile[] possibleStarters = {profile, profile2, profile3, profile4};
+            Language[] langs = {Language.GERMAN, Language.ENGLISH};
+
+            String[] streets = {
+                    "Hauptstraße", "Nebenweg", "Parkallee", "Bergstraße", "Sonnenweg",
+                    "Waldweg", "Ringstraße", "Feldgasse", "Weinbergstraße", "Industriestraße",
+                    "Schillerstraße", "Goethestraße", "Ahornweg", "Lindenweg", "Kirchplatz"
+            };
+
+            for (int i = 0; i < 15; i++) {
+                Activity a = new Activity();
+                a.setTitle("Generated Activity " + (i + 1));
+                a.setDescription("Automatically generated test activity #" + (i + 1));
+                a.setDate(LocalDateTime.now().plusDays(2 + i));
+                a.setGroupSize(10 + (i % 5));
+
+                Profile starter = possibleStarters[i % possibleStarters.length];
+                a.setStartedBy(starter);
+
+                List<Profile> participants = new ArrayList<>();
+                participants.add(starter);
+                if (i % 2 == 0) participants.add(profile);
+                if (i % 3 == 0) participants.add(profile2);
+                a.setTakePart(participants);
+
+                a.setLanguage(langs[i % langs.length]);
+
+                Image img = new Image();
+                img.setUrl("https://picsum.photos/id/" + (10 + i) + "/200/300");
+                img.setPublicId("auto_" + (10 + i));
+                a.setImage(img);
+
+                Address adr = new Address();
+                adr.setStreet(streets[i % streets.length]);   // FIX: Index modulo
+                adr.setHouseNumber(String.valueOf(1 + (i % 20)));
+                adr.setCity("Regensburg");
+                adr.setPostalCode("9300" + (i % 10));
+                adr.setCountry("Germany");
+                adr.setLatitude(49.0 + (i * 0.001));
+                adr.setLongitude(12.1 + (i * 0.001));
+                a.setAddress(adr);
+
+                extraActivities.add(a);
+            }
+
+            activityRepository.saveAll(extraActivities);
+
         };
+
     }
 }
