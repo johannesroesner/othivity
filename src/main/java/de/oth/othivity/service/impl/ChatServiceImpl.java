@@ -78,7 +78,6 @@ public class ChatServiceImpl implements ChatService {
         message.setContent(chatMessageDto.getContent());
         message.setChat(chat);
         message.setRead(false);
-        message.setTimestamp(LocalDateTime.now());
 
         message.setSender(currentProfile);
         message.setReceiver(chat.getProfileA().equals(currentProfile) ? chat.getProfileB() : chat.getProfileA());

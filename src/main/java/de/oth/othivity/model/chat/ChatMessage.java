@@ -3,6 +3,8 @@ package de.oth.othivity.model.chat;
 import de.oth.othivity.model.main.Profile;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,6 +42,7 @@ public class ChatMessage {
     @Column(nullable = false, length = 500)
     private String content;
 
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime timestamp;
 }
