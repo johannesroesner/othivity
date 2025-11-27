@@ -69,12 +69,12 @@
                         <!-- Accept/Decline buttons far right -->
                         <div class="flex flex-row items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/club/' + ${report.id}}" method="post">
-                                <button type="submit" class="btn btn-success btn-sm" title="Report akzeptieren">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" onclick="return confirm('Do you really want to accept this report?');">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
-                            <form th:action="@{'/reports/decline/club/' + ${report.id}}" method="post">
-                                <button type="submit" class="btn btn-error btn-sm" title="Report ablehnen">
+                            <form th:action="@{'/reports/reject/club/' + ${report.id}}" method="post">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" onclick="return confirm('Do you really want to reject this report?');">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>
@@ -134,12 +134,12 @@
                         <!-- Accept/Decline buttons far right -->
                         <div class="flex flex-row items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/activity/' + ${report.id}}" method="post">
-                                <button type="submit" class="btn btn-success btn-sm" title="Report akzeptieren">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept report" onclick="return confirm('Do you really want to accept this report?');">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
-                            <form th:action="@{'/reports/decline/activity/' + ${report.id}}" method="post">
-                                <button type="submit" class="btn btn-error btn-sm" title="Report ablehnen">
+                            <form th:action="@{'/reports/reject/activity/' + ${report.id}}" method="post">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject report" onclick="return confirm('Do you really want to reject this report?');">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>
@@ -199,12 +199,12 @@
                         <!-- Accept/Decline buttons far right -->
                         <div class="flex flex-row items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/profile/' + ${report.id}}" method="post">
-                                <button type="submit" class="btn btn-success btn-sm" title="Report akzeptieren">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" onclick="return confirm('Do you really want to accept this report?');">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
-                            <form th:action="@{'/reports/decline/profile/' + ${report.id}}" method="post">
-                                <button type="submit" class="btn btn-error btn-sm" title="Report ablehnen">
+                            <form th:action="@{'/reports/reject/profile/' + ${report.id}}" method="post">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" onclick="return confirm('Do you really want to reject this report?');">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>

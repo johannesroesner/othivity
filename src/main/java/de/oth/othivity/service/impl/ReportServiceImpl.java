@@ -18,6 +18,7 @@ import de.oth.othivity.model.main.Activity;
 
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -67,5 +68,29 @@ public class ReportServiceImpl implements IReportService {
         activityReport.setActivity(activity);
         activityReport.setComment(reportDto.getComment());
         return activityReportRepository.save(activityReport);
+    }
+    @Override
+    public void acceptClubReport(UUID reportId) {
+        clubReportRepository.deleteById(reportId);
+    }
+    @Override
+    public void acceptActivityReport(UUID reportId) {
+        activityReportRepository.deleteById(reportId);
+    }
+    @Override
+    public void acceptProfileReport(UUID reportId) {
+        profileReportRepository.deleteById(reportId);
+    }
+    @Override
+    public void rejectClubReport(UUID reportId) {
+        clubReportRepository.deleteById(reportId);
+    }
+    @Override
+    public void rejectActivityReport(UUID reportId) {
+        activityReportRepository.deleteById(reportId);
+    }
+    @Override
+    public void rejectProfileReport(UUID reportId) {
+        profileReportRepository.deleteById(reportId);
     }
 }

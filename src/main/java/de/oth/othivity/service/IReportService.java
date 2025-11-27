@@ -11,6 +11,7 @@ import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Activity;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 
@@ -26,4 +27,16 @@ public interface IReportService {
     ProfileReport createProfileReport(ReportDto reportDto, Profile issuer, Profile profile);
 
     ActivityReport createActivityReport(ReportDto reportDto, Profile issuer, Activity activity);
+
+    void acceptClubReport(UUID reportId);
+
+    void acceptActivityReport(UUID reportId);
+
+    void acceptProfileReport(UUID reportId);
+    
+    void rejectClubReport(UUID reportId);
+
+    void rejectActivityReport(UUID reportId);
+
+    void rejectProfileReport(UUID reportId);
 }
