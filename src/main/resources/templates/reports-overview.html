@@ -6,84 +6,210 @@
 <nav th:insert="~{layout/nav :: nav(activeTab='reports')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
     <!-- content start -->
-    <h1 class="text-3xl font-bold mb-6">Reports Overview</h1>
+    <h1 class="text-3xl font-bold mb-6" th:text="#{reportsOverview.pageTitle}"></h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
         <div class="lg:col-span-3 mb-8 lg:mb-0">
             <div class="flex justify-between items-center mb-6">
                 <div role="tablist" class="tabs tabs-border flex space-x-2">
-                    <a role="tab" class="tab tab-active" id="clubTab">Club Reports</a>
-                    <a role="tab" class="tab" id="activityTab">Activity Reports</a>
-                    <a role="tab" class="tab" id="profileTab">Profile Reports</a>
+                        <a role="tab" class="tab tab-active" id="activityTab" th:text="#{reportsOverview.activityReports}"></a>
+                        <a role="tab" class="tab" id="clubTab" th:text="#{reportsOverview.clubReports}"></a>
+                        <a role="tab" class="tab" id="profileTab" th:text="#{reportsOverview.profileReports}"></a>
                 </div>
             </div>
 
             <!-- Club Reports Table -->
-            <div id="clubTable">
-                <h2 class="text-xl font-semibold mb-3">Club Reports</h2>
-                <div class="overflow-x-auto rounded-xl shadow">
-                    <table class="table w-full">
-                        <thead>
-                        <tr class="bg-base-200">
-                            <th>Issuer</th>
-                            <th>Comment</th>
-                            <th>Club Name</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="report : ${clubReports}">
-                            <td th:text="${report.issuer.username}"></td>
-                            <td th:text="${report.comment}"></td>
-                            <td th:text="${report.club.name}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <div id="clubReports" class="hidden">
+                <h2 class="text-xl font-semibold mb-3" th:text="#{reportsOverview.clubReports}"></h2>
+                <div class="flex flex-col gap-6">
+                    <!-- Header card for column descriptions -->
+                    <div class="card bg-base-200 shadow p-3 rounded-xl flex flex-row items-center gap-8 w-full mb-2" style="min-height:40px;">
+                        <div class="flex flex-col items-center min-w-[90px]">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reporter}"></span>
+                        </div>
+                        <div class="flex-1 px-2 text-base-content/80 text-sm">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reportmessage}"></span>
+                        </div>
+                        <div class="flex flex-col items-center min-w-[120px]">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reportedClub}"></span>
+                        </div>
+                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(clubReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:each="report : ${clubReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
+                        <!-- Reporter left -->
+                        <div class="flex flex-col items-center min-w-[90px]">
+                            <a th:href="@{'/profile/' + ${report.issuer.username}}" class="flex flex-col items-center group">
+                                <span th:if="${report.issuer.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                    <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
+                                </span>
+                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
+                            </a>
+                        </div>
+                        <!-- Info center -->
+                        <div class="flex-1 px-2 text-base-content/80 text-sm">
+                            <div class="mb-2 border border-base-300 rounded-md p-2" style="height: 80px; max-width: 700px; overflow-y: auto;">
+                                    <span class="font-semibold block mb-1" th:text="#{reportsOverview.comment}"></span>
+                                <span th:text="${report.comment}"></span>
+                            </div>
+                        </div>
+                        <!-- Reported club right -->
+                        <div class="flex flex-col items-center min-w-[120px]">
+                            <a th:href="@{'/clubs/' + ${report.club.id}}" class="flex flex-col items-center group">
+                                <span th:if="${report.club.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                    <img th:src="@{${report.club.image.url}}" class="w-full h-full object-cover"/>
+                                </span>
+                                <span th:if="${report.club.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1">🏛️</span>
+                                <span class="font-bold text-sm group-hover:underline" th:text="${report.club.name}"></span>
+                            </a>
+                        </div>
+                        <!-- Accept/Decline buttons far right -->
+                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                            <form th:action="@{'/reports/accept/club/' + ${report.id}}" method="post">
+                                <button type="submit" class="btn btn-success btn-sm" title="Report akzeptieren">
+                                    <span class="text-lg">&#10003;</span>
+                                </button>
+                            </form>
+                            <form th:action="@{'/reports/decline/club/' + ${report.id}}" method="post">
+                                <button type="submit" class="btn btn-error btn-sm" title="Report ablehnen">
+                                    <span class="text-lg">&#10007;</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Activity Reports Table -->
-            <div id="activityTable" class="hidden">
-                <h2 class="text-xl font-semibold mb-3">Activity Reports</h2>
-                <div class="overflow-x-auto rounded-xl shadow">
-                    <table class="table w-full">
-                        <thead>
-                        <tr class="bg-base-200">
-                            <th>Issuer</th>
-                            <th>Comment</th>
-                            <th>Activity Name</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="report : ${activityReports}">
-                            <td th:text="${report.issuer.username}"></td>
-                            <td th:text="${report.comment}"></td>
-                            <td th:text="${report.activity.title}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <div id="activityReports">
+                <h2 class="text-xl font-semibold mb-3" th:text="#{reportsOverview.activityReports}"></h2>
+                <div class="flex flex-col gap-6">
+                    <!-- Header card for column descriptions -->
+                    <div class="card bg-base-200 shadow p-3 rounded-xl flex flex-row items-center gap-8 w-full mb-2" style="min-height:40px;">
+                        <div class="flex flex-col items-center min-w-[90px]">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reporter}"></span>
+                        </div>
+                        <div class="flex-1 px-2 text-base-content/80 text-sm">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reportmessage}"></span>
+                        </div>
+                        <div class="flex flex-col items-center min-w-[120px]">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reportedActivity}"></span>
+                        </div>
+                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(activityReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:each="report : ${activityReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
+                        <!-- Reporter left -->
+                        <div class="flex flex-col items-center min-w-[90px]">
+                            <a th:href="@{'/profile/' + ${report.issuer.username}}" class="flex flex-col items-center group">
+                                <span th:if="${report.issuer.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                    <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
+                                </span>
+                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
+                            </a>
+                        </div>
+                        <!-- Info center -->
+                        <div class="flex-1 px-2 text-base-content/80 text-sm">
+                            <div class="mb-2 border border-base-300 rounded-md p-2" style="height: 80px; max-width: 700px; overflow-y: auto;">
+                                    <span class="font-semibold block mb-1" th:text="#{reportsOverview.comment}"></span>
+                                <span th:text="${report.comment}"></span>
+                            </div>
+                        </div>
+                        <!-- Reported activity right -->
+                        <div class="flex flex-col items-center min-w-[120px]">
+                            <a th:href="@{'/activities/' + ${report.activity.id}}" class="flex flex-col items-center group">
+                                <span th:if="${report.activity.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                    <img th:src="@{${report.activity.image.url}}" class="w-full h-full object-cover"/>
+                                </span>
+                                <span th:if="${report.activity.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1">🎯</span>
+                                <span class="font-bold text-sm group-hover:underline" th:text="${report.activity.title}"></span>
+                            </a>
+                        </div>
+                        <!-- Accept/Decline buttons far right -->
+                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                            <form th:action="@{'/reports/accept/activity/' + ${report.id}}" method="post">
+                                <button type="submit" class="btn btn-success btn-sm" title="Report akzeptieren">
+                                    <span class="text-lg">&#10003;</span>
+                                </button>
+                            </form>
+                            <form th:action="@{'/reports/decline/activity/' + ${report.id}}" method="post">
+                                <button type="submit" class="btn btn-error btn-sm" title="Report ablehnen">
+                                    <span class="text-lg">&#10007;</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Profile Reports Table -->
-            <div id="profileTable" class="hidden">
-                <h2 class="text-xl font-semibold mb-3">Profile Reports</h2>
-                <div class="overflow-x-auto rounded-xl shadow">
-                    <table class="table w-full">
-                        <thead>
-                        <tr class="bg-base-200">
-                            <th>Issuer</th>
-                            <th>Comment</th>
-                            <th>Profile Username</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="report : ${profileReports}">
-                            <td th:text="${report.issuer.username}"></td>
-                            <td th:text="${report.comment}"></td>
-                            <td th:text="${report.profile.username}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <div id="profileReports" class="hidden">
+                <h2 class="text-xl font-semibold mb-3" th:text="#{reportsOverview.profileReports}"></h2>
+                <div class="flex flex-col gap-6">
+                    <!-- Header card for column descriptions -->
+                    <div class="card bg-base-200 shadow p-3 rounded-xl flex flex-row items-center gap-8 w-full mb-2" style="min-height:40px;">
+                        <div class="flex flex-col items-center min-w-[90px]">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reporter}"></span>
+                        </div>
+                        <div class="flex-1 px-2 text-base-content/80 text-sm">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reportmessage}"></span>
+                        </div>
+                        <div class="flex flex-col items-center min-w-[120px]">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.reportedProfile}"></span>
+                        </div>
+                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                                <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(profileReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:each="report : ${profileReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
+                        <!-- Reporter left -->
+                        <div class="flex flex-col items-center min-w-[90px]">
+                            <a th:href="@{'/profile/' + ${report.issuer.username}}" class="flex flex-col items-center group">
+                                <span th:if="${report.issuer.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                    <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
+                                </span>
+                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
+                            </a>
+                        </div>
+                        <!-- Info center -->
+                        <div class="flex-1 px-2 text-base-content/80 text-sm">
+                            <div class="mb-2 border border-base-300 rounded-md p-2" style="height: 80px; max-width: 700px; overflow-y: auto;">
+                                    <span class="font-semibold block mb-1" th:text="#{reportsOverview.comment}"></span>
+                                <span th:text="${report.comment}"></span>
+                            </div>
+                        </div>
+                        <!-- Reported profile right -->
+                        <div class="flex flex-col items-center min-w-[120px]">
+                            <a th:href="@{'/profile/' + ${report.profile.username}}" class="flex flex-col items-center group">
+                                <span th:if="${report.profile.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                    <img th:src="@{${report.profile.image.url}}" class="w-full h-full object-cover"/>
+                                </span>
+                                <span th:if="${report.profile.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.profile.initials}"></span>
+                                <span class="font-bold text-sm group-hover:underline" th:text="${report.profile.username}"></span>
+                            </a>
+                        </div>
+                        <!-- Accept/Decline buttons far right -->
+                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                            <form th:action="@{'/reports/accept/profile/' + ${report.id}}" method="post">
+                                <button type="submit" class="btn btn-success btn-sm" title="Report akzeptieren">
+                                    <span class="text-lg">&#10003;</span>
+                                </button>
+                            </form>
+                            <form th:action="@{'/reports/decline/profile/' + ${report.id}}" method="post">
+                                <button type="submit" class="btn btn-error btn-sm" title="Report ablehnen">
+                                    <span class="text-lg">&#10007;</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,35 +220,35 @@
     const clubTab = document.getElementById("clubTab");
     const activityTab = document.getElementById("activityTab");
     const profileTab = document.getElementById("profileTab");
-    const clubTable = document.getElementById("clubTable");
-    const activityTable = document.getElementById("activityTable");
-    const profileTable = document.getElementById("profileTable");
+    const clubReports = document.getElementById("clubReports");
+    const activityReports = document.getElementById("activityReports");
+    const profileReports = document.getElementById("profileReports");
 
     clubTab.onclick = () => {
         clubTab.classList.add("tab-active");
         activityTab.classList.remove("tab-active");
         profileTab.classList.remove("tab-active");
-        clubTable.classList.remove("hidden");
-        activityTable.classList.add("hidden");
-        profileTable.classList.add("hidden");
+        clubReports.classList.remove("hidden");
+        activityReports.classList.add("hidden");
+        profileReports.classList.add("hidden");
     };
 
     activityTab.onclick = () => {
         activityTab.classList.add("tab-active");
         clubTab.classList.remove("tab-active");
         profileTab.classList.remove("tab-active");
-        activityTable.classList.remove("hidden");
-        clubTable.classList.add("hidden");
-        profileTable.classList.add("hidden");
+        activityReports.classList.remove("hidden");
+        clubReports.classList.add("hidden");
+        profileReports.classList.add("hidden");
     };
 
     profileTab.onclick = () => {
         profileTab.classList.add("tab-active");
         clubTab.classList.remove("tab-active");
         activityTab.classList.remove("tab-active");
-        profileTable.classList.remove("hidden");
-        clubTable.classList.add("hidden");
-        activityTable.classList.add("hidden");
+        profileReports.classList.remove("hidden");
+        clubReports.classList.add("hidden");
+        activityReports.classList.add("hidden");
     };
 </script>
 <footer th:insert="~{layout/footer :: footer}"></footer>

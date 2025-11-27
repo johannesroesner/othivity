@@ -28,6 +28,12 @@ import java.util.List;
 import java.util.UUID;
 
 import de.oth.othivity.model.helper.Address;
+import de.oth.othivity.repository.report.ClubReportRepository;
+import de.oth.othivity.repository.report.ActivityReportRepository;
+import de.oth.othivity.repository.report.ProfileReportRepository;
+import de.oth.othivity.model.report.ClubReport;
+import de.oth.othivity.model.report.ActivityReport;
+import de.oth.othivity.model.report.ProfileReport;
 
 @Configuration
 public class TestDataRunner {
@@ -44,7 +50,10 @@ public class TestDataRunner {
                                    ActivityRepository activityRepository,
                                    SessionServiceImpl sessionService,
                                    PasswordEncoder passwordEncoder,
-                                   ClubRepository clubRepository) {
+                                   ClubRepository clubRepository,
+                                   ClubReportRepository clubReportRepository,
+                                   ActivityReportRepository activityReportRepository,
+                                   ProfileReportRepository profileReportRepository) {
         return args -> {
 
             // ---- User & Profil ----
@@ -302,6 +311,37 @@ public class TestDataRunner {
             joinRequest.setProfile(profile);
             joinRequest.setText("Ich würde gerne diesem exklusiven Club beitreten.");
             clubJoinRequestRepository.save(joinRequest);
+
+            // --- Test Reports ---
+            ClubReport clubReport = new ClubReport();
+            clubReport.setClub(club);
+            clubReport.setIssuer(profile2);
+            clubReport.setComment("Test-Report für Club.");
+            clubReportRepository.save(clubReport);
+
+            ActivityReport activityReport = new ActivityReport();
+            activityReport.setActivity(activity);
+            activityReport.setIssuer(profile3);
+            activityReport.setComment("Test-Report für Aktivität.");
+            activityReportRepository.save(activityReport);
+
+            ProfileReport profileReport = new ProfileReport();
+            profileReport.setProfile(profile);
+            profileReport.setIssuer(profile4);
+            profileReport.setComment("Test-Report für Profil.");
+            profileReportRepository.save(profileReport);
+
+            ActivityReport activityReport2 = new ActivityReport();
+            activityReport2.setActivity(otherActivity);
+            activityReport2.setIssuer(profile2);
+            activityReport2.setComment("Test-Report für Aktivität2 mit langem Text um das Text Fenster zu testen uwgeoffgwouegf zowugefougwo ef ugwo egfo wgeo fzgwe ozfgwou egzfoue wg zfouzg wfzgwo fugw oeufh oweuf hpwehfi ohuw eofi hOLU.");
+            activityReportRepository.save(activityReport2);
+
+            ActivityReport activityReport3 = new ActivityReport();
+            activityReport3.setActivity(activity);
+            activityReport3.setIssuer(profile4);
+            activityReport3.setComment("Test-Report für Aktivität3");
+            activityReportRepository.save(activityReport3);
         };
     }
 }
