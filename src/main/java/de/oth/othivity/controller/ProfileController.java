@@ -198,16 +198,6 @@ public class ProfileController {
         VerificationToken verificationToken = tokenRepository.findByToken(emailVerificationDto.getToken());
         Profile profile = sessionService.getProfileFromSession(session);
 
-        if (emailVerificationDto.getToken() != null) {
-            System.out.println("Original token: '" + emailVerificationDto.getToken() + "'");
-            //emailVerificationDto.setToken(emailVerificationDto.getToken().trim()); 
-        }else {
-            model.addAttribute("message", "Token darf nicht leer sein.");
-            System.out.println("Token is null");
-            return "verify-email";
-        }
-
-        
         if (verificationToken == null) {
             model.addAttribute("message", "Ungültiger Token.");
             System.out.println("Invalid token");
