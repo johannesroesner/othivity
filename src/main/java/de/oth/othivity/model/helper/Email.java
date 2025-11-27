@@ -1,19 +1,20 @@
 package de.oth.othivity.model.helper;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "phone")
+@Table(name = "email")
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
-public class Phone {
+public class Email {
 
-    public Phone() {
+    public Email(String address) {
+        this.address = address;
         this.verified = false;
     }
 
@@ -22,8 +23,8 @@ public class Phone {
     private UUID id;
 
     @Column(nullable = false, unique = true)
-    private String number;
+    private String address;
 
     @Column(nullable = false)
-    private Boolean verified; //TODO johannes - insted of phone(){ this.verified = false;} use verified = false; here?
+    private Boolean verified = false;
 }

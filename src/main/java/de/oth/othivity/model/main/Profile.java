@@ -4,6 +4,7 @@ import de.oth.othivity.listener.ProfileEntityListener;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.report.ProfileReport;
@@ -44,8 +45,9 @@ public class Profile implements HasImage {
     @Column(unique = true)
     private String username;
 
-    @Column(unique = true)
-    private String email;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "email_id")
+    private Email email;
 
     @Column(length = 3000)
     private String aboutMe;
@@ -53,6 +55,9 @@ public class Profile implements HasImage {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Language language;
+
+    @Column(nullable = false)
+    private Boolean setupComplete = false;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")

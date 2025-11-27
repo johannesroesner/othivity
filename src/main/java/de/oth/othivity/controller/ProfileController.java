@@ -19,8 +19,10 @@ import de.oth.othivity.validator.ImageUploadValidator;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.dto.UsernameDto;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.enumeration.Language;
+
 
 @AllArgsConstructor
 @Controller
@@ -139,5 +141,30 @@ public class ProfileController {
         }
         
         return "redirect:/settings";
+    }
+
+    @GetMapping("/setup")
+    public String setup(Model model, HttpSession session) {
+
+        model.addAttribute("usernameDto", new UsernameDto());
+        return "setup";
+    }
+    
+    @PostMapping("/profile/username/update")
+    public String updateUsername(@ModelAttribute UsernameDto usernameDto, BindingResult bindingResult, Model model, HttpSession session) {
+        if (bindingResult.hasErrors()) {
+            return "setup";
+        }
+
+        Profile profile = sessionService.getProfileFromSession(session);
+
+        if (profile == null) {
+            // Weiterleitung zu Login oder Fehlerseite
+            return "redirect:/login";
+        }
+
+        profileService.setUsername(profile, usernameDto.getUsername());
+
+        return "redirect:/dashboard";
     }
 }

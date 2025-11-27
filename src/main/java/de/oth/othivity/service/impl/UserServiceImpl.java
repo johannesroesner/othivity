@@ -4,6 +4,7 @@ import de.oth.othivity.model.security.User;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.service.IUserService;
 import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.config.AppConfig;
 
@@ -27,7 +28,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public User registerNewUserAccount(RegisterDto registerDto, Locale locale) {
+    public User registerNewUserAccount(RegisterDto registerDto, Locale locale, boolean needSetup, boolean needVerificationEmail) {
 
         User user = new User();
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
@@ -35,7 +36,7 @@ public class UserServiceImpl implements IUserService {
         
         User savedUser = userRepository.save(user);
         
-        Profile profile = profileService.createProfileFromUser(savedUser, registerDto, locale);
+        Profile profile = profileService.createProfileFromUser(savedUser, registerDto, locale, needSetup, needVerificationEmail);
 
         savedUser.setProfile(profile);
         userRepository.save(savedUser);

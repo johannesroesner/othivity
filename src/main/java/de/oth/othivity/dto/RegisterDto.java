@@ -1,5 +1,7 @@
 package de.oth.othivity.dto;
 
+import de.oth.othivity.model.helper.Email;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

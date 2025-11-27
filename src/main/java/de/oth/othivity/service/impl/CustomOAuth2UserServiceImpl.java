@@ -7,9 +7,12 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.service.IUserService;
+import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.service.ProfileService;
 import lombok.AllArgsConstructor;
 
 import java.util.Locale;
@@ -20,6 +23,7 @@ import java.util.UUID;
 public class CustomOAuth2UserServiceImpl extends OidcUserService {
     
     private final IUserService userService;
+    private final ProfileService profileService;
 
     @Override
     @Transactional
@@ -27,21 +31,22 @@ public class CustomOAuth2UserServiceImpl extends OidcUserService {
         
         OidcUser oidcUser = super.loadUser(userRequest);
 
-        String email = oidcUser.getAttribute("email");
+        String emailAddress = oidcUser.getEmail();
         String name = oidcUser.getAttribute("name");
 
-        User user = userService.getUserByEmail(email);
+        User user = userService.getUserByEmail(emailAddress);
         if (user == null) {
 
             RegisterDto registerDto = new RegisterDto();
-            registerDto.setEmail(email);
-            registerDto.setUsername(email.split("@")[0]);
+            registerDto.setEmail(emailAddress);
+            registerDto.setUsername(emailAddress.split("@")[0]);
             registerDto.setFirstName(name != null && name.contains(" ") ? name.split(" ")[0] : name);
             registerDto.setLastName(name != null && name.contains(" ") ? name.substring(name.indexOf(" ") + 1) : "");
             registerDto.setPassword(UUID.randomUUID().toString());
 
+            User newUser = userService.registerNewUserAccount(registerDto, Locale.ENGLISH, true, false);
 
-            userService.registerNewUserAccount(registerDto, Locale.ENGLISH);
+            profileService.setVerificationForEmail(newUser.getProfile());
         }
 
         return oidcUser;

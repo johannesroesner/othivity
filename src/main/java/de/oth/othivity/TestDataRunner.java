@@ -27,8 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import de.oth.othivity.model.helper.Address;
-
 @Configuration
 public class TestDataRunner {
 
@@ -57,11 +55,12 @@ public class TestDataRunner {
             profile.setFirstName("Max");
             profile.setLastName("Mustermann");
             profile.setUsername("gaudiSepp");
-            profile.setEmail("a@a.com");
+            profile.setEmail(new Email("a@a.com"));
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setRole(Role.USER);
             profile.setLanguage(Language.ENGLISH);
             profile.setUser(user);
+            profile.setSetupComplete(true);
             profileRepository.save(profile);
 
             User user2 = new User();
@@ -73,11 +72,12 @@ public class TestDataRunner {
             profile2.setFirstName("Sebastian");
             profile2.setLastName("Moritz");
             profile2.setUsername("moesef");
-            profile2.setEmail("sebastian@example.com");
+            profile2.setEmail(new Email("sebastian@example.com"));
             profile2.setAboutMe("Ich bin ein Testprofil.");
             profile2.setRole(Role.USER);
             profile2.setLanguage(Language.ENGLISH);
             profile2.setUser(user2);
+            profile2.setSetupComplete(true);
             profileRepository.save(profile2);
 
             User user3 = new User();
@@ -89,11 +89,12 @@ public class TestDataRunner {
             profile3.setFirstName("Moritz");
             profile3.setLastName("Semmelmann");
             profile3.setUsername("moritz");
-            profile3.setEmail("moritz@example.com");
+            profile3.setEmail(new Email("moritz@example.com"));
             profile3.setAboutMe("Ich bin ein Testprofil.");
             profile3.setRole(Role.USER);
             profile3.setLanguage(Language.ENGLISH);
             profile3.setUser(user3);
+            profile3.setSetupComplete(true);
             profileRepository.save(profile3);
 
 
@@ -106,11 +107,12 @@ public class TestDataRunner {
             profile4.setFirstName("Sebastian");
             profile4.setLastName("Moritz");
             profile4.setUsername("moe");
-            profile4.setEmail("sebastian@moritz-furth.de");
+            profile4.setEmail(new Email("sebastian@moritz-furth.de"));
             profile4.setAboutMe("Ich bin ein Testprofil.");
             profile4.setRole(Role.MODERATOR);
             profile4.setLanguage(Language.ENGLISH);
             profile4.setUser(user4);
+            profile4.setSetupComplete(true);
             profileRepository.save(profile4);
 
             Activity activity = new Activity();

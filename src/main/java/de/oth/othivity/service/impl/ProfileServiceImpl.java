@@ -3,6 +3,7 @@ package de.oth.othivity.service.impl;
 import de.oth.othivity.model.enumeration.NotificationType;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
@@ -16,6 +17,7 @@ import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ClubRepository;
+
 import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.IEmailService;
 import de.oth.othivity.service.INotificationService;
@@ -31,6 +33,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Service
 public class ProfileServiceImpl implements ProfileService {
+
     private final SessionService sessionService;
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
@@ -47,13 +50,19 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale) {
+    public Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale, boolean needSetup, boolean needVerificationEmail) {
         Profile profile = new Profile();
         profile.setUser(user);
         profile.setFirstName(registerDto.getFirstName());
         profile.setLastName(registerDto.getLastName());
         profile.setUsername(registerDto.getUsername());
-        profile.setEmail(registerDto.getEmail());
+        profile.setEmail(new Email(registerDto.getEmail()));
+        if (!needSetup) {
+            profile.setSetupComplete(true);
+        }
+        if (!needVerificationEmail) {
+            profile.getEmail().setVerified(true);
+        }
         profile.setRole(Role.USER);
         if (clientLocale != null) {
             String langCode = clientLocale.getLanguage();
@@ -96,7 +105,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public boolean isEmailTaken(String email){
-        return profileRepository.existsByemail(email);
+        return profileRepository.existsByEmailAddress(email);
     }
 
     @Override
@@ -112,6 +121,19 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile getCurrentProfile(HttpSession session) {
         return sessionService.getProfileFromSession(session);
+    }
+
+    @Override
+    public Profile setUsername(Profile profile, String username) {
+        profile.setUsername(username);
+        profile.setSetupComplete(true);
+        return profileRepository.save(profile);
+    }
+
+    @Override
+    public void setVerificationForEmail(Profile profile) {
+        profile.getEmail().setVerified(true);
+        profileRepository.save(profile);
     }
 
     @Override
@@ -136,5 +158,15 @@ public class ProfileServiceImpl implements ProfileService {
         }
         profileDto.setAboutMe(profile.getAboutMe());
         return profileDto;
+    }
+
+    @Override
+    public boolean isEmailVerified(Profile profile) {
+        return profile.getEmail().getVerified();
+    }
+
+    @Override
+    public boolean isSetupComplete(Profile profile) {
+        return profile.getSetupComplete();
     }
 }

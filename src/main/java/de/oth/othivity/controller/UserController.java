@@ -66,7 +66,7 @@ public class UserController {
             return "register";
         }
 
-        userService.registerNewUserAccount(registerDto, request.getLocale());
+        userService.registerNewUserAccount(registerDto, request.getLocale(), false, true);
         return "redirect:/login?registered";
     }
 }

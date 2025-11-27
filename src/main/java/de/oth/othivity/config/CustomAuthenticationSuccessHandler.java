@@ -37,7 +37,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             OidcUser oidcUser = (OidcUser) principal;
             String email = oidcUser.getEmail();
 
-            profile = profileRepository.findByEmail(email);
+            profile = profileRepository.findByEmailAddress(email);
 
         }
         if (profile != null) {
@@ -45,7 +45,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             session.setAttribute("profileId", profile.getId());
             session.setAttribute("role", profile.getRole());
             sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
-        }
+        } 
         response.sendRedirect("/dashboard");
     }
 }

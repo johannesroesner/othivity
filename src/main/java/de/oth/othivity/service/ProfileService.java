@@ -20,7 +20,7 @@ public interface ProfileService {
 
     List<Club> allJoinedClubsByProfile(HttpSession session);
 
-    Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale);
+    Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale, boolean needSetup, boolean setEmailVerified);
     
     void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage);
 
@@ -41,4 +41,13 @@ public interface ProfileService {
     void deleteProfileImage(Profile profile);
 
     ProfileDto profileToDto(Profile profile);
+
+    boolean isEmailVerified(Profile profile);
+
+    boolean isSetupComplete(Profile profile);
+
+    Profile setUsername(Profile profile, String username);
+
+    void setVerificationForEmail(Profile profile);
+
 }

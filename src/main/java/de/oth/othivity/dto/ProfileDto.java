@@ -4,6 +4,7 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.main.Club;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class ProfileDto {
 
     private String username;
 
-    private String email;
+    private Email email;
 
     private String aboutMe;
 
