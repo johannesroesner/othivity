@@ -112,16 +112,8 @@ public class ActivityController {
         model.addAttribute("leaveAble", sessionService.canLeave(session, activity));
         model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
         model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
-        try {
-        WeatherSnapshot weather = weatherService.getForecastForTime(
-            activity.getAddress().getLatitude(),
-            activity.getAddress().getLongitude(),
-            activity.getDate()
-        );
-        model.addAttribute("weather", weather);
-    } catch (Exception e) {
-        model.addAttribute("weather", null);
-    }
+        model.addAttribute("weather", weatherService.getForecastForTime(activity.getAddress(),activity.getDate()));
+
 
     model.addAttribute("activity", activity);
         return "activity-detail";

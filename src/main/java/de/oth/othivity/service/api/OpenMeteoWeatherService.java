@@ -1,5 +1,6 @@
 package de.oth.othivity.service.api;
 
+import de.oth.othivity.model.helper.Address;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,7 +25,10 @@ public class OpenMeteoWeatherService implements IWeatherService {
     }
 
    @Override
-    public WeatherSnapshot getForecastForTime(double lat, double lon, LocalDateTime targetTime) {
+    public WeatherSnapshot getForecastForTime(Address address, LocalDateTime targetTime) {
+        if(address == null || address.getLatitude() == null || address.getLongitude() == null) return null;
+
+
         long daysUntilEvent = ChronoUnit.DAYS.between(LocalDate.now(), targetTime.toLocalDate());
         if (daysUntilEvent > 7 || daysUntilEvent < 0) {
             return null; 
@@ -33,8 +37,8 @@ public class OpenMeteoWeatherService implements IWeatherService {
     
         LocalDateTime roundedTime = targetTime.truncatedTo(ChronoUnit.HOURS);
         String uri = UriComponentsBuilder.fromPath("/forecast")
-                .queryParam("latitude", lat)
-                .queryParam("longitude", lon)
+                .queryParam("latitude", address.getLatitude())
+                .queryParam("longitude", address.getLongitude())
                 .queryParam("hourly", String.join(",",
                         "temperature_2m", "apparent_temperature", "relative_humidity_2m",
                         "precipitation_probability", "precipitation", "weather_code",
