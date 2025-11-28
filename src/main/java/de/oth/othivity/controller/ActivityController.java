@@ -48,19 +48,31 @@ public class ActivityController {
                              @RequestParam(defaultValue = "0") int createdPage,
                              @RequestParam(defaultValue = "0") int allPage,
                              @RequestParam(defaultValue = "10") int size,
-                             @RequestParam(defaultValue = "my") String activeTab) {
+                             @RequestParam(defaultValue = "my") String activeTab,
+                             @RequestParam(defaultValue = "date") String sortBy,
+                             @RequestParam(defaultValue = "asc") String direction,
+                             @RequestParam(required = false) String tag,
+                             @RequestParam(required = false) String search){
 
-        Pageable myPageable = pagingService.createPageable(myPage, size, "date");
-        Pageable createdPageable = pagingService.createPageable(createdPage, size, "date");
-        Pageable allPageable = pagingService.createPageable(allPage, size, "date");
+        Tag selectedTag = null;
+        if(tag != null && !tag.isBlank() && !tag.equalsIgnoreCase("all")) selectedTag = Tag.valueOf(tag.toUpperCase());
+
+        Pageable myPageable = pagingService.createPageable(myPage, size, sortBy, direction);
+        Pageable createdPageable = pagingService.createPageable(createdPage, size, sortBy, direction);
+        Pageable allPageable = pagingService.createPageable(allPage, size, sortBy, direction);
 
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
-        model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session,myPageable));
-        model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session,createdPageable));
-        model.addAttribute("allActivities", activityService.getActivitiesNotCreatedOrNotJoinedByProfile(session,allPageable));
+        model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfileWithFilter(session, myPageable, selectedTag, search));
+        model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfileWithFilter(session, createdPageable, selectedTag, search));
+        model.addAttribute("allActivities", activityService.getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(session, allPageable, selectedTag, search));
 
         model.addAttribute("activeTab", activeTab);
-        model.addAttribute("currentSize", size);
+        model.addAttribute("size", size);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+
+        model.addAttribute("tag", selectedTag);
+        model.addAttribute("allTags", Tag.values());
         return "activity-overview";
     }
 

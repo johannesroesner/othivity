@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface PagingService {
-    Pageable createPageable(int page, int size, String sortBy);
+    Pageable createPageable(int page, int size, String sortBy, String direction);
 }

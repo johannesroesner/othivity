@@ -1,6 +1,7 @@
 package de.oth.othivity.service;
 
 import de.oth.othivity.dto.ActivityDto;
+import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import jakarta.servlet.http.HttpSession;
@@ -17,11 +18,11 @@ public interface ActivityService {
 
     List<Activity> getAllActivities();
 
-    Page<Activity> getActivitiesCreatedOrJoinedByProfile(HttpSession session, Pageable pageable);
+    Page<Activity> getActivitiesCreatedOrJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search);
 
-    Page<Activity> getActivitiesNotCreatedOrNotJoinedByProfile(HttpSession session, Pageable pageable);
+    Page<Activity> getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search);
 
-    Page<Activity> getActivitiesCreatedByProfile(HttpSession session, Pageable pageable);
+    Page<Activity> getActivitiesCreatedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search);
 
     List<String> getActivityDatesForProfile(HttpSession session);
 

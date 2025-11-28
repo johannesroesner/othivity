@@ -1,6 +1,7 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.helper.*;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
@@ -19,13 +20,8 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.model.main.Activity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import de.oth.othivity.model.helper.Address;
 
@@ -220,7 +216,7 @@ public class TestDataRunner {
             Activity bestActivity = new Activity();
             bestActivity.setTitle("Best Mix Activity");
             bestActivity.setDescription("Good balance of distance and time.");
-            bestActivity.setDate(LocalDateTime.now().plusDays(2));
+            bestActivity.setDate(LocalDateTime.now().plusDays(10000));
             bestActivity.setGroupSize(10);
             bestActivity.setStartedBy(profile2);
             // Teilnehmerliste korrekt setzen
@@ -303,7 +299,7 @@ public class TestDataRunner {
             joinRequest.setText("Ich würde gerne diesem exklusiven Club beitreten.");
             clubJoinRequestRepository.save(joinRequest);
 
-            // ---- Additional 100 Activities ----
+            // ---- Additional 2000 Activities ----
             List<Activity> extraActivities = new ArrayList<>();
             Profile[] possibleStarters = {profile, profile2, profile3, profile4};
             Language[] langs = {Language.GERMAN, Language.ENGLISH};
@@ -313,6 +309,9 @@ public class TestDataRunner {
                     "Waldweg", "Ringstraße", "Feldgasse", "Weinbergstraße", "Industriestraße",
                     "Schillerstraße", "Goethestraße", "Ahornweg", "Lindenweg", "Kirchplatz"
             };
+
+            Tag[] tags = Tag.values();
+            Random random = new Random();
 
             for (int i = 0; i < 2000; i++) {
                 Activity a = new Activity();
@@ -332,13 +331,21 @@ public class TestDataRunner {
 
                 a.setLanguage(langs[i % langs.length]);
 
+                // Random 1-3 Tags
+                int numberOfTags = 1 + random.nextInt(3); // 1 bis 3 Tags
+                List<Tag> randomTags = new ArrayList<>();
+                while (randomTags.size() < numberOfTags) {
+                    randomTags.add(tags[random.nextInt(tags.length)]);
+                }
+                a.setTags(randomTags);
+
                 Image img = new Image();
                 img.setUrl("https://picsum.photos/id/" + (10 + i) + "/200/300");
                 img.setPublicId("auto_" + (10 + i));
                 a.setImage(img);
 
                 Address adr = new Address();
-                adr.setStreet(streets[i % streets.length]);   // FIX: Index modulo
+                adr.setStreet(streets[i % streets.length]);
                 adr.setHouseNumber(String.valueOf(1 + (i % 20)));
                 adr.setCity("Regensburg");
                 adr.setPostalCode("9300" + (i % 10));
