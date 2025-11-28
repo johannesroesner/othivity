@@ -17,6 +17,7 @@ import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.repository.helper.NotificationRepository;
 import de.oth.othivity.model.enumeration.Language;
 import org.springframework.context.MessageSource;
+import de.oth.othivity.service.IPushNotificationService;    
 
 import java.util.Comparator;
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class NotificationServiceImpl implements INotificationService {
     private final MessageSource messageSource;
     private final NotificationRepository notificationRepository;
     private final EmailServiceImpl emailService;
+    private final IPushNotificationService pushNotificationService;
 
     @Override
     public <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField) {
@@ -78,7 +80,7 @@ public class NotificationServiceImpl implements INotificationService {
         }
 
         if(type == NotificationType.PUSH_NOTIFICATION) {
-            // send push notification - formattedMessage
+            pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);
             return;
         }
 
