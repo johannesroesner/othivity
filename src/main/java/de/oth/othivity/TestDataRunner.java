@@ -1,7 +1,6 @@
 package de.oth.othivity;
 
 import de.oth.othivity.model.enumeration.Role;
-import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.helper.*;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
@@ -20,10 +19,21 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.model.main.Activity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import de.oth.othivity.model.helper.Address;
+import de.oth.othivity.repository.report.ClubReportRepository;
+import de.oth.othivity.repository.report.ActivityReportRepository;
+import de.oth.othivity.repository.report.ProfileReportRepository;
+import de.oth.othivity.model.report.ClubReport;
+import de.oth.othivity.model.report.ActivityReport;
+import de.oth.othivity.model.report.ProfileReport;
 
 @Configuration
 public class TestDataRunner {
@@ -40,7 +50,10 @@ public class TestDataRunner {
                                    ActivityRepository activityRepository,
                                    SessionServiceImpl sessionService,
                                    PasswordEncoder passwordEncoder,
-                                   ClubRepository clubRepository) {
+                                   ClubRepository clubRepository,
+                                   ClubReportRepository clubReportRepository,
+                                   ActivityReportRepository activityReportRepository,
+                                   ProfileReportRepository profileReportRepository) {
         return args -> {
 
             // ---- User & Profil ----
@@ -87,7 +100,7 @@ public class TestDataRunner {
             profile3.setUsername("moritz");
             profile3.setEmail("moritz@example.com");
             profile3.setAboutMe("Ich bin ein Testprofil.");
-            profile3.setRole(Role.USER);
+            profile3.setRole(Role.MODERATOR);
             profile3.setLanguage(Language.ENGLISH);
             profile3.setUser(user3);
             profileRepository.save(profile3);
@@ -216,7 +229,7 @@ public class TestDataRunner {
             Activity bestActivity = new Activity();
             bestActivity.setTitle("Best Mix Activity");
             bestActivity.setDescription("Good balance of distance and time.");
-            bestActivity.setDate(LocalDateTime.now().plusDays(10000));
+            bestActivity.setDate(LocalDateTime.now().plusDays(2));
             bestActivity.setGroupSize(10);
             bestActivity.setStartedBy(profile2);
             // Teilnehmerliste korrekt setzen
@@ -299,67 +312,48 @@ public class TestDataRunner {
             joinRequest.setText("Ich würde gerne diesem exklusiven Club beitreten.");
             clubJoinRequestRepository.save(joinRequest);
 
-            // ---- Additional 2000 Activities ----
-            List<Activity> extraActivities = new ArrayList<>();
-            Profile[] possibleStarters = {profile, profile2, profile3, profile4};
-            Language[] langs = {Language.GERMAN, Language.ENGLISH};
+            // --- Test Reports ---
+            ClubReport clubReport = new ClubReport();
+            clubReport.setClub(club);
+            clubReport.setIssuer(profile3);
+            clubReport.setComment("Test-Report für Club.");
+            clubReportRepository.save(clubReport);
 
-            String[] streets = {
-                    "Hauptstraße", "Nebenweg", "Parkallee", "Bergstraße", "Sonnenweg",
-                    "Waldweg", "Ringstraße", "Feldgasse", "Weinbergstraße", "Industriestraße",
-                    "Schillerstraße", "Goethestraße", "Ahornweg", "Lindenweg", "Kirchplatz"
-            };
+            ClubReport clubReport2 = new ClubReport();
+            clubReport2.setClub(club);
+            clubReport2.setIssuer(profile3);
+            clubReport2.setComment("Test-Report für Club.");
+            clubReportRepository.save(clubReport2);
 
-            Tag[] tags = Tag.values();
-            Random random = new Random();
+            ActivityReport activityReport = new ActivityReport();
+            activityReport.setActivity(activity);
+            activityReport.setIssuer(profile3);
+            activityReport.setComment("Test-Report für Aktivität.");
+            activityReportRepository.save(activityReport);
 
-            for (int i = 0; i < 2000; i++) {
-                Activity a = new Activity();
-                a.setTitle("Generated Activity " + (i + 1));
-                a.setDescription("Automatically generated test activity #" + (i + 1));
-                a.setDate(LocalDateTime.now().plusDays(2 + i));
-                a.setGroupSize(10 + (i % 5));
+            ActivityReport activityReport2 = new ActivityReport();
+            activityReport2.setActivity(otherActivity);
+            activityReport2.setIssuer(profile3);
+            activityReport2.setComment("Test-Report für Aktivität2 mit langem Text um das Text Fenster zu testen uwgeoffgwouegf zowugefougwo ef ugwo egfo wgeo fzgwe ozfgwou egzfoue wg zfouzg wfzgwo fugw oeufh oweuf hpwehfi ohuw eofi hOLU.");
+            activityReportRepository.save(activityReport2);
 
-                Profile starter = possibleStarters[i % possibleStarters.length];
-                a.setStartedBy(starter);
+            ActivityReport activityReport3 = new ActivityReport();
+            activityReport3.setActivity(activity);
+            activityReport3.setIssuer(profile4);
+            activityReport3.setComment("Test-Report für Aktivität3");
+            activityReportRepository.save(activityReport3);
 
-                List<Profile> participants = new ArrayList<>();
-                participants.add(starter);
-                if (i % 2 == 0) participants.add(profile);
-                if (i % 3 == 0) participants.add(profile2);
-                a.setTakePart(participants);
-
-                a.setLanguage(langs[i % langs.length]);
-
-                // Random 1-3 Tags
-                int numberOfTags = 1 + random.nextInt(3); // 1 bis 3 Tags
-                List<Tag> randomTags = new ArrayList<>();
-                while (randomTags.size() < numberOfTags) {
-                    randomTags.add(tags[random.nextInt(tags.length)]);
-                }
-                a.setTags(randomTags);
-
-                Image img = new Image();
-                img.setUrl("https://picsum.photos/id/" + (10 + i) + "/200/300");
-                img.setPublicId("auto_" + (10 + i));
-                a.setImage(img);
-
-                Address adr = new Address();
-                adr.setStreet(streets[i % streets.length]);
-                adr.setHouseNumber(String.valueOf(1 + (i % 20)));
-                adr.setCity("Regensburg");
-                adr.setPostalCode("9300" + (i % 10));
-                adr.setCountry("Germany");
-                adr.setLatitude(49.0 + (i * 0.001));
-                adr.setLongitude(12.1 + (i * 0.001));
-                a.setAddress(adr);
-
-                extraActivities.add(a);
-            }
-
-            activityRepository.saveAll(extraActivities);
-
+            ProfileReport profileReport = new ProfileReport();
+            profileReport.setProfile(profile);
+            profileReport.setIssuer(profile3);
+            profileReport.setComment("Test-Report für Profil.");
+            profileReportRepository.save(profileReport);
+            
+            ProfileReport profileReport2 = new ProfileReport();
+            profileReport2.setProfile(profile);
+            profileReport2.setIssuer(profile3);
+            profileReport2.setComment("Test-Report für Profil.");
+            profileReportRepository.save(profileReport2);
         };
-
     }
 }

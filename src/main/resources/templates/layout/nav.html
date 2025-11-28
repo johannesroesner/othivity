@@ -41,6 +41,15 @@
                     <span th:if="${unreadMessageCount > 0}" th:text="${unreadMessageCount}" class="indicator-item badge badge-secondary badge-xs"></span>
                 </div>
             </a>
+            <a th:if="${isModerator}" role="tab" th:class="'tab px-2 ' + (${activeTab} == 'reports' ? 'tab-active' : '')" href="/reports">
+                <div class="indicator flex items-center">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span th:if="${unresolvedReportCount > 0}" th:text="${unresolvedReportCount}" class="indicator-item badge badge-secondary badge-xs"></span>
+                </div>
+            </a>
         </div>
 
         <div class="dropdown dropdown-end">

@@ -4,7 +4,7 @@ import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ChatService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.service.INotificationService;
-
+import de.oth.othivity.service.IReportService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import de.oth.othivity.model.enumeration.Role;
 
 /// This class adds the current user's username to the model for all controllers except public ones
 @AllArgsConstructor
@@ -23,14 +25,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
     ExplorerController.class,
     ChatController.class,
     ExplorerController.class,
-    NotificationController.class
+    NotificationController.class,
+    ReportController.class
 })
 public class GlobalControllerAdvice {
 
     private final SessionService sessionService;
     private final INotificationService notificationService;
     private final ChatService chatService;
-
+    private final IReportService reportService;
     @ModelAttribute
     public void addCurrentUsername(HttpSession session, Model model) {
         Profile profile = sessionService.getProfileFromSession(session);
@@ -72,5 +75,19 @@ public class GlobalControllerAdvice {
     @ModelAttribute
     public void addUnreadChatCount(HttpSession session, HttpServletRequest request, Model model) {
         model.addAttribute("unreadMessageCount", chatService.getUnreadMessageCountForProfile(session));
+    }
+    @ModelAttribute
+    public void addReportCount(HttpServletRequest request, Model model) {
+       int count = reportService.countReports();
+        model.addAttribute("unresolvedReportCount", count);
+    }
+    @ModelAttribute
+    public void isModerator(HttpSession session, Model model) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile != null) {
+            model.addAttribute("isModerator", profile.getRole().equals(Role.MODERATOR));
+        } else {
+            model.addAttribute("isModerator", false);
+        }
     }
 }
