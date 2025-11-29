@@ -28,7 +28,7 @@ public class SecurityConfig {
                     .ignoringRequestMatchers("/h2-console/**")  // Nur H2-Console ohne CSRF
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**", "/test.png","/bridge.png","/moritz.png","/sebastian.png","/johannes.png", "/fav.ico").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // TODO delete when H2 not needed anymore

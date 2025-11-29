@@ -41,4 +41,6 @@ public interface ProfileService {
     void deleteProfileImage(Profile profile);
 
     ProfileDto profileToDto(Profile profile);
+
+    int getProfileCounter();
 }
