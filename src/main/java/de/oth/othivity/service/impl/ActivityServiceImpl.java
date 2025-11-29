@@ -1,6 +1,7 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.dto.ActivityDto;
+import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ActivityRepository;
@@ -10,6 +11,8 @@ import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,43 +36,34 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public List<Activity> getActivitiesCreatedOrJoinedByProfile(HttpSession session) {
+    public Page<Activity> getActivitiesCreatedOrJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search) {
         Profile profile = sessionService.getProfileFromSession(session);
-        if (profile == null) return List.of();
+        if (profile == null) return Page.empty();
 
-        List<Activity> activities = new ArrayList<>(profile.getParticipatingActivities());
-        activities.addAll(profile.getStartedActivities());
-
-        return activities.stream().distinct().toList();
+        return activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, pageable, tag, search);
     }
 
     @Override
-    public List<Activity> getActivitiesNotCreatedOrNotJoinedByProfile(HttpSession session) {
+    public Page<Activity> getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search) {
         Profile profile = sessionService.getProfileFromSession(session);
-        if (profile == null) return List.of();
+        if (profile == null) return Page.empty();
 
-        List<Activity> allActivities = getAllActivities();
-
-        return allActivities.stream()
-                .filter(activity -> !profile.getStartedActivities().contains(activity))
-                .filter(activity -> !profile.getParticipatingActivities().contains(activity))
-                .toList();
+        return activityRepository.findAllNotCreatedOrNotJoinedByProfileWithFilter(profile, pageable, tag, search);
     }
 
     @Override
-    public List<Activity> getActivitiesCreatedByProfile(HttpSession session) {
+    public Page<Activity> getActivitiesCreatedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search) {
         Profile profile = sessionService.getProfileFromSession(session);
-        if (profile == null) return List.of();
+        if (profile == null) return Page.empty();
 
-        return  profile.getStartedActivities();
+        return activityRepository.findAllCreatedByProfileWithFilter(profile, pageable, tag, search);
     }
+
 
     @Override
     public List<String> getActivityDatesForProfile(HttpSession session) {
-        List<Activity> activities = getActivitiesCreatedOrJoinedByProfile(session);
-        if (activities.isEmpty()) {
-            return List.of();
-        }
+        Profile profile = sessionService.getProfileFromSession(session);
+        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, Pageable.unpaged(), null, null).getContent();
 
         final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

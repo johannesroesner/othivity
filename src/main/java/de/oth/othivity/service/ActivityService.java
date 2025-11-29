@@ -1,9 +1,12 @@
 package de.oth.othivity.service;
 
 import de.oth.othivity.dto.ActivityDto;
+import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,11 +18,11 @@ public interface ActivityService {
 
     List<Activity> getAllActivities();
 
-    List<Activity> getActivitiesCreatedOrJoinedByProfile(HttpSession session);
+    Page<Activity> getActivitiesCreatedOrJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search);
 
-    List<Activity> getActivitiesNotCreatedOrNotJoinedByProfile(HttpSession session);
+    Page<Activity> getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search);
 
-    List<Activity> getActivitiesCreatedByProfile(HttpSession session);
+    Page<Activity> getActivitiesCreatedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search);
 
     List<String> getActivityDatesForProfile(HttpSession session);
 

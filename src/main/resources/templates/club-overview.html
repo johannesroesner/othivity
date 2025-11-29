@@ -15,7 +15,7 @@
                     <a role="tab" class="tab tab-active" id="myTab" th:text="#{clubOverview.myTab}"></a>
                     <a role="tab" class="tab" id="allTab" th:text="#{clubOverview.allTab}"></a>
                 </div>
-                <button class="btn btn-primary" onclick="window.location.href='/clubs/create'" th:text="#{clubOverview.createButton}"></button>
+                <button class="btn btn-primary shadow-2xl" onclick="window.location.href='/clubs/create'" th:text="#{clubOverview.createButton}"></button>
             </div>
             
             <div id="myTable" th:insert="fragments/club-table :: clubTable(title=#{clubOverview.myTab}, clubs=${joinedClubs})"></div>
