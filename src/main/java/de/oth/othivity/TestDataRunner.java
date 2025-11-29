@@ -103,6 +103,10 @@ public class TestDataRunner {
             user4.setPassword(passwordEncoder.encode("jklöjklö"));
             userRepository.save(user4);
 
+            Image image4 = new Image();
+            image4.setUrl("https://res.cloudinary.com/dz90z0pvg/image/upload/v1764334381/othivity_images/slesgbgu6ndns6xhdna0.jpg");
+            image4.setPublicId("othivity_images/slesgbgu6ndns6xhdna0");
+
             Profile profile4 = new Profile();
             profile4.setFirstName("Sebastian");
             profile4.setLastName("Moritz");
@@ -112,6 +116,7 @@ public class TestDataRunner {
             profile4.setRole(Role.MODERATOR);
             profile4.setLanguage(Language.ENGLISH);
             profile4.setUser(user4);
+            profile4.setImage(image4);
             profile4.setSetupComplete(true);
             profileRepository.save(profile4);
 
