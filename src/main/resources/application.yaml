@@ -41,8 +41,6 @@ server:
   port: 8080
 
 vapid:
-  public:
-    key: ${VAPID_PUBLIC_KEY}
-  private:
-    key: ${VAPID_PRIVATE_KEY}
-  subject: ${VAPID_SUBJECT}
+  subject: mailto:test@test.de
+  public-key: DummyPublicKeyForTests...
+  private-key: DummyPrivateKeyForTests...
