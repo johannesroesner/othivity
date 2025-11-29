@@ -52,7 +52,7 @@ public class PushNotificationServiceImpl implements IPushNotificationService {
                 "body", message
             ));
         } catch (Exception e) {
-            throw new RuntimeException("Fehler beim Erstellen der Push-Payload", e);
+            return;
         }
 
         for (PushSubscription sub : subscriptions) {
