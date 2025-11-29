@@ -1,18 +1,18 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.repository.security.UserRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.test.context.TestConstructor;
-import org.springframework.transaction.annotation.Transactional;
-
+import de.oth.othivity.service.IPushNotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
@@ -22,22 +22,23 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import org.springframework.security.test.context.support.WithMockUser;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AllArgsConstructor
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @Transactional
 public class AuthenticationIntegrationTest {
 
-    private final MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @MockBean
+    private IPushNotificationService pushNotificationService;
 
     @BeforeEach
     void setUp() {
-        // Clean up before each test if necessary, though @Transactional handles rollback
     }
 
     @Test
