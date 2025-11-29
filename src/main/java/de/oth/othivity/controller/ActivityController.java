@@ -7,6 +7,7 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.weather.WeatherSnapshot;
 import de.oth.othivity.service.ActivityService;
+import de.oth.othivity.service.PagingService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.service.IWeatherService;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,6 +35,7 @@ public class ActivityController {
     private final ProfileService profileService;
     private final SessionService sessionService;
     private final IWeatherService weatherService;
+    private final PagingService pagingService;
 
     private final ActivityDtoValidator activityDtoValidator;
     private final ImageUploadValidator imageUploadValidator;
@@ -43,12 +46,36 @@ public class ActivityController {
     }
 
     @GetMapping("/activities")
-    public String activities(HttpSession session, Model model) {
+    public String activities(HttpSession session, Model model,
+                             @RequestParam(defaultValue = "0") int myPage,
+                             @RequestParam(defaultValue = "0") int createdPage,
+                             @RequestParam(defaultValue = "0") int allPage,
+                             @RequestParam(defaultValue = "10") int size,
+                             @RequestParam(defaultValue = "my") String activeTab,
+                             @RequestParam(defaultValue = "date") String sortBy,
+                             @RequestParam(defaultValue = "asc") String direction,
+                             @RequestParam(required = false) String tag,
+                             @RequestParam(required = false) String search){
+
+        Tag selectedTag = null;
+        if(tag != null && !tag.isBlank() && !tag.equalsIgnoreCase("all")) selectedTag = Tag.valueOf(tag.toUpperCase());
+
+        Pageable myPageable = pagingService.createPageable(myPage, size, sortBy, direction);
+        Pageable createdPageable = pagingService.createPageable(createdPage, size, sortBy, direction);
+        Pageable allPageable = pagingService.createPageable(allPage, size, sortBy, direction);
 
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
-        model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfile(session));
-        model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfile(session));
-        model.addAttribute("allActivities", activityService.getActivitiesNotCreatedOrNotJoinedByProfile(session));
+        model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfileWithFilter(session, myPageable, selectedTag, search));
+        model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfileWithFilter(session, createdPageable, selectedTag, search));
+        model.addAttribute("allActivities", activityService.getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(session, allPageable, selectedTag, search));
+
+        model.addAttribute("activeTab", activeTab);
+        model.addAttribute("size", size);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+
+        model.addAttribute("tag", selectedTag);
+        model.addAttribute("allTags", Tag.values());
         return "activity-overview";
     }
 
@@ -85,16 +112,8 @@ public class ActivityController {
         model.addAttribute("leaveAble", sessionService.canLeave(session, activity));
         model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
         model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
-        try {
-        WeatherSnapshot weather = weatherService.getForecastForTime(
-            activity.getAddress().getLatitude(), 
-            activity.getAddress().getLongitude(), 
-            activity.getDate()
-        );
-        model.addAttribute("weather", weather);
-    } catch (Exception e) {
-        model.addAttribute("weather", null);
-    }
+        model.addAttribute("weather", weatherService.getForecastForTime(activity.getAddress(),activity.getDate()));
+
 
     model.addAttribute("activity", activity);
         return "activity-detail";

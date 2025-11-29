@@ -5,8 +5,9 @@
 <nav th:insert="~{layout/nav :: nav(activeTab='chat')}"></nav>
 
 <div class="container mx-auto mb-10 px-6 py-6 grow h-[calc(100vh-250px)] flex flex-col">
-    <div class="justify-start">
-        <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
+
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold" th:text="#{chat.messages}"></h1>
     </div>
 
     <div class="grid lg:grid-cols-3 gap-4 h-full p-4">
