@@ -36,9 +36,6 @@ public class ProfileIntegrationTest {
 
     @Autowired
     private ProfileRepository profileRepository;
-
-    // Mocks the Push Notification Service so tests don't fail due to missing keys
-    // and don't try to send real requests.
     @MockBean
     private IPushNotificationService pushNotificationService;
 
