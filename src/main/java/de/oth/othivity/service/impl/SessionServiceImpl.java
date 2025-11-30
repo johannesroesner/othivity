@@ -31,15 +31,12 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Profile getProfileFromSession(HttpSession session) {
-        // 1. ID aus der Session holen
         UUID profileId = (UUID) session.getAttribute("profileId");
 
-        // 2. WICHTIG: Prüfen ob sie null ist!
         if (profileId == null) {
-            return null; // Wenn keine ID da ist, geben wir einfach "nichts" zurück, statt abzustürzen
+            return null;
         }
 
-        // 3. Erst jetzt die Datenbank fragen
         return profileRepository.findById(profileId).orElse(null);
     }
 
@@ -127,7 +124,6 @@ public class SessionServiceImpl implements SessionService {
     public String getReturnUrlFromSession(HttpSession session, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         
-        // Hier "/settings" zur Ausschlussliste hinzufügen
         if (referer != null 
             && !referer.contains("/profile/") 
             && !referer.contains("/settings")

@@ -130,6 +130,12 @@ public class NotificationServiceImpl implements INotificationService {
     @Override
     public String sendVerificationEmail(Profile recipient) {
         String token = UUID.randomUUID().toString();
+
+        VerificationToken existingToken = verificationTokenRepository.findByProfile(recipient);
+        if (existingToken != null) {
+            verificationTokenRepository.delete(existingToken);
+        }
+
         VerificationToken verificationToken = new VerificationToken(token, recipient);
         verificationTokenRepository.save(verificationToken);
 
