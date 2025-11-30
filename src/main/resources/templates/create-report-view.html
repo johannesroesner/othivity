@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head('Report erstellen')}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab=${reportType == 'CLUB' ? 'clubs' : (reportType == 'ACTIVITY' ? 'activities' : (reportType == 'PROFILE' ? 'profile' : 'dashboard'))})}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <!-- content start -->
+    <div class="flex items-center mb-6">
+        <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
+        <h1 class="text-3xl font-bold ml-4" th:text="#{createReportView.pageTitle}"></h1>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2 space-y-6">
+            <div class="card bg-base-200 shadow-md p-6 space-y-4">
+                <div role="tablist" class="tabs tabs-border flex space-x-2 mb-4">
+                    <a role="tab" class="tab" th:if="${club != null}" th:classappend="${reportType} == 'CLUB' ? 'tab-active' : ''" th:href="@{'/reports/create/club/' + ${club.id}}" th:text="#{createReportView.clubTab}"></a>
+                    <a role="tab" class="tab" th:if="${activity != null}" th:classappend="${reportType} == 'ACTIVITY' ? 'tab-active' : ''" th:href="@{'/reports/create/activity/' + ${activity.id}}" th:text="#{createReportView.activityTab}"></a>
+                    <a role="tab" class="tab" th:if="${profile != null}" th:classappend="${reportType} == 'PROFILE' ? 'tab-active' : ''" th:href="@{'/reports/create/profile/' + ${profile.id}}" th:text="#{createReportView.profileTab}"></a>
+                </div>
+                <!-- Club Info Block -->
+                <div th:if="${club != null}" class="flex items-center gap-4 mb-4">
+                    <div class="w-16 h-16 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
+                        <img th:if="${club.image != null}" th:src="@{${club.image.url}}" class="w-full h-full object-cover"/>
+                        <span th:if="${club.image == null}" class="text-2xl font-bold">🏛️</span>
+                    </div>
+                    <div>
+                        <div class="text-lg font-bold" th:text="${club.name}"></div>
+                        <div class="text-sm text-base-content/70" th:text="${club.description}"></div>
+                    </div>
+                </div>
+                <!-- Activity Info Block -->
+                <div th:if="${activity != null}" class="flex items-center gap-4 mb-4">
+                    <div class="w-16 h-16 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
+                        <img th:if="${activity.image != null}" th:src="@{${activity.image.url}}" class="w-full h-full object-cover"/>
+                        <span th:if="${activity.image == null}" class="text-2xl font-bold">🎯</span>
+                    </div>
+                    <div>
+                        <div class="text-lg font-bold" th:text="${activity.title}"></div>
+                        <div class="text-sm text-base-content/70" th:text="${activity.description}"></div>
+                    </div>
+                </div>
+                <!-- Profile Info Block -->
+                <div th:if="${profile != null}" class="flex items-center gap-4 mb-4">
+                    <div class="w-16 h-16 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
+                        <img th:if="${profile.image != null}" th:src="@{${profile.image.url}}" class="w-full h-full object-cover"/>
+                        <span th:if="${profile.image == null}" class="text-2xl font-bold" th:text="${profile.initials}"></span>
+                    </div>
+                    <div>
+                        <div class="text-lg font-bold" th:text="${profile.username}"></div>
+                        <div class="text-sm text-base-content/70" th:text="${profile.bio}"></div>
+                    </div>
+                </div>
+            </div>
+            <form th:action="${formAction}" th:object="${reportDto}" method="post" class="space-y-6">
+                <div>
+                    <label class="label"><span class="label-text text-sm" th:text="#{createReportView.messageLabel}"></span></label>
+                    <textarea th:field="*{comment}" th:placeholder="#{createReportView.messagePlaceholder}" class="textarea textarea-bordered w-full" required></textarea>
+                    <p th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}" class="text-error text-xs mt-1"></p>
+                </div>
+                <button type="submit" class="btn btn-primary" th:text="#{createReportView.submitButton}"></button>
+            </form>
+        </div>
+    </div>
+    <!-- content end -->
+</div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>

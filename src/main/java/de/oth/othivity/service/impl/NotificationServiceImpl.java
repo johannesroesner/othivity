@@ -17,8 +17,9 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.repository.helper.NotificationRepository;
-
+import de.oth.othivity.model.enumeration.Language;
 import org.springframework.context.MessageSource;
+import de.oth.othivity.service.IPushNotificationService;    
 
 import java.util.Comparator;
 import java.util.UUID;
@@ -32,6 +33,7 @@ public class NotificationServiceImpl implements INotificationService {
     private final MessageSource messageSource;
     private final NotificationRepository notificationRepository;
     private final EmailServiceImpl emailService;
+    private final IPushNotificationService pushNotificationService;
 
     @Override
     public <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField) {
@@ -40,8 +42,25 @@ public class NotificationServiceImpl implements INotificationService {
 
     @Override
     public <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField, Profile issuer) {
-        // get profile language
-        String content = messageSource.getMessage(messageField, null, Locale.GERMAN);
+        Locale locale;
+        if (recipient != null && recipient.getLanguage() != null) {
+            switch (recipient.getLanguage()) {
+                case Language.GERMAN:
+                    locale = Locale.GERMAN;
+                    break;
+                case Language.FRENCH:
+                    locale = Locale.FRENCH;
+                    break;
+                case Language.SPANISH:
+                    locale = Locale.forLanguageTag("es");
+                    break;
+                default:
+                    locale = Locale.ENGLISH;
+            }
+        } else {
+            locale = Locale.ENGLISH;
+        }
+        String content = messageSource.getMessage(messageField, null, locale);
 
         String formattedMessage = "";
         String formattedMessageWithLink = "";
@@ -65,7 +84,7 @@ public class NotificationServiceImpl implements INotificationService {
         }
 
         if(type == NotificationType.PUSH_NOTIFICATION) {
-            // send push notification - formattedMessage
+            pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);
             return;
         }
 

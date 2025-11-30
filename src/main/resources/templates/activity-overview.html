@@ -22,10 +22,45 @@
                 </div>
                 <button class="btn btn-primary shadow-2xl" onclick="window.location.href='/activities/create'" th:text="#{activityOverview.createButton}"></button>
             </div>
+            <div id="myTable"th:insert="fragments/activity-table ::activityTable(title=#{activityOverview.myTab},
+                 activities=${profileActivities},
+                 pageParam='myPage',
+                 activeTab=${activeTab},
+                 size=${size},
+                 sortBy=${sortBy},
+                 direction=${direction},
+                 tag=${tag},
+                 search=${search},
+                 allTags=${allTags})">
+            </div>
 
-            <div id="myTable" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.myTab}, activities=${profileActivities})"></div>
-            <div id="createdTable" class="hidden" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.createdTab}, activities=${createdActivities})"></div>
-            <div id="allTable" class="hidden" th:insert="fragments/activity-table :: activityTable(title=#{activityOverview.allTab}, activities=${allActivities})"></div>
+            <div id="createdTable" class="hidden"
+                 th:insert="fragments/activity-table ::activityTable(
+                 title=#{activityOverview.createdTab},
+                 activities=${createdActivities},
+                 pageParam='createdPage',
+                 activeTab=${activeTab},
+                 size=${size},
+                 sortBy=${sortBy},
+                 direction=${direction},
+                 tag=${tag},
+                 search=${search},
+                 allTags=${allTags})">
+            </div>
+
+            <div id="allTable" class="hidden"
+                 th:insert="fragments/activity-table ::activityTable(
+                 title=#{activityOverview.allTab},
+                 activities=${allActivities},
+                 pageParam='allPage',
+                 activeTab=${activeTab},
+                 size=${size},
+                 sortBy=${sortBy},
+                 direction=${direction},
+                 tag=${tag},
+                 search=${search},
+                 allTags=${allTags})">
+            </div>
         </div>
 
         <div class="card bg-base-200 shadow-2xl h-fit">
@@ -34,9 +69,7 @@
                     <span class="text-3xl">📅</span>
                     <h2 class="card-title mb-0" th:text="#{activityOverview.calendar}"></h2>
                 </div>
-
                 <div id="calendar" class="bg-base-100 border rounded-lg shadow p-4"></div>
-
             </div>
         </div>
     </div>
@@ -52,38 +85,53 @@
     const myTable = document.getElementById("myTable");
     const allTable = document.getElementById("allTable");
 
-    myTab.onclick = () => {
+    const activeTab = /*[[${activeTab}]]*/ 'my';
+
+    function showMy() {
         myTab.classList.add("tab-active");
+        createdTab.classList.remove("tab-active");
         allTab.classList.remove("tab-active");
-        createdTab.classList.remove("tab-active");
+
         myTable.classList.remove("hidden");
+        createdTable.classList.add("hidden");
         allTable.classList.add("hidden");
-        createdTable.classList.add("hidden");
-    };
+    }
 
-    allTab.onclick = () => {
-        allTab.classList.add("tab-active");
-        myTab.classList.remove("tab-active");
-        createdTab.classList.remove("tab-active");
-        allTable.classList.remove("hidden");
-        myTable.classList.add("hidden");
-        createdTable.classList.add("hidden");
-    };
-
-    createdTab.onclick = () => {
+    function showCreated() {
         createdTab.classList.add("tab-active");
         myTab.classList.remove("tab-active");
         allTab.classList.remove("tab-active");
+
         createdTable.classList.remove("hidden");
         myTable.classList.add("hidden");
         allTable.classList.add("hidden");
-    };
+    }
+
+    function showAll() {
+        allTab.classList.add("tab-active");
+        myTab.classList.remove("tab-active");
+        createdTab.classList.remove("tab-active");
+
+        allTable.classList.remove("hidden");
+        myTable.classList.add("hidden");
+        createdTable.classList.add("hidden");
+    }
+
+    myTab.onclick = showMy;
+    createdTab.onclick = showCreated;
+    allTab.onclick = showAll;
+
+    if (activeTab === 'my') showMy();
+    else if (activeTab === 'created') showCreated();
+    else if (activeTab === 'all') showAll();
+    else showMy(); // Fallback
 
     const daysToMark = /*[[${daysToMark}]]*/ [];
 </script>
 <script type="module">
     import { Calendar } from 'https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/+esm'
     const options = {
+        inputMode: false,
         selectionDatesMode: 'multiple',
         selectedDates: daysToMark,
         selectedMonth: new Date().getMonth(),

@@ -2,6 +2,7 @@ package de.oth.othivity.model.main;
 
 import de.oth.othivity.listener.ProfileEntityListener;
 import de.oth.othivity.model.enumeration.Role;
+import de.oth.othivity.model.chat.Chat;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.helper.Email;
@@ -90,10 +91,17 @@ public class Profile implements HasImage {
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProfileReport> reports = new ArrayList<>();
 
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClubJoinRequest> clubJoinRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profileA", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chat> chatAsA = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profileB", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chat> chatAsB = new ArrayList<>();
+
+    // view helper
     public String getInitials() {
         return (firstName.substring(0,1) + lastName.substring(0,1)).toUpperCase();
     }
-
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ClubJoinRequest> clubJoinRequests = new ArrayList<>();
 }

@@ -26,6 +26,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import de.oth.othivity.repository.report.ClubReportRepository;
+import de.oth.othivity.repository.report.ActivityReportRepository;
+import de.oth.othivity.repository.report.ProfileReportRepository;
+import de.oth.othivity.model.report.ClubReport;
+import de.oth.othivity.model.report.ActivityReport;
+import de.oth.othivity.model.report.ProfileReport;
 
 @Configuration
 public class TestDataRunner {
@@ -42,20 +48,23 @@ public class TestDataRunner {
                                    ActivityRepository activityRepository,
                                    SessionServiceImpl sessionService,
                                    PasswordEncoder passwordEncoder,
-                                   ClubRepository clubRepository) {
+                                   ClubRepository clubRepository,
+                                   ClubReportRepository clubReportRepository,
+                                   ActivityReportRepository activityReportRepository,
+                                   ProfileReportRepository profileReportRepository) {
         return args -> {
 
             // ---- User & Profil ----
             User user = new User();
-            user.setEmail("a@a.com");
+            user.setEmail("johannes@example.com");
             user.setPassword(passwordEncoder.encode("password"));
             userRepository.save(user);
 
             Profile profile = new Profile();
-            profile.setFirstName("Max");
-            profile.setLastName("Mustermann");
-            profile.setUsername("gaudiSepp");
-            profile.setEmail(new Email("a@a.com"));
+            profile.setFirstName("Johannes");
+            profile.setLastName("Rösner");
+            profile.setUsername("johannes");
+            profile.setEmail(new Email("johannes@example.com"));
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setRole(Role.USER);
             profile.setLanguage(Language.ENGLISH);
@@ -71,7 +80,7 @@ public class TestDataRunner {
             Profile profile2 = new Profile();
             profile2.setFirstName("Sebastian");
             profile2.setLastName("Moritz");
-            profile2.setUsername("moesef");
+            profile2.setUsername("sebastian");
             profile2.setEmail(new Email("sebastian@example.com"));
             profile2.setAboutMe("Ich bin ein Testprofil.");
             profile2.setRole(Role.USER);
@@ -91,7 +100,7 @@ public class TestDataRunner {
             profile3.setUsername("moritz");
             profile3.setEmail(new Email("moritz@example.com"));
             profile3.setAboutMe("Ich bin ein Testprofil.");
-            profile3.setRole(Role.USER);
+            profile3.setRole(Role.MODERATOR);
             profile3.setLanguage(Language.ENGLISH);
             profile3.setUser(user3);
             profile3.setSetupComplete(true);
@@ -309,6 +318,49 @@ public class TestDataRunner {
             joinRequest.setProfile(profile);
             joinRequest.setText("Ich würde gerne diesem exklusiven Club beitreten.");
             clubJoinRequestRepository.save(joinRequest);
+
+            // --- Test Reports ---
+            ClubReport clubReport = new ClubReport();
+            clubReport.setClub(club);
+            clubReport.setIssuer(profile3);
+            clubReport.setComment("Test-Report für Club.");
+            clubReportRepository.save(clubReport);
+
+            ClubReport clubReport2 = new ClubReport();
+            clubReport2.setClub(club);
+            clubReport2.setIssuer(profile3);
+            clubReport2.setComment("Test-Report für Club.");
+            clubReportRepository.save(clubReport2);
+
+            ActivityReport activityReport = new ActivityReport();
+            activityReport.setActivity(activity);
+            activityReport.setIssuer(profile3);
+            activityReport.setComment("Test-Report für Aktivität.");
+            activityReportRepository.save(activityReport);
+
+            ActivityReport activityReport2 = new ActivityReport();
+            activityReport2.setActivity(otherActivity);
+            activityReport2.setIssuer(profile3);
+            activityReport2.setComment("Test-Report für Aktivität2 mit langem Text um das Text Fenster zu testen uwgeoffgwouegf zowugefougwo ef ugwo egfo wgeo fzgwe ozfgwou egzfoue wg zfouzg wfzgwo fugw oeufh oweuf hpwehfi ohuw eofi hOLU.");
+            activityReportRepository.save(activityReport2);
+
+            ActivityReport activityReport3 = new ActivityReport();
+            activityReport3.setActivity(activity);
+            activityReport3.setIssuer(profile4);
+            activityReport3.setComment("Test-Report für Aktivität3");
+            activityReportRepository.save(activityReport3);
+
+            ProfileReport profileReport = new ProfileReport();
+            profileReport.setProfile(profile);
+            profileReport.setIssuer(profile3);
+            profileReport.setComment("Test-Report für Profil.");
+            profileReportRepository.save(profileReport);
+            
+            ProfileReport profileReport2 = new ProfileReport();
+            profileReport2.setProfile(profile);
+            profileReport2.setIssuer(profile3);
+            profileReport2.setComment("Test-Report für Profil.");
+            profileReportRepository.save(profileReport2);
         };
     }
 }

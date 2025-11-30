@@ -1,5 +1,6 @@
 package de.oth.othivity.controller;
 
+import de.oth.othivity.service.ChatService;
 import de.oth.othivity.validator.ProfileDtoValidator;
 import de.oth.othivity.validator.EmailVerificationDtoValidator;
 
@@ -49,6 +50,7 @@ public class ProfileController {
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
+    private final ChatService chatService;
     private final EmailVerificationDtoValidator emailVerificationDtoValidator;
 
     @InitBinder("profileDto")
@@ -65,9 +67,13 @@ public class ProfileController {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
+
         model.addAttribute("profile", profile);
         model.addAttribute("isOwnProfile", currentProfile.getId().equals(profile.getId()));
 
+        model.addAttribute("chatId", chatService.buildChatId(profile, currentProfile));
+
+        model.addAttribute("canMessage", sessionService.canMessage(session,profile));
         model.addAttribute("canDelete", sessionService.canDelete(session, profile));
         model.addAttribute("canUpdate", sessionService.canUpdate(session, profile));
 

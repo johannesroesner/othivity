@@ -44,6 +44,8 @@ public interface ProfileService {
 
     ProfileDto profileToDto(Profile profile);
 
+    int getProfileCounter();
+
     boolean isEmailVerified(Profile profile);
 
     boolean isSetupComplete(Profile profile);

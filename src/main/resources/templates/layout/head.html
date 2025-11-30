@@ -1,12 +1,25 @@
 <head th:fragment="head(title)">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${title} ?: 'OTHivity'">OTHivity</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" th:href="@{/images/fav.ico}"/>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/styles/index.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        @media (min-width: 1024px) {
+            .custom-hero-bg {
+                background-image: url('/images/bridge.png');
+                background-position: bottom;
+                background-repeat: no-repeat;
+                background-size: 112%;
+            }
+        }
+    </style>
 </head>
 
