@@ -8,6 +8,8 @@ import de.oth.othivity.service.IReportService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import de.oth.othivity.model.enumeration.Role;
 
 /// This class adds the current user's username to the model for all controllers except public ones
-@AllArgsConstructor
+@RequiredArgsConstructor
 @ControllerAdvice(assignableTypes = {
     ActivityController.class,
     ClubController.class,
@@ -89,5 +91,14 @@ public class GlobalControllerAdvice {
         } else {
             model.addAttribute("isModerator", false);
         }
+    }
+
+    @Value("${vapid.public.key}")
+    private String vapidPublicKey;
+
+    @ModelAttribute
+    public void addVapidPublicKey(Model model) {
+        // Damit steht "vapidPublicKey" in jedem HTML-Footer zur Verfügung
+        model.addAttribute("vapidPublicKey", vapidPublicKey);
     }
 }

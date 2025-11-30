@@ -4,14 +4,15 @@ import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
-import lombok.AllArgsConstructor;
+import de.oth.othivity.service.IPushNotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.TestConstructor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +25,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AllArgsConstructor
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @Transactional
 public class ProfileIntegrationTest {
 
-    private final MockMvc mockMvc;
-    private final UserRepository userRepository;
-    private final ProfileRepository profileRepository;
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
+    @MockBean
+    private IPushNotificationService pushNotificationService;
 
     @BeforeEach
     void setUp() {
