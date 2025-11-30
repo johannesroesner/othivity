@@ -7,12 +7,11 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.service.IUserService;
-import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.ICustomOAuth2UserService;
 import lombok.AllArgsConstructor;
 
 import java.util.Locale;
@@ -20,7 +19,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Service
-public class CustomOAuth2UserServiceImpl extends OidcUserService {
+public class CustomOAuth2UserServiceImpl extends OidcUserService implements ICustomOAuth2UserService {
     
     private final IUserService userService;
     private final ProfileService profileService;

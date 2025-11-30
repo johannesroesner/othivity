@@ -35,10 +35,7 @@ import de.oth.othivity.model.helper.VerificationToken;
 import de.oth.othivity.repository.helper.VerificationTokenRepository;
 import de.oth.othivity.dto.EmailVerificationDto;
 import de.oth.othivity.service.INotificationService;
-
-
-
-import de.oth.othivity.service.impl.ApiTokenService;
+import de.oth.othivity.service.IApiTokenService;
 
 @AllArgsConstructor
 @Controller
@@ -48,7 +45,7 @@ public class ProfileController {
     private final SessionService sessionService;
     private final INotificationService notificationService;
     private final VerificationTokenRepository tokenRepository;
-    private final ApiTokenService apiTokenService; //TODO SBM Interface verwenden
+    private final IApiTokenService apiTokenService; 
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
@@ -181,7 +178,6 @@ public class ProfileController {
         Profile profile = sessionService.getProfileFromSession(session);
 
         if (profile == null) {
-            // Weiterleitung zu Login oder Fehlerseite
             return "redirect:/login";
         }
         profileService.updateProfileLanguage(profile, request.getLocale());
@@ -243,7 +239,6 @@ public class ProfileController {
             return "redirect:/settings";
         }
 
-        // Token erstellen (Profile UND User übergeben)
         String rawToken = apiTokenService.createToken(profile, name, duration);
 
         redirectAttributes.addFlashAttribute("createdToken", rawToken);

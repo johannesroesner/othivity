@@ -1,7 +1,7 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.dto.LoginDto; // Ich nehme an, das existiert schon
-import de.oth.othivity.service.impl.JwtService;
+import de.oth.othivity.dto.LoginDto; 
+import de.oth.othivity.service.IJwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class ApiAuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService; // TODO SBM Interface verwenden
+    private final IJwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto request) {

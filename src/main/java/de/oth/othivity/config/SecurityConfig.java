@@ -11,13 +11,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import de.oth.othivity.service.ICustomOAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -25,9 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final CustomAuthenticationSuccessHandler successHandler;
-    // FIX: Wir nutzen hier das Interface statt der konkreten Klasse.
-    // Das löst das Import-Problem und ist sauberer (Dependency Inversion).
-    private final OAuth2UserService<OidcUserRequest, OidcUser> customOAuth2UserService;
+    private final ICustomOAuth2UserService customOAuth2UserService;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
@@ -35,7 +30,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // 1. Konfiguration für API (JWT, Stateless)
     @Bean
     @Order(1)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -54,7 +48,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 2. Konfiguration für Web Frontend (Thymeleaf, Sessions)
     @Bean
     @Order(2)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
