@@ -3,6 +3,7 @@ package de.oth.othivity.config;
 import de.oth.othivity.model.security.CustomUserDetails;
 import de.oth.othivity.service.impl.CustomUserDetailsService;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,8 +28,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                     .ignoringRequestMatchers("/h2-console/**")  // Nur H2-Console ohne CSRF
                 )
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**", "/test.png","/bridge.png","/moritz.png","/sebastian.png","/johannes.png", "/fav.ico").permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // TODO delete when H2 not needed anymore

@@ -14,7 +14,9 @@
                     <div class="mockup-phone scale-75">
                         <div class="mockup-phone-camera"></div>
                         <div class="mockup-phone-display">
-                            <img th:src="@{/test.png}">
+                            <div th:with="langCode=${browserLang}">
+                                <img th:src="@{/images/} + 'screen_' + ${langCode} + '.png'" th:onerror="|this.src='@{/images/screen_en.png}'|">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -33,17 +35,17 @@
                         <div class="avatar-group -space-x-6">
                             <div class="avatar">
                                 <div class="w-12">
-                                    <img th:src="@{/johannes.png}">
+                                    <img th:src="@{/images/johannes.png}">
                                 </div>
                             </div>
                             <div class="avatar">
                                 <div class="w-12">
-                                    <img th:src="@{/sebastian.png}">
+                                    <img th:src="@{/images/sebastian.png}">
                                 </div>
                             </div>
                             <div class="avatar">
                                 <div class="w-12">
-                                    <img th:src="@{/moritz.png}">
+                                    <img th:src="@{/images/moritz.png}">
                                 </div>
                             </div>
                             <div class="avatar avatar-placeholder">
