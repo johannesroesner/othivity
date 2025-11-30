@@ -5,6 +5,8 @@ import de.oth.othivity.model.security.ApiToken;
 import de.oth.othivity.model.security.CustomUserDetails;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.repository.security.ApiTokenRepository;
+import de.oth.othivity.service.IApiTokenService;
+import de.oth.othivity.service.IJwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +17,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ApiTokenService {
+public class ApiTokenService implements IApiTokenService {
 
     private final ApiTokenRepository tokenRepository;
-    private final JwtService jwtService;
+    private final IJwtService jwtService;
 
     @Transactional
     public String createToken(Profile profile, String name, int durationInMonths) {

@@ -1,6 +1,7 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.security.CustomUserDetails;
+import de.oth.othivity.service.IJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtService {
+public class JwtService implements IJwtService {
 
     @Value("${jwt.secret}")
     private String secretKey;
