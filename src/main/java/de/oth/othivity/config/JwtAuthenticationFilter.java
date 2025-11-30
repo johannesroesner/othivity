@@ -1,6 +1,6 @@
 package de.oth.othivity.config;
 
-import de.oth.othivity.service.IApiTokenService;
+import de.oth.othivity.service.impl.ApiTokenService;
 import de.oth.othivity.service.impl.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService; // TODO SBM fix interface bug
     private final UserDetailsService userDetailsService;
-    private final IApiTokenService apiTokenService; 
+    private final ApiTokenService apiTokenService; // TODO SBM fix interface bug
 
     @Override
     protected void doFilterInternal(
