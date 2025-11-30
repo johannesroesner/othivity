@@ -196,6 +196,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void deleteActivity(Activity activity) {
         for (Profile profile : activity.getTakePart()) {
+            //TODO moe
             notificationService.sendNotification(NotificationType.EMAIL,activity,profile, "notification.activity.deleted");
             notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,profile, "notification.activity.deleted");
         }
