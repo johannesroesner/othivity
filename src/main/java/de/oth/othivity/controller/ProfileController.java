@@ -5,6 +5,9 @@ import de.oth.othivity.validator.EmailVerificationDtoValidator;
 
 import java.util.Calendar;
 
+
+import java.security.Principal;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +19,10 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
+import java.util.UUID;
 
 import de.oth.othivity.validator.ImageUploadValidator;
 import de.oth.othivity.service.ProfileService;
@@ -33,6 +38,7 @@ import de.oth.othivity.service.INotificationService;
 
 
 
+import de.oth.othivity.service.impl.ApiTokenService;
 
 @AllArgsConstructor
 @Controller
@@ -42,6 +48,7 @@ public class ProfileController {
     private final SessionService sessionService;
     private final INotificationService notificationService;
     private final VerificationTokenRepository tokenRepository;
+    private final ApiTokenService apiTokenService; //TODO SBM Interface verwenden
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
@@ -77,6 +84,8 @@ public class ProfileController {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
+
+        model.addAttribute("apiTokens", apiTokenService.getProfileTokens(profile));
         model.addAttribute("profile", profile);
         model.addAttribute("languages", Language.values());
         return "settings";
@@ -224,4 +233,33 @@ public class ProfileController {
         return "redirect:/dashboard";
     }
     
+
+    @PostMapping("/tokens")
+    public String createToken(@RequestParam("name") String name, @RequestParam("duration") int duration, Principal principal, RedirectAttributes redirectAttributes, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+
+        if (profile == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Kein Profil gefunden.");
+            return "redirect:/settings";
+        }
+
+        // Token erstellen (Profile UND User übergeben)
+        String rawToken = apiTokenService.createToken(profile, name, duration);
+
+        redirectAttributes.addFlashAttribute("createdToken", rawToken);
+        redirectAttributes.addFlashAttribute("successMessage", "Token erstellt!");
+
+        return "redirect:/settings";
+    }
+
+    @PostMapping("/tokens/delete")
+    public String deleteToken(@RequestParam("id") UUID id, Principal principal, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        
+        if (profile != null) {
+            apiTokenService.revokeToken(id, profile);
+        }
+        
+        return "redirect:/settings";
+    }
 }
