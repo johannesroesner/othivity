@@ -58,15 +58,15 @@ public class TestDataRunner {
 
             // ---- User & Profil ----
             User user = new User();
-            user.setEmail("a@a.com");
+            user.setEmail("johannes@example.com");
             user.setPassword(passwordEncoder.encode("password"));
             userRepository.save(user);
 
             Profile profile = new Profile();
-            profile.setFirstName("Max");
-            profile.setLastName("Mustermann");
-            profile.setUsername("gaudiSepp");
-            profile.setEmail("a@a.com");
+            profile.setFirstName("Johannes");
+            profile.setLastName("Rösner");
+            profile.setUsername("johannes");
+            profile.setEmail("johannes@example.com");
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setRole(Role.USER);
             profile.setLanguage(Language.ENGLISH);
@@ -81,7 +81,7 @@ public class TestDataRunner {
             Profile profile2 = new Profile();
             profile2.setFirstName("Sebastian");
             profile2.setLastName("Moritz");
-            profile2.setUsername("moesef");
+            profile2.setUsername("sebastian");
             profile2.setEmail("sebastian@example.com");
             profile2.setAboutMe("Ich bin ein Testprofil.");
             profile2.setRole(Role.USER);

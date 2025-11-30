@@ -137,4 +137,9 @@ public class ProfileServiceImpl implements ProfileService {
         profileDto.setAboutMe(profile.getAboutMe());
         return profileDto;
     }
+
+    @Override
+    public int getProfileCounter() {
+        return (int) profileRepository.count();
+    }
 }
