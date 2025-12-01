@@ -25,8 +25,15 @@ public class SessionServiceImpl implements SessionService {
     private final ProfileRepository profileRepository;
     private final LocaleResolver localeResolver;
 
+    @Override
     public Profile getProfileFromSession(HttpSession session) {
-        return profileRepository.findById((UUID) session.getAttribute("profileId")).orElse(null);
+        UUID profileId = (UUID) session.getAttribute("profileId");
+
+        if (profileId == null) {
+            return null;
+        }
+
+        return profileRepository.findById(profileId).orElse(null);
     }
 
     @Override
@@ -118,7 +125,6 @@ public class SessionServiceImpl implements SessionService {
     public String getReturnUrlFromSession(HttpSession session, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         
-        // Hier "/settings" zur Ausschlussliste hinzufügen
         if (referer != null 
             && !referer.contains("/profile/") 
             && !referer.contains("/settings")

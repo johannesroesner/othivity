@@ -1,13 +1,12 @@
 package de.oth.othivity.service.impl;
 
-import de.oth.othivity.model.enumeration.NotificationType;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.dto.RegisterDto;
@@ -16,8 +15,8 @@ import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ClubRepository;
+
 import de.oth.othivity.service.ImageService;
-import de.oth.othivity.service.IEmailService;
 import de.oth.othivity.service.INotificationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -31,6 +30,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Service
 public class ProfileServiceImpl implements ProfileService {
+
     private final SessionService sessionService;
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
@@ -47,30 +47,22 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale) {
+    public Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale, boolean needSetup, boolean needVerificationEmail) {
         Profile profile = new Profile();
         profile.setUser(user);
         profile.setFirstName(registerDto.getFirstName());
         profile.setLastName(registerDto.getLastName());
         profile.setUsername(registerDto.getUsername());
-        profile.setEmail(registerDto.getEmail());
+        profile.setEmail(new Email(registerDto.getEmail()));
+        if (!needSetup) {
+            profile.setSetupComplete(true);
+        }
+        if (!needVerificationEmail) {
+            profile.getEmail().setVerified(true);
+        }
         profile.setRole(Role.USER);
         if (clientLocale != null) {
-            String langCode = clientLocale.getLanguage();
-            switch (langCode) {
-                case "de":
-                    profile.setLanguage(Language.GERMAN);
-                    break;
-                case "fr":
-                    profile.setLanguage(Language.FRENCH);
-                    break;
-                case "es":
-                    profile.setLanguage(Language.SPANISH);
-                    break;
-                default:
-                    profile.setLanguage(Language.ENGLISH);
-                    break;
-            }
+            profile.setLanguage(localeToLanguage(clientLocale));
         }
         return profileRepository.save(profile);
     }
@@ -90,13 +82,19 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public void updateProfileLanguage(Profile profile, Locale clientLocale) {
+        profile.setLanguage(localeToLanguage(clientLocale));
+        profileRepository.save(profile);
+    }
+
+    @Override
     public boolean isUsernameTaken(String username) {
         return profileRepository.existsByusername(username);
     }
 
     @Override
     public boolean isEmailTaken(String email){
-        return profileRepository.existsByemail(email);
+        return profileRepository.existsByEmailAddress(email);
     }
 
     @Override
@@ -115,9 +113,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public Profile setUsername(Profile profile, String username) {
+        profile.setUsername(username);
+        profile.setSetupComplete(true);
+        return profileRepository.save(profile);
+    }
+
+    @Override
+    public void setVerificationForEmail(Profile profile) {
+        profile.getEmail().setVerified(true);
+        profileRepository.save(profile);
+    }
+
+    @Override
     public void deleteProfile(Profile profile) {
-        // TODO SBM delete profile not user - OAuth
-        userRepository.delete(profile.getUser());
+        userRepository.delete(profile.getUser()); //TODO SBM delete profile
     }
 
     @Override
@@ -141,5 +151,27 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public int getProfileCounter() {
         return (int) profileRepository.count();
+    }
+
+    @Override
+    public boolean isEmailVerified(Profile profile) {
+        return profile.getEmail().getVerified();
+    }
+
+    @Override
+    public boolean isSetupComplete(Profile profile) {
+        return profile.getSetupComplete();
+    }
+
+    private Language localeToLanguage(Locale locale) {
+        if (locale == null) return Language.ENGLISH;
+        String languageTag = locale.getLanguage();
+        return switch (languageTag) {
+            case "de" -> Language.GERMAN;
+            case "en" -> Language.ENGLISH;
+            case "fr" -> Language.FRENCH;
+            case "es" -> Language.SPANISH;
+            default -> Language.ENGLISH;
+        };
     }
 }

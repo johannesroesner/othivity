@@ -8,6 +8,8 @@ import java.util.Locale;
 @Service
 public interface IUserService {
 
-    User registerNewUserAccount(RegisterDto registerDto , Locale locale);
+    User registerNewUserAccount(RegisterDto registerDto, Locale locale, boolean needSetup, boolean sendVerificationEmail);
+
+    User getUserByEmail(String email);
 
 }

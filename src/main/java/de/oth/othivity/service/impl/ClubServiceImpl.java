@@ -1,6 +1,5 @@
 package de.oth.othivity.service.impl;
 
-import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;

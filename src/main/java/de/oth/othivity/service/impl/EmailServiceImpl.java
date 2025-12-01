@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import de.oth.othivity.service.IEmailService;
 import jakarta.mail.internet.MimeMessage;
 import de.oth.othivity.model.main.Profile;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -22,7 +23,7 @@ public class EmailServiceImpl implements IEmailService {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
             helper.setFrom("othivity@gmail.com");
-            helper.setTo(recipient.getEmail());
+            helper.setTo(recipient.getEmail().getAddress());
             helper.setSubject(subject);
             helper.setText(message, true); 
 

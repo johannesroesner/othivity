@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.repository.report.ClubReportRepository;
 import de.oth.othivity.repository.report.ActivityReportRepository;
 import de.oth.othivity.repository.report.ProfileReportRepository;
@@ -66,11 +64,12 @@ public class TestDataRunner {
             profile.setFirstName("Johannes");
             profile.setLastName("Rösner");
             profile.setUsername("johannes");
-            profile.setEmail("johannes@example.com");
+            profile.setEmail(new Email("johannes@example.com"));
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setRole(Role.USER);
             profile.setLanguage(Language.ENGLISH);
             profile.setUser(user);
+            profile.setSetupComplete(true);
             profileRepository.save(profile);
 
             User user2 = new User();
@@ -82,11 +81,12 @@ public class TestDataRunner {
             profile2.setFirstName("Sebastian");
             profile2.setLastName("Moritz");
             profile2.setUsername("sebastian");
-            profile2.setEmail("sebastian@example.com");
+            profile2.setEmail(new Email("sebastian@example.com"));
             profile2.setAboutMe("Ich bin ein Testprofil.");
             profile2.setRole(Role.USER);
             profile2.setLanguage(Language.ENGLISH);
             profile2.setUser(user2);
+            profile2.setSetupComplete(true);
             profileRepository.save(profile2);
 
             User user3 = new User();
@@ -98,11 +98,12 @@ public class TestDataRunner {
             profile3.setFirstName("Moritz");
             profile3.setLastName("Semmelmann");
             profile3.setUsername("moritz");
-            profile3.setEmail("moritz@example.com");
+            profile3.setEmail(new Email("moritz@example.com"));
             profile3.setAboutMe("Ich bin ein Testprofil.");
             profile3.setRole(Role.MODERATOR);
             profile3.setLanguage(Language.ENGLISH);
             profile3.setUser(user3);
+            profile3.setSetupComplete(true);
             profileRepository.save(profile3);
 
 
@@ -111,15 +112,21 @@ public class TestDataRunner {
             user4.setPassword(passwordEncoder.encode("jklöjklö"));
             userRepository.save(user4);
 
+            Image image4 = new Image();
+            image4.setUrl("https://res.cloudinary.com/dz90z0pvg/image/upload/v1764334381/othivity_images/slesgbgu6ndns6xhdna0.jpg");
+            image4.setPublicId("othivity_images/slesgbgu6ndns6xhdna0");
+
             Profile profile4 = new Profile();
             profile4.setFirstName("Sebastian");
             profile4.setLastName("Moritz");
             profile4.setUsername("moe");
-            profile4.setEmail("sebastian@moritz-furth.de");
+            profile4.setEmail(new Email("sebastian@moritz-furth.de"));
             profile4.setAboutMe("Ich bin ein Testprofil.");
             profile4.setRole(Role.MODERATOR);
             profile4.setLanguage(Language.ENGLISH);
             profile4.setUser(user4);
+            profile4.setImage(image4);
+            profile4.setSetupComplete(true);
             profileRepository.save(profile4);
 
             Activity activity = new Activity();

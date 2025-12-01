@@ -4,8 +4,6 @@
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='settings')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
-    <!-- content start -->
-
     <div class="flex items-center mb-6 space-x-2 justify-between">
         <div class="flex items-center space-x-2">
             <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
@@ -63,8 +61,108 @@
             </form>
         </div>
     </div>
-    <!-- content end -->
-</div>
+
+    <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl mt-10">
+            <div class="flex flex-col space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold" th:text="#{settings.api.title}"></h2>
+                    <span class="badge badge-primary badge-outline"></span>
+                </div>
+                
+                <p class="text-base-content/70" th:text="#{settings.api.description}"></p>
+
+                <div th:if="${createdToken != null}" class="alert alert-success shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div class="w-full">
+                        <h3 class="font-bold" th:text="#{settings.api.successTitle}"></h3>
+                        <div class="text-xs" th:text="#{settings.api.successBody}"></div>
+                        <div class="join w-full mt-2">
+                            <input type="text" readonly class="input input-bordered input-sm w-full font-mono join-item bg-base-100" th:value="${createdToken}" onclick="this.select()">
+                            
+                            <button class="btn btn-sm join-item" 
+                                    th:data-copied-text="#{settings.api.copied}"
+                                    onclick="navigator.clipboard.writeText(this.previousElementSibling.value); this.innerText=this.getAttribute('data-copied-text')"
+                                    th:text="#{settings.api.copy}">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${errorMessage}" class="alert alert-error shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <div class="bg-base-100 p-6 rounded-xl border border-base-300">
+                    <form th:action="@{/tokens}" method="post" class="flex flex-col md:flex-row gap-4 items-end">
+                        <div class="form-control w-full">
+                            <label class="label pt-0">
+                                <span class="label-text text-sm font-semibold" th:text="#{settings.api.labelName}"></span>
+                            </label>
+                            <input type="text" name="name" th:placeholder="#{settings.api.placeholderName}" class="input input-bordered w-full" required />
+                        </div>
+                        <div class="form-control w-full md:w-48">
+                            <label class="label pt-0">
+                                <span class="label-text text-sm font-semibold" th:text="#{settings.api.labelDuration}"></span>
+                            </label>
+                            <select name="duration" class="select select-bordered w-full">
+                                <option value="1" th:text="#{settings.api.duration.1m}"></option>
+                                <option value="3" selected th:text="#{settings.api.duration.3m}"></option>
+                                <option value="6" th:text="#{settings.api.duration.6m}"></option>
+                                <option value="12" th:text="#{settings.api.duration.1y}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full md:w-auto">
+                            <span th:text="#{settings.api.generateButton}"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th th:text="#{settings.api.table.name}"></th>
+                                <th th:text="#{settings.api.table.expires}"></th>
+                                <th th:text="#{settings.api.table.lastUsed}"></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${apiTokens == null || apiTokens.isEmpty()}">
+                                <td colspan="4" class="text-center text-base-content/50 py-4" th:text="#{settings.api.empty}"></td>
+                            </tr>
+                            <tr th:each="token : ${apiTokens}">
+                                <td>
+                                    <div class="font-bold" th:text="${token.name}"></div>
+                                    <div class="text-xs opacity-50 font-mono" th:text="'ID: ...' + ${#strings.substring(token.tokenIdentifier, 0, 8)}"></div>
+                                </td>
+                                <td>
+                                    <span th:text="${#temporals.format(token.expiresAt, 'dd.MM.yyyy')}"></span>
+                                    <span class="badge badge-xs badge-error ml-2" th:if="${token.expiresAt.isBefore(#temporals.createNow())}" th:text="#{settings.api.expired}">Expired</span>
+                                </td>
+                                <td>
+                                    <span th:if="${token.lastUsedAt != null}" th:text="${#temporals.format(token.lastUsedAt, 'dd.MM.yyyy HH:mm')}"></span>
+                                    <span th:if="${token.lastUsedAt == null}" class="opacity-50">-</span>
+                                </td>
+                                <td class="text-right">
+                                    <form th:action="@{/tokens/delete}" method="post" 
+                                        th:data-confirm="#{settings.api.revokeConfirm}"
+                                        th:onsubmit="|return confirm(this.getAttribute('data-confirm'));|" 
+                                        class="inline">
+                                        <input type="hidden" name="id" th:value="${token.id}" />
+                                        <button type="submit" class="btn btn-ghost btn-xs text-error hover:bg-error/10" th:text="#{settings.api.revoke}"></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
 <footer th:insert="~{layout/footer :: footer}"></footer>
 </body>
 </html>

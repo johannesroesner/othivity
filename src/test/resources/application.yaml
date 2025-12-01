@@ -12,6 +12,17 @@ spring:
           auth: true
           starttls:
             enable: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "dummy-google-client-id"
+            client-secret: "dummy-google-client-secret"
+            scope:
+              - openid
+              - profile
+              - email
   thymeleaf:
     cache: false
   messages:
@@ -46,3 +57,6 @@ vapid:
     key: "BP0B22nOk_2rm8bWODEp5Kiv096Lx5Se0Dvu1br-awaZljXewIu_qboBo21igiSOLcx6hY8szJGHMvVtB_5LoAE"
   private:
     key: "12345678901234567890123456789012"
+
+jwt:
+  secret: "9a4f2c8d3b7e15f90a2b5c8d4e6f3a1b7c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f"
