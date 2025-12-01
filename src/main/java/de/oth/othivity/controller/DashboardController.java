@@ -8,7 +8,6 @@ import de.oth.othivity.service.IExplorerService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
@@ -26,12 +25,7 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String index(Model model, HttpSession session) {
-        model.addAttribute("activeTab", "dashboard");
-
-
         model.addAttribute("allActivities", activityService.getAllActivitiesWithGeoCoordinates());
-
-
         Activity soonestActivity = activityService.getSoonestActivityForProfile(sessionService.getProfileFromSession(session));
         model.addAttribute("soonestActivityForProfile", soonestActivity);
         model.addAttribute("soonestActivityTimeUntil", activityService.getActivityTimeUntil(soonestActivity));
