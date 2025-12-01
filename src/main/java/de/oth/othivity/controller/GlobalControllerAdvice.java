@@ -28,7 +28,8 @@ import de.oth.othivity.model.enumeration.Role;
     ChatController.class,
     ExplorerController.class,
     NotificationController.class,
-    ReportController.class
+    ReportController.class,
+    VerificationController.class
 })
 public class GlobalControllerAdvice {
 
@@ -78,11 +79,13 @@ public class GlobalControllerAdvice {
     public void addUnreadChatCount(HttpSession session, HttpServletRequest request, Model model) {
         model.addAttribute("unreadMessageCount", chatService.getUnreadMessageCountForProfile(session));
     }
+
     @ModelAttribute
     public void addReportCount(HttpServletRequest request, Model model) {
        int count = reportService.countReports();
         model.addAttribute("unresolvedReportCount", count);
     }
+
     @ModelAttribute
     public void isModerator(HttpSession session, Model model) {
         Profile profile = sessionService.getProfileFromSession(session);
@@ -101,4 +104,6 @@ public class GlobalControllerAdvice {
         // Damit steht "vapidPublicKey" in jedem HTML-Footer zur Verfügung
         model.addAttribute("vapidPublicKey", vapidPublicKey);
     }
+
+    
 }

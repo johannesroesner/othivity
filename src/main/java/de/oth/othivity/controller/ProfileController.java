@@ -229,6 +229,10 @@ public class ProfileController {
         }
 
         profileService.setVerificationForEmail(profile);
+        
+        // Session aktualisieren mit neuem verified-Status
+        profile.getEmail().setVerified(true);
+        session.setAttribute("profile", profile);
 
         tokenRepository.delete(verificationToken);
 

@@ -21,15 +21,6 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String index(Model model, HttpSession session) {
         model.addAttribute("activeTab", "");
-
-        Profile profile = sessionService.getProfileFromSession(session);
-        if (profile.getSetupComplete() == null || !profile.getSetupComplete()) {
-            return "redirect:/setup";
-        }
-        if (profile.getEmail() == null || !profile.getEmail().getVerified()) {
-            return "redirect:/verify-email";
-        }
-
         return "dashboard";
     }
 }
