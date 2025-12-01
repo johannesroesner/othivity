@@ -64,7 +64,9 @@ public class TestDataRunner {
             profile.setFirstName("Johannes");
             profile.setLastName("Rösner");
             profile.setUsername("johannes");
-            profile.setEmail(new Email("johannes@example.com"));
+            Email email = new Email("johannes@example.com");
+            email.setVerified(true);
+            profile.setEmail(email);
             profile.setAboutMe("Ich bin ein Testprofil.");
             profile.setRole(Role.USER);
             profile.setLanguage(Language.ENGLISH);
