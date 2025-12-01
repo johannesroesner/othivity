@@ -43,4 +43,10 @@ public interface ActivityService {
     void deleteActivity(Activity activity);
 
     void removeProfileFromActivities(Profile profile);
+
+    Activity getSoonestActivityForProfile(Profile profile);
+
+    String getActivityTimeUntil(Activity activity);
+
+    String getAllActivitiesWithGeoCoordinates();
 }

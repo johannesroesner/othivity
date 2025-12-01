@@ -11,8 +11,8 @@
                     <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{activityTable.search}"></span>
                 </label>
                 <div class="join w-full">
-                    <input type="text" name="search" class="input input-bordered input-sm join-item w-full" th:placeholder="#{activityTable.searchPlaceholder}" th:value="${search}" />
-                    <button type="submit" class="btn btn-sm btn-primary join-item">
+                    <input type="text" name="search" class="input input-bordered input-md join-item w-full" th:placeholder="#{activityTable.searchPlaceholder}" th:value="${search}" />
+                    <button type="submit" class="btn btn-md btn-primary join-item">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </button>
                 </div>
@@ -24,7 +24,7 @@
                     <label class="label py-1">
                         <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{activityOverview.Tag}"></span>
                     </label>
-                    <select name="tag" class="select select-bordered select-sm w-full max-w-xs" onchange="this.form.submit()">
+                    <select name="tag" class="select select-bordered select-md w-full max-w-xs" onchange="this.form.submit()">
                         <option th:value="all"  th:selected="${tag == null || tag == ''}" th:text="#{activityTable.allTagOption}"></option>
                         <option th:each="t : ${allTags}" th:value="${t.name()}" th:text="${t.emoji != null ? t.emoji + ' ' + t.name() : t.name()}" th:selected="${t == tag}"></option>
                     </select>
@@ -34,13 +34,13 @@
                     <label class="label py-1">
                         <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{activityOverview.SortedBy}"></span>
                     </label>
-                    <div class="join">
-                        <select name="sortBy" class="select select-bordered select-sm join-item" onchange="this.form.submit()">
+                    <div class="join w-60">
+                        <select name="sortBy" class="select select-bordered select-md join-item" onchange="this.form.submit()">
                             <option value="date" th:selected="${sortBy == 'date'}" th:text="#{activityTable.date}"></option>
                             <option value="title" th:selected="${sortBy == 'title'}" th:text="#{activityTable.title}"></option>
                             <option value="groupSize" th:selected="${sortBy == 'groupSize'}" th:text="#{activityTable.groupSize}"></option>
                         </select>
-                        <select name="direction" class="select select-bordered select-sm join-item" onchange="this.form.submit()">
+                        <select name="direction" class="select select-bordered select-md join-item" onchange="this.form.submit()">
                             <option value="asc" th:selected="${direction == 'asc'}">▲</option>
                             <option value="desc" th:selected="${direction == 'desc'}">▼</option>
                         </select>
@@ -51,7 +51,7 @@
                     <label class="label py-1">
                         <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{activityOverview.Show}"></span>
                     </label>
-                    <select name="size" class="select select-bordered select-sm" onchange="this.form.submit()">
+                    <select name="size" class="select select-bordered select-md" onchange="this.form.submit()">
                         <option value="5" th:selected="${size == 5}">5</option>
                         <option value="10" th:selected="${size == 10}">10</option>
                         <option value="20" th:selected="${size == 20}">20</option>
