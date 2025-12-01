@@ -1,6 +1,8 @@
 package de.oth.othivity.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.oth.othivity.dto.ActivityDto;
+import de.oth.othivity.dto.MarkerDto;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
@@ -11,15 +13,21 @@ import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -28,7 +36,11 @@ public class ActivityServiceImpl implements ActivityService {
     private final ImageService imageService;
     private final GeocodingService geocodingService;
 
+    private final MessageSource messageSource;
+    private final ObjectMapper objectMapper;
+
     private final ActivityRepository activityRepository;
+
 
     @Override
     public List<Activity> getAllActivities() {
@@ -190,5 +202,58 @@ public class ActivityServiceImpl implements ActivityService {
                 activityRepository.save(activity);
             }
         }
+    }
+
+    @Override
+    public Activity getSoonestActivityForProfile(Profile profile) {
+        if (profile == null) return null;
+        return activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, Pageable.unpaged(), null, null).getContent().get(0);
+    }
+
+    @Override
+    public String getActivityTimeUntil(Activity activity) {
+        if (activity == null || activity.getDate() == null) return "";
+
+        Locale locale = LocaleContextHolder.getLocale();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime date = activity.getDate();
+
+        if (date.isBefore(now)) {
+            return messageSource.getMessage("dashboard.activityOccurred", null, locale);
+        }
+
+        long days = Duration.between(now, date).toDays();
+        if (days > 0) {
+            return messageSource.getMessage("dashboard.activityDays", new Object[]{days}, locale);
+        }
+
+        long hours = Duration.between(now, date).toHours();
+        if (hours > 0) {
+            return messageSource.getMessage("dashboard.activityHours", new Object[]{hours}, locale);
+        }
+
+        long minutes = Duration.between(now, date).toMinutes();
+        return messageSource.getMessage("dashboard.activityMinutes", new Object[]{minutes}, locale);
+    }
+
+    @Override
+    public String getAllActivitiesWithGeoCoordinates(){
+        List<MarkerDto> markers = activityRepository.findAll().stream()
+                .filter(a -> a.getAddress() != null
+                        && a.getAddress().getLatitude() != null
+                        && a.getAddress().getLongitude() != null)
+                .map(a -> new MarkerDto(
+                        a.getAddress().getLatitude(),
+                        a.getAddress().getLongitude(),
+                        "/activities/" + a.getId(),
+                        a.getTitle()
+                ))
+                .collect(Collectors.toList());
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(markers);
+        } catch (Exception e) {}
+
+        return json;
     }
 }
