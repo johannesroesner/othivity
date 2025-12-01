@@ -6,9 +6,11 @@ import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.repository.main.ActivityRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -17,6 +19,7 @@ import lombok.AllArgsConstructor;
 import de.oth.othivity.dto.ClubDto;
 import org.springframework.web.multipart.MultipartFile;
 import de.oth.othivity.service.ImageService;
+import de.oth.othivity.model.enumeration.NotificationType;
 import java.util.UUID;
 
 @AllArgsConstructor 
@@ -26,6 +29,7 @@ public class ClubServiceImpl implements ClubService {
     private final ClubRepository clubRepository;
     private final ImageService imageService;
     private final ActivityRepository activityRepository;
+    private final INotificationService notificationService;
 
     @Override
     public List<Club> getAllClubs() {
@@ -160,12 +164,16 @@ public class ClubServiceImpl implements ClubService {
     }
     
     @Override
+    @Transactional
     public void deleteClub(Club club, Profile profile) {
         if (profile == null || club == null) {
             return;
         }
 
         if (club.getAdmins().contains(profile)) {
+            for(Profile member : club.getMembers()) {
+                notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, member, "notification.club.deleted");
+            }
             clubRepository.delete(club);
         }
     }
@@ -180,6 +188,7 @@ public class ClubServiceImpl implements ClubService {
             if (!club.getAdmins().contains(profile)) {
                 club.getAdmins().add(profile);
                 clubRepository.save(club);
+                notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, profile, "notification.club.admin.added");
             }
         }
     }
@@ -193,6 +202,8 @@ public class ClubServiceImpl implements ClubService {
         if (club.getAdmins().contains(currentProfile) && !club.getAdmins().contains(profile)) {
             club.getMembers().remove(profile);
             clubRepository.save(club);
+            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, profile, "notification.club.member.removed");
         }
+
     }
 }
