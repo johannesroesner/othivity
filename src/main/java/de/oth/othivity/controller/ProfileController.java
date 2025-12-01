@@ -37,6 +37,7 @@ import de.oth.othivity.repository.helper.VerificationTokenRepository;
 import de.oth.othivity.dto.EmailVerificationDto;
 import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.service.IApiTokenService;
+import de.oth.othivity.service.IReportService;
 
 @AllArgsConstructor
 @Controller
@@ -47,6 +48,7 @@ public class ProfileController {
     private final INotificationService notificationService;
     private final VerificationTokenRepository tokenRepository;
     private final IApiTokenService apiTokenService; 
+    private final IReportService reportService;
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
@@ -76,6 +78,7 @@ public class ProfileController {
         model.addAttribute("canMessage", sessionService.canMessage(session,profile));
         model.addAttribute("canDelete", sessionService.canDelete(session, profile));
         model.addAttribute("canUpdate", sessionService.canUpdate(session, profile));
+        model.addAttribute("isReportable", reportService.isReportableProfile(currentProfile, profile));
 
         return "profile";
     }

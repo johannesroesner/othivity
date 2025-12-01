@@ -10,6 +10,7 @@ import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.PagingService;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IReportService;
 import de.oth.othivity.service.IWeatherService;
 import de.oth.othivity.validator.ActivityDtoValidator;
 import de.oth.othivity.validator.ImageUploadValidator;
@@ -36,6 +37,7 @@ public class ActivityController {
     private final SessionService sessionService;
     private final IWeatherService weatherService;
     private final PagingService pagingService;
+    private final IReportService reportService;
 
     private final ActivityDtoValidator activityDtoValidator;
     private final ImageUploadValidator imageUploadValidator;
@@ -113,6 +115,7 @@ public class ActivityController {
         model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
         model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
         model.addAttribute("weather", weatherService.getForecastForTime(activity.getAddress(),activity.getDate()));
+        model.addAttribute("isReportable", reportService.isReportableActivity(sessionService.getProfileFromSession(session), activity));
 
 
     model.addAttribute("activity", activity);

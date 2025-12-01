@@ -347,7 +347,7 @@ public class TestDataRunner {
             clubReportRepository.save(clubReport);
 
             ClubReport clubReport2 = new ClubReport();
-            clubReport2.setClub(club);
+            clubReport2.setClub(club2);
             clubReport2.setIssuer(profile3);
             clubReport2.setComment("Test-Report für Club.");
             clubReportRepository.save(clubReport2);
@@ -375,12 +375,6 @@ public class TestDataRunner {
             profileReport.setIssuer(profile3);
             profileReport.setComment("Test-Report für Profil.");
             profileReportRepository.save(profileReport);
-            
-            ProfileReport profileReport2 = new ProfileReport();
-            profileReport2.setProfile(profile);
-            profileReport2.setIssuer(profile3);
-            profileReport2.setComment("Test-Report für Profil.");
-            profileReportRepository.save(profileReport2);
         };
     }
 }
