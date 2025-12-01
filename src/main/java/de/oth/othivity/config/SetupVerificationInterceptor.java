@@ -11,6 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
+@org.springframework.context.annotation.Profile("!test")
 public class SetupVerificationInterceptor implements HandlerInterceptor {
 
     private final SessionService sessionService;
