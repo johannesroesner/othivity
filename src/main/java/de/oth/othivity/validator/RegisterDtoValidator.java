@@ -48,7 +48,7 @@ public class RegisterDtoValidator implements Validator {
         if (request.getEmail() != null && profileService.isEmailTaken(request.getEmail())) {
             errors.rejectValue("email", "register.error.emailExists");
         }
-
+        
         if (request.getEmail() != null && !request.getEmail().isEmpty() && !EMAIL_PATTERN.matcher(request.getEmail()).matches()) {
             errors.rejectValue("email", "field.invalid", "Invalid email format");
         }

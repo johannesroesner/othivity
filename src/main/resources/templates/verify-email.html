@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layout/head :: head(#{verifyEmail.title})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/empty-nav :: nav(activeTab='verifyEmail')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <div class="lg:w-1/2 mx-auto">
+        <div class="card bg-base-200 shadow-2xl p-8 space-y-8 rounded-2xl">
+
+            <p class="text-base-content/70" th:text="#{verifyEmail.instruction}"></p>
+
+            <form th:action="@{/profile/email/verify}" method="post" th:object="${emailVerificationDto}">
+                <div class="space-y-1 mb-6">
+                    <label class="label">
+                        <span class="label-text text-sm font-semibold text-base-content/70" th:text="#{verifyEmail.codeLabel}"></span>
+                    </label>
+
+                    <input type="text" 
+                           th:field="*{token}" 
+                           class="input input-bordered w-full font-mono" 
+                           placeholder="Token hier einfügen"
+                           required />
+                    
+                    <p th:if="${#fields.hasErrors('token')}" th:errors="*{token}" class="text-error text-sm mt-1"></p>
+                </div>
+
+                <div class="flex justify-end pt-4">
+                    <button type="submit" class="btn btn-primary" th:text="#{verifyEmail.submitButton}">Verifizieren</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    </div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>

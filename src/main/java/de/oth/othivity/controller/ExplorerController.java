@@ -20,15 +20,7 @@ public class ExplorerController {
     private final IExplorerService explorerService;
 
     @GetMapping("/explorer")
-    public String clubs(HttpSession session, Model model,
-                        @RequestParam(required = false) Double lat,
-                        @RequestParam(required = false) Double lon) {
-        //TODO: remove clubs if not needed rename method
-        // model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(session));
-        // model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(session));
-        // model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(session));
-
-        // Default location: OTH Regensburg
+    public String clubs(HttpSession session, Model model, @RequestParam(required = false) Double lat, @RequestParam(required = false) Double lon) {
         if (lat == null || lon == null) {
             lat = 49.0179;
             lon = 12.0968;

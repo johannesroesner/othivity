@@ -1,59 +1,85 @@
 package de.oth.othivity.config;
 
-import de.oth.othivity.model.security.CustomUserDetails;
-import de.oth.othivity.service.impl.CustomUserDetailsService;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import lombok.AllArgsConstructor;
+import de.oth.othivity.service.ICustomOAuth2UserService;
 
 @Configuration
-@AllArgsConstructor
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
     private final CustomAuthenticationSuccessHandler successHandler;
+    private final ICustomOAuth2UserService customOAuth2UserService;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf
-                    .ignoringRequestMatchers("/h2-console/**")  // Nur H2-Console ohne CSRF
-                )
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**", "/images/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // TODO delete when H2 not needed anymore
-                .formLogin(form -> form
-                .loginPage("/login")
-                .loginProcessingUrl("/process-login")
-                .usernameParameter("email")
-                .successHandler(successHandler) 
-                
-                .permitAll()
+    @Bean
+    @Order(1)
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/api/**")
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().authenticated()
             )
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .logout((logout) -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll());
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Order(2)
+    public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**")
+            )
+
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                    .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/images/**").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/process-login")
+                .usernameParameter("email")
+                .successHandler(successHandler)
+                .permitAll())
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .userInfoEndpoint(info -> info
+                    .oidcUserService(customOAuth2UserService)
+                )
+                .successHandler(successHandler)
+            )
+            .logout((logout) -> logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/")
+                    .permitAll());
+
+        return http.build();
     }
 }

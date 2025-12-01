@@ -2,15 +2,13 @@ package de.oth.othivity.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.oth.othivity.dto.ActivityDto;
+import de.oth.othivity.model.enumeration.NotificationType;
 import de.oth.othivity.dto.MarkerDto;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ActivityRepository;
-import de.oth.othivity.service.ActivityService;
-import de.oth.othivity.service.GeocodingService;
-import de.oth.othivity.service.ImageService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -35,12 +33,12 @@ public class ActivityServiceImpl implements ActivityService {
     private final SessionService sessionService;
     private final ImageService imageService;
     private final GeocodingService geocodingService;
+    private final INotificationService notificationService;
 
     private final MessageSource messageSource;
     private final ObjectMapper objectMapper;
 
     private final ActivityRepository activityRepository;
-
 
     @Override
     public List<Activity> getAllActivities() {
@@ -135,6 +133,12 @@ public class ActivityServiceImpl implements ActivityService {
             activityRepository.save(activity);
         }
 
+        for(Profile participant : activity.getTakePart() ) {
+            //TODO moe
+            notificationService.sendNotification(NotificationType.EMAIL,activity,participant, "notification.activity.updated");
+            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,participant, "notification.activity.updated");
+        }
+
         return activityRepository.save(activity);
     }
 
@@ -168,6 +172,10 @@ public class ActivityServiceImpl implements ActivityService {
         participants.add(profile);
         activity.setTakePart(participants);
 
+        //TODO moe
+        notificationService.sendNotification(NotificationType.EMAIL,activity,activity.getStartedBy(), "notification.activity.joined");
+        notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,activity.getStartedBy(), "notification.activity.joined");
+
         return activityRepository.save(activity);
     }
 
@@ -178,17 +186,32 @@ public class ActivityServiceImpl implements ActivityService {
         List<Profile> participants = activity.getTakePart();
         participants.removeIf(p -> p.getId().equals(profile.getId()));
         activity.setTakePart(participants);
+
+        //TODO moe
+        notificationService.sendNotification(NotificationType.EMAIL,activity,activity.getStartedBy(), "notification.activity.left");
+        notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,activity.getStartedBy(), "notification.activity.left");
+
         return activityRepository.save(activity);
     }
 
     @Override
     public Activity kickParticipant(Activity activity, Profile profile) {
         activity.getTakePart().removeIf(p -> p.getId().equals(profile.getId()));
+
+        //TODO moe
+        notificationService.sendNotification(NotificationType.EMAIL,activity,profile, "notification.activity.kicked");
+        notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,profile, "notification.activity.kicked");
         return activityRepository.save(activity);
     }
 
     @Override
     public void deleteActivity(Activity activity) {
+        for (Profile profile : activity.getTakePart()) {
+            //TODO moe
+            notificationService.sendNotification(NotificationType.EMAIL,activity,profile, "notification.activity.deleted");
+            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,profile, "notification.activity.deleted");
+        }
+
         activityRepository.delete(activity);
     }
 

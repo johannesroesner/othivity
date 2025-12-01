@@ -28,4 +28,6 @@ public interface INotificationService {
 
     int getCountOfUnreadNotifications(Profile profile);
 
+    String sendVerificationEmail(Profile recipient);
+
 }

@@ -2,6 +2,13 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.service.ChatService;
 import de.oth.othivity.validator.ProfileDtoValidator;
+import de.oth.othivity.validator.EmailVerificationDtoValidator;
+
+import java.util.Calendar;
+
+
+import java.security.Principal;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +20,23 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
+import java.util.UUID;
 
 import de.oth.othivity.validator.ImageUploadValidator;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.dto.UsernameDto;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.enumeration.Language;
+import de.oth.othivity.model.helper.VerificationToken;
+import de.oth.othivity.repository.helper.VerificationTokenRepository;
+import de.oth.othivity.dto.EmailVerificationDto;
+import de.oth.othivity.service.INotificationService;
+import de.oth.othivity.service.IApiTokenService;
 
 @AllArgsConstructor
 @Controller
@@ -29,10 +44,14 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final SessionService sessionService;
+    private final INotificationService notificationService;
+    private final VerificationTokenRepository tokenRepository;
+    private final IApiTokenService apiTokenService; 
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
     private final ChatService chatService;
+    private final EmailVerificationDtoValidator emailVerificationDtoValidator;
 
     @InitBinder("profileDto")
     protected void initBinder(WebDataBinder binder) {
@@ -68,6 +87,8 @@ public class ProfileController {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
+
+        model.addAttribute("apiTokens", apiTokenService.getProfileTokens(profile));
         model.addAttribute("profile", profile);
         model.addAttribute("languages", Language.values());
         return "settings";
@@ -142,6 +163,106 @@ public class ProfileController {
             profileService.updateProfileLanguage(profile, language);
             profile.setLanguage(language); 
             sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
+        }
+        
+        return "redirect:/settings";
+    }
+
+    @GetMapping("/setup")
+    public String setup(Model model, HttpSession session) {
+
+        model.addAttribute("usernameDto", new UsernameDto());
+        return "setup";
+    }
+    
+    @PostMapping("/profile/username/update")
+    public String updateUsername(@ModelAttribute UsernameDto usernameDto, BindingResult bindingResult, Model model, HttpSession session , HttpServletRequest request) {
+        if (bindingResult.hasErrors()) {
+            return "setup";
+        }
+
+        Profile profile = sessionService.getProfileFromSession(session);
+
+        if (profile == null) {
+            return "redirect:/login";
+        }
+        profileService.updateProfileLanguage(profile, request.getLocale());
+        profileService.setUsername(profile, usernameDto.getUsername());
+
+        return "redirect:/dashboard";
+    }
+
+    @GetMapping("/verify-email")
+    public String verifyEmail(Model model, HttpSession session) {
+
+        model.addAttribute("emailVerificationDto", new EmailVerificationDto());
+
+        notificationService.sendVerificationEmail(sessionService.getProfileFromSession(session));
+
+        return "verify-email";
+    }
+    
+
+    @PostMapping("/profile/email/verify")
+    public String verifyUser(@ModelAttribute EmailVerificationDto emailVerificationDto, Model model, HttpSession session) {
+
+        VerificationToken verificationToken = tokenRepository.findByToken(emailVerificationDto.getToken());
+        Profile profile = sessionService.getProfileFromSession(session);
+
+        if (verificationToken == null) {
+            model.addAttribute("message", "Ungültiger Token.");
+            System.out.println("Invalid token");
+            return "verify-email";
+        }
+
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            model.addAttribute("message", "Token ist abgelaufen.");
+            System.out.println("Token expired");
+            return "verify-email";
+        }
+
+        if (verificationToken.getProfile() == null || !verificationToken.getProfile().getId().equals(profile.getId())) {
+            model.addAttribute("message", "Token gehört nicht zum aktuellen Benutzer.");
+            System.out.println("Token does not belong to current user");
+            return "verify-email";
+        }
+
+        profileService.setVerificationForEmail(profile);
+        
+        // Session aktualisieren mit neuem verified-Status
+        profile.getEmail().setVerified(true);
+        session.setAttribute("profile", profile);
+
+        tokenRepository.delete(verificationToken);
+
+        return "redirect:/dashboard";
+    }
+    
+
+    @PostMapping("/tokens")
+    public String createToken(@RequestParam("name") String name, @RequestParam("duration") int duration, Principal principal, RedirectAttributes redirectAttributes, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+
+        if (profile == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Kein Profil gefunden.");
+            return "redirect:/settings";
+        }
+
+        String rawToken = apiTokenService.createToken(profile, name, duration);
+
+        redirectAttributes.addFlashAttribute("createdToken", rawToken);
+        redirectAttributes.addFlashAttribute("successMessage", "Token erstellt!");
+
+        return "redirect:/settings";
+    }
+
+    @PostMapping("/tokens/delete")
+    public String deleteToken(@RequestParam("id") UUID id, Principal principal, HttpSession session) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        
+        if (profile != null) {
+            apiTokenService.revokeToken(id, profile);
         }
         
         return "redirect:/settings";
