@@ -18,7 +18,7 @@ public class PushSubscriptionController {
     private final PushSubscriptionRepository subscriptionRepository;
     private final SessionService sessionService;
 
-    @PostMapping("/api/push/subscribe")
+    @PostMapping("/push/subscribe")
     public void subscribe(@RequestBody PushSubscriptionDto dto, HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return;
