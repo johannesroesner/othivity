@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:data-theme="${currentThemeName}">
 <head th:insert="~{layout/head :: head(#{activityOverview.pageTitle})}">
     <th:block>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/dist/vanilla-calendar.min.css">

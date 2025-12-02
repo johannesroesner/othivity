@@ -1,11 +1,15 @@
 package de.oth.othivity.controller;
 
+import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.IExplorerService;
 import de.oth.othivity.model.main.Activity;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +24,16 @@ public class ExplorerController {
     private final IExplorerService explorerService;
 
     @GetMapping("/explorer")
-    public String clubs(HttpSession session, Model model, @RequestParam(required = false) Double lat, @RequestParam(required = false) Double lon) {
+    public String explorer(HttpSession session, Model model,
+                           @RequestParam(required = false) Double lat,
+                           @RequestParam(required = false) Double lon,
+                           @RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "5") int size,
+                           @RequestParam(required = false) String search,
+                           @RequestParam(required = false) Tag tag,
+                           @RequestParam(defaultValue = "bestMix") String activeTab,
+                           @RequestParam(required = false) String sortBy,
+                           @RequestParam(defaultValue = "asc") String direction) {
         if (lat == null || lon == null) {
             lat = 49.0179;
             lon = 12.0968;

@@ -38,6 +38,7 @@ import de.oth.othivity.dto.EmailVerificationDto;
 import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.service.IApiTokenService;
 import de.oth.othivity.service.IReportService;
+import de.oth.othivity.model.enumeration.Theme;
 
 @AllArgsConstructor
 @Controller
@@ -94,6 +95,7 @@ public class ProfileController {
         model.addAttribute("apiTokens", apiTokenService.getProfileTokens(profile));
         model.addAttribute("profile", profile);
         model.addAttribute("languages", Language.values());
+        model.addAttribute("themes", Theme.values());
         return "settings";
     }
 
@@ -169,6 +171,17 @@ public class ProfileController {
         }
         
         return "redirect:/settings";
+    }
+
+    @PostMapping("/change-theme")
+    public String changeTheme(@RequestParam("theme") Theme theme, HttpSession session, HttpServletRequest request) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile != null) {
+            profileService.updateProfileTheme(profile, theme);
+        }
+        // Redirect zurück zur Seite, von der der Request kam
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/settings");
     }
 
     @GetMapping("/setup")

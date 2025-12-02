@@ -12,6 +12,7 @@ import de.oth.othivity.model.report.ProfileReport;
 import de.oth.othivity.model.helper.ClubJoinRequest;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.enumeration.Language;
+import de.oth.othivity.model.enumeration.Theme;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -56,18 +57,22 @@ public class Profile implements HasImage {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Language language;
+    
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Theme theme = Theme.LIGHT;
 
     @Column(nullable = false)
     private Boolean setupComplete = false;
-
+    
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
-
+    
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "notification_id")
     private List<Notification> notifications = new ArrayList<>();
-
+    
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "phone_id")
     private Phone phone;
@@ -100,7 +105,6 @@ public class Profile implements HasImage {
     @OneToMany(mappedBy = "profileB", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chat> chatAsB = new ArrayList<>();
 
-    // view helper
     public String getInitials() {
         return (firstName.substring(0,1) + lastName.substring(0,1)).toUpperCase();
     }

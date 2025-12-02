@@ -18,6 +18,7 @@ import de.oth.othivity.repository.main.ClubRepository;
 
 import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.INotificationService;
+import de.oth.othivity.model.enumeration.Theme;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,12 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void updateProfileLanguage(Profile profile, Language language) {
         profile.setLanguage(language);
+        profileRepository.save(profile);
+    }
+
+    @Override
+    public void updateProfileTheme(Profile profile, Theme theme) {
+        profile.setTheme(theme);
         profileRepository.save(profile);
     }
 
