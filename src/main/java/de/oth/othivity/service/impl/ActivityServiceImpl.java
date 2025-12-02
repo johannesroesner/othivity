@@ -230,7 +230,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Activity getSoonestActivityForProfile(Profile profile) {
         if (profile == null) return null;
-        return activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, Pageable.unpaged(), null, null).getContent().get(0);
+        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, Pageable.unpaged(), null, null).getContent();
+        return activities.isEmpty() ? null : activities.get(0);
     }
 
     @Override

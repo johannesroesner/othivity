@@ -11,11 +11,7 @@
         <h1 class="text-3xl font-bold" th:text="#{clubDetail.pageTitle}"></h1>
 
         <!-- Buttons -->
-        <div class="ml-auto flex gap-4">
-            <!-- Report Button -->
-            <a th:href="@{'/reports/create/club/' + ${club.id}}" class="btn btn-error">
-                <span th:text="#{clubDetail.reportButton}">Report</span>
-            </a>
+        <div class="ml-auto flex gap-4 items-center">
             <!-- Join Requests Button -->
             <a th:if="${editMode and inviteOnly}" th:href="@{'/clubs/join-requests/' + ${club.id}}" class="btn btn-info">
                 <span th:text="#{clubDetail.joinRequests}"></span>
@@ -51,6 +47,15 @@
                     <span th:text="#{clubDetail.sendJoinRequest}">Send Join Request</span>
                 </button>
             </form>
+            
+            <!-- Report Button -->
+            <a th:if="${isReportable}" th:href="@{'/reports/create/club/' + ${club.id}}" role="tab" class="tab px-2">
+                <div class="indicator flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </a>
         </div>
     </div>
 
@@ -194,8 +199,9 @@
             </div>
         </div>
 
-        <div id="map-container" class="lg:col-span-2 relative">
-            <div id="map" class="h-full w-full rounded shadow-2xl"></div>
+        <div id="map-container" class="lg:col-span-2 relative min-h-[300px]">
+            <div th:replace="~{fragments/map :: mapDiv}"></div>
+            <script th:replace="~{fragments/map :: mapScript(${club.address.latitude}, ${club.address.longitude}, ${club.name})}"></script>
         </div>
 
         <div class="">
@@ -234,14 +240,6 @@
     <!-- content end -->
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var map = L.map('map').setView([51.505, -0.09], 13);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-    });
-
     let currentSlide = 0;
     const slides = document.querySelectorAll('.carousel-item');
 

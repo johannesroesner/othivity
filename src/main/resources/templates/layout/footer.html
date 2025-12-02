@@ -58,7 +58,7 @@
                 headers[csrfHeader] = csrfToken;
             }
 
-            const response = await fetch('/api/push/subscribe', {
+            const response = await fetch('/push/subscribe', {
                 method: 'POST',
                 body: JSON.stringify(subscription),
                 headers: headers

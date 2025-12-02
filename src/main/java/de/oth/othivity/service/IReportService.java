@@ -41,4 +41,8 @@ public interface IReportService {
     void rejectProfileReport(UUID reportId);
 
     int countReports();
+
+    boolean isReportableClub(Profile issuer, Club club);
+    boolean isReportableActivity(Profile issuer, Activity activity);
+    boolean isReportableProfile(Profile issuer, Profile profile);
 }

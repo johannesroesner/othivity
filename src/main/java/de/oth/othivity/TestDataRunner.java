@@ -91,6 +91,11 @@ public class TestDataRunner {
             profile2.setSetupComplete(true);
             profileRepository.save(profile2);
 
+            Email email3  = new Email();
+            email3.setAddress("moritz@example.com");
+            email3.setVerified(true);
+            
+
             User user3 = new User();
             user3.setEmail("moritz@example.com");
             user3.setPassword(passwordEncoder.encode("password"));
@@ -100,7 +105,7 @@ public class TestDataRunner {
             profile3.setFirstName("Moritz");
             profile3.setLastName("Semmelmann");
             profile3.setUsername("moritz");
-            profile3.setEmail(new Email("moritz@example.com"));
+            profile3.setEmail(email3);
             profile3.setAboutMe("Ich bin ein Testprofil.");
             profile3.setRole(Role.MODERATOR);
             profile3.setLanguage(Language.ENGLISH);
@@ -165,10 +170,13 @@ public class TestDataRunner {
             club6.setDescription("Ein weiterer exklusiver Club, der nur auf Einladung beitretbar ist.");
             club6.setAccessLevel(AccessLevel.ON_INVITE);
             Address address6 = new Address();
-            address6.setStreet("Exclusive Blvd");
-            address6.setHouseNumber("13");
-            address6.setCity("Selectville");
-            address6.setPostalCode("44444");
+            address6.setStreet("Seybothstraße");
+            address6.setHouseNumber("2");
+            address6.setCity("Regensburg");
+            address6.setPostalCode("93053");
+            address6.setCountry("Germany");
+            address6.setLatitude(49.0134);
+            address6.setLongitude(12.1016);
             club6.setAddress(address6);
             club6.getMembers().add(profile3);
             club6.getAdmins().add(profile3);
@@ -211,10 +219,13 @@ public class TestDataRunner {
             club.setDescription("Dies ist ein Test Club.");
             club.setAccessLevel(AccessLevel.OPEN);
             Address address = new Address();
-            address.setStreet("Musterstraße");
+            address.setStreet("Brunhuberstraße");
             address.setHouseNumber("1");
-            address.setCity("Musterstadt");
-            address.setPostalCode("12345");
+            address.setCity("Regensburg");
+            address.setPostalCode("93053");
+            address.setCountry("Germany");
+            address.setLatitude(49.0089);
+            address.setLongitude(12.1102);
             club.setAddress(address);
             club.getMembers().add(profile);
             club.getMembers().add(profile2);
@@ -227,10 +238,13 @@ public class TestDataRunner {
             club2.setDescription("Ein exklusiver Club nur für geladene Gäste.");
             club2.setAccessLevel(AccessLevel.CLOSED);
             Address address4 = new Address();
-            address4.setStreet("Exclusive Street");
-            address4.setHouseNumber("99");
-            address4.setCity("Elite City");
-            address4.setPostalCode("54321");
+            address4.setStreet("Domplatz");
+            address4.setHouseNumber("1");
+            address4.setCity("Regensburg");
+            address4.setPostalCode("93047");
+            address4.setCountry("Germany");
+            address4.setLatitude(49.0196);
+            address4.setLongitude(12.0974);
             club2.setAddress(address4);
             club2.getMembers().add(profile);
             club2.getMembers().add(profile2);
@@ -289,10 +303,13 @@ public class TestDataRunner {
             club4.setDescription("Ein sozialer Club für gemeinsame Aktivitäten.");
             club4.setAccessLevel(AccessLevel.CLOSED);
             Address address7 = new Address();
-            address7.setStreet("Social Avenue");
+            address7.setStreet("Bahnhofstraße");
             address7.setHouseNumber("17");
-            address7.setCity("Friendlytown");
-            address7.setPostalCode("22222");
+            address7.setCity("Regensburg");
+            address7.setPostalCode("93047");
+            address7.setCountry("Germany");
+            address7.setLatitude(49.0134);
+            address7.setLongitude(12.0990);
             club4.setAddress(address7);
             club4.getMembers().add(profile);
             club4.getMembers().add(profile2);
@@ -306,10 +323,13 @@ public class TestDataRunner {
             club5.setDescription("Ein exklusiver Club, der nur auf Einladung beitretbar ist.");
             club5.setAccessLevel(AccessLevel.ON_INVITE);
             Address address5 = new Address();
-            address5.setStreet("Invite Lane");
-            address5.setHouseNumber("7");
-            address5.setCity("Invitetown");
-            address5.setPostalCode("33333");
+            address5.setStreet("Emmeramsplatz");
+            address5.setHouseNumber("5");
+            address5.setCity("Regensburg");
+            address5.setPostalCode("93047");
+            address5.setCountry("Germany");
+            address5.setLatitude(49.0193);
+            address5.setLongitude(12.0947);
             club5.setAddress(address5);
             club5.getMembers().add(profile);
             club5.getAdmins().add(profile);
@@ -329,7 +349,7 @@ public class TestDataRunner {
             clubReportRepository.save(clubReport);
 
             ClubReport clubReport2 = new ClubReport();
-            clubReport2.setClub(club);
+            clubReport2.setClub(club2);
             clubReport2.setIssuer(profile3);
             clubReport2.setComment("Test-Report für Club.");
             clubReportRepository.save(clubReport2);
@@ -357,12 +377,6 @@ public class TestDataRunner {
             profileReport.setIssuer(profile3);
             profileReport.setComment("Test-Report für Profil.");
             profileReportRepository.save(profileReport);
-            
-            ProfileReport profileReport2 = new ProfileReport();
-            profileReport2.setProfile(profile);
-            profileReport2.setIssuer(profile3);
-            profileReport2.setComment("Test-Report für Profil.");
-            profileReportRepository.save(profileReport2);
         };
     }
 }

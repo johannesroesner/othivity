@@ -122,4 +122,37 @@ public class ReportServiceImpl implements IReportService {
         int profileReports = (int) profileReportRepository.count();
         return clubReports + activityReports + profileReports;
     }
+    @Override
+    public boolean isReportableClub(Profile issuer, Club club) {
+        List<ClubReport> reports = clubReportRepository.findByIssuerAndClub(issuer, club);
+        if (!reports.isEmpty()) {
+            return false;
+        }
+        if (club.getAdmins().contains(issuer)) {
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public boolean isReportableActivity(Profile issuer, Activity activity) {
+        List<ActivityReport> reports = activityReportRepository.findByIssuerAndActivity(issuer, activity);
+        if (!reports.isEmpty()) {
+            return false;
+        }
+        if (activity.getStartedBy().equals(issuer)) {
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public boolean isReportableProfile(Profile issuer, Profile profile) {
+        List<ProfileReport> reports = profileReportRepository.findByIssuerAndProfile(issuer, profile);
+        if (!reports.isEmpty()) {
+            return false;
+        }
+        if (issuer.equals(profile)) {
+            return false;
+        }
+        return true;
+    }
 }

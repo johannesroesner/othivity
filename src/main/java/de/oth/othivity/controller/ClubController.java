@@ -3,6 +3,7 @@ package de.oth.othivity.controller;
 import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.service.ClubService;
+import de.oth.othivity.service.IReportService;
 import de.oth.othivity.service.SessionService;
 import de.oth.othivity.validator.ImageUploadValidator;
 import de.oth.othivity.service.ProfileService;
@@ -36,6 +37,7 @@ public class ClubController {
     private final SessionService sessionService;
     private final ClubDtoValidator clubDtoValidator;
     private final ProfileService profileService;
+    private final IReportService reportService;
 
     @InitBinder("clubDto")
     protected void initBinder(WebDataBinder binder) {
@@ -90,6 +92,7 @@ public class ClubController {
         model.addAttribute("memberCount", club.getMembers() != null ? club.getMembers().size() : 0); 
         model.addAttribute("clubActivities", clubService.getActivitiesByClub(club));
         model.addAttribute("activitiesCount", clubService.getActivitiesByClub(club).size());
+        model.addAttribute("isReportable", reportService.isReportableClub(sessionService.getProfileFromSession(session), club));
 
         return "club-detail";
     }
