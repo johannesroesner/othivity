@@ -1,21 +1,88 @@
-<div th:fragment="clubTable(title, clubs)">
+<div th:fragment="clubTable(title, clubs, pageParam, activeTab, size, sortBy, direction, search)">
 
-    <h2 class="text-xl font-semibold mb-3" th:text="${title}"></h2>
+    <div class="bg-base-200 p-4 rounded-2xl shadow-2xl mb-6">
+        <form method="get" th:action="@{/clubs}" class="flex flex-col lg:flex-row gap-4 lg:items-end justify-between">
 
-    <div class="overflow-x-auto rounded-2xl shadow-2xl">
-        <table class="table w-full">
+            <input type="hidden" name="activeTab" th:value="${activeTab}"/>
+            <input type="hidden" th:name="${pageParam}" value="0"/>
+
+            <div class="form-control w-full lg:w-auto flex-grow max-w-md">
+                <label class="label py-1">
+                    <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{clubTable.search}"></span>
+                </label>
+                <div class="join w-full">
+                    <input type="text" name="search" class="input input-bordered input-md join-item w-full" th:placeholder="#{clubTable.searchPlaceholder}" th:value="${search}" />
+                    <button type="submit" class="btn btn-md btn-primary join-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 items-end">
+
+                <div class="form-control">
+                    <label class="label py-1">
+                        <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{clubTable.accessLevel}"></span>
+                    </label>
+                    <select name="accessLevel" class="select select-bordered select-md w-full max-w-xs" onchange="this.form.submit()">
+                        <option value="all" th:selected="${accessLevel == null || accessLevel == ''}" th:text="#{clubTable.allAccessLevels}"></option>
+                        <option th:each="level : ${allAccessLevels}" th:value="${level.name()}" th:text="#{${level.key}}" th:selected="${level.name() == accessLevel}"></option>
+                    </select>
+                </div>
+
+                <div class="form-control">
+                    <label class="label py-1">
+                        <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{clubTable.sortBy}"></span>
+                    </label>
+                    <div class="join w-60">
+                        <select name="sortBy" class="select select-bordered select-md join-item" onchange="this.form.submit()">
+                            <option value="name" th:selected="${sortBy == 'name'}" th:text="#{clubTable.name}"></option>
+                            <option value="size" th:selected="${sortBy == 'size'}" th:text="#{clubTable.size}"></option>
+                        </select>
+                        <select name="direction" class="select select-bordered select-md join-item" onchange="this.form.submit()">
+                            <option value="asc" th:selected="${direction == 'asc'}">▲</option>
+                            <option value="desc" th:selected="${direction == 'desc'}">▼</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label class="label py-1">
+                        <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{clubTable.show}"></span>
+                    </label>
+                    <select name="size" class="select select-bordered select-md" onchange="this.form.submit()">
+                        <option value="5" th:selected="${size == 5}">5</option>
+                        <option value="10" th:selected="${size == 10}">10</option>
+                        <option value="20" th:selected="${size == 20}">20</option>
+                        <option value="50" th:selected="${size == 50}">50</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="overflow-x-auto rounded-2xl shadow-2xl mb-4">
+        <table class="table w-full table-fixed">
+            <colgroup>
+                <col style="width: 40%;">
+                <col style="width: 25%;">
+                <col style="width: 20%;">
+                <col style="width: 15%;">
+            </colgroup>
             <thead>
             <tr class="bg-base-200">
                 <th th:text="#{clubTable.name}"></th>
                 <th th:text="#{clubTable.accessLevel}"></th>
+                <th th:text="#{clubTable.memberCount}"></th>
                 <th></th>
             </tr>
             </thead>
 
             <tbody>
-            <tr th:each="club : ${clubs}">
-                <td th:text="${club.name}"></td>
+            <tr th:each="club : ${clubs.content}">
+                <td class="truncate" th:text="${club.name}"></td>
                 <td th:text="#{${club.accessLevel.key}}"></td>
+                <td th:text="${club.members.size()}"></td>
                 <td>
                     <a class="btn btn-primary btn-xs"
                        th:href="@{'/clubs/' + ${club.id}}"
@@ -23,7 +90,34 @@
                     </a>
                 </td>
             </tr>
+            <tr th:if="${clubs.empty}">
+                <td colspan="4" class="text-center italic text-gray-500" th:text="#{clubTable.noClubs}"></td>
+            </tr>
             </tbody>
         </table>
+    </div>
+
+    <div th:if="${clubs.totalPages > 1}" class="flex justify-center my-4">
+        <div class="join shadow-2xl">
+            <a class="join-item btn btn-square"
+               th:classappend="${clubs.first} ? 'btn-disabled'"
+               th:href="@{/clubs(${pageParam}=0,activeTab=${activeTab},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">«</a>
+            <a class="join-item btn btn-square"
+               th:classappend="${clubs.first} ? 'btn-disabled'"
+               th:href="@{/clubs(${pageParam}=${clubs.number - 1},activeTab=${activeTab},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">‹</a>
+
+            <th:block th:with="startPage=${T(java.lang.Math).max(0, clubs.number - 2)},endPage=${T(java.lang.Math).min(clubs.totalPages - 1, clubs.number + 2)}">
+                <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">
+                    <input class="join-item btn btn-square" type="radio" name="options" th:aria-label="${i + 1}" th:checked="${i == clubs.number}" th:classappend="${i == clubs.number} ? 'btn-active bg-primary text-white'" th:onclick="|window.location.href='@{/clubs((${pageParam})=${i},activeTab=${activeTab},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}'|"/>
+                </th:block>
+            </th:block>
+
+            <a class="join-item btn btn-square"
+               th:classappend="${clubs.last} ? 'btn-disabled'"
+               th:href="@{/clubs(${pageParam}=${clubs.number + 1},activeTab=${activeTab},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">›</a>
+            <a class="join-item btn btn-square"
+               th:classappend="${clubs.last} ? 'btn-disabled'"
+               th:href="@{/clubs(${pageParam}=${clubs.totalPages - 1},activeTab=${activeTab},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">»</a>
+        </div>
     </div>
 </div>
