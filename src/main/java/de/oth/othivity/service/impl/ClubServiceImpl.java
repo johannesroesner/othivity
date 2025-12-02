@@ -13,6 +13,7 @@ import de.oth.othivity.repository.main.ActivityRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import jakarta.servlet.http.HttpSession;
@@ -53,6 +54,19 @@ public class ClubServiceImpl implements ClubService {
     public Page<Club> getClubsJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return Page.empty();
+        
+        if (pageable.getSort().isSorted()) {
+            var order = pageable.getSort().iterator().next();
+            if ("members.size".equals(order.getProperty())) {
+                Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+                if (order.isAscending()) {
+                    return clubRepository.findClubsJoinedByProfileOrderBySizeAsc(profile, search, accessLevel, unsortedPageable);
+                } else {
+                    return clubRepository.findClubsJoinedByProfileOrderBySizeDesc(profile, search, accessLevel, unsortedPageable);
+                }
+            }
+        }
+        
         return clubRepository.findClubsJoinedByProfile(profile, search, accessLevel, pageable);
     }
     
@@ -75,6 +89,19 @@ public class ClubServiceImpl implements ClubService {
     public Page<Club> getClubsNotJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return Page.empty();
+        
+        if (pageable.getSort().isSorted()) {
+            var order = pageable.getSort().iterator().next();
+            if ("members.size".equals(order.getProperty())) {
+                Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+                if (order.isAscending()) {
+                    return clubRepository.findClubsNotJoinedByProfileOrderBySizeAsc(profile, search, accessLevel, unsortedPageable);
+                } else {
+                    return clubRepository.findClubsNotJoinedByProfileOrderBySizeDesc(profile, search, accessLevel, unsortedPageable);
+                }
+            }
+        }
+        
         return clubRepository.findClubsNotJoinedByProfile(profile, search, accessLevel, pageable);
     }
     @Override

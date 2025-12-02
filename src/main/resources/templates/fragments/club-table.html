@@ -37,6 +37,7 @@
                     <div class="join w-60">
                         <select name="sortBy" class="select select-bordered select-md join-item" onchange="this.form.submit()">
                             <option value="name" th:selected="${sortBy == 'name'}" th:text="#{clubTable.name}"></option>
+                            <option value="size" th:selected="${sortBy == 'size'}" th:text="#{clubTable.size}"></option>
                         </select>
                         <select name="direction" class="select select-bordered select-md join-item" onchange="this.form.submit()">
                             <option value="asc" th:selected="${direction == 'asc'}">▲</option>
@@ -61,19 +62,27 @@
     </div>
 
     <div class="overflow-x-auto rounded-2xl shadow-2xl mb-4">
-        <table class="table w-full">
+        <table class="table w-full table-fixed">
+            <colgroup>
+                <col style="width: 40%;">
+                <col style="width: 25%;">
+                <col style="width: 20%;">
+                <col style="width: 15%;">
+            </colgroup>
             <thead>
             <tr class="bg-base-200">
                 <th th:text="#{clubTable.name}"></th>
                 <th th:text="#{clubTable.accessLevel}"></th>
+                <th th:text="#{clubTable.memberCount}"></th>
                 <th></th>
             </tr>
             </thead>
 
             <tbody>
             <tr th:each="club : ${clubs.content}">
-                <td th:text="${club.name}"></td>
+                <td class="truncate" th:text="${club.name}"></td>
                 <td th:text="#{${club.accessLevel.key}}"></td>
+                <td th:text="${club.members.size()}"></td>
                 <td>
                     <a class="btn btn-primary btn-xs"
                        th:href="@{'/clubs/' + ${club.id}}"
@@ -82,7 +91,7 @@
                 </td>
             </tr>
             <tr th:if="${clubs.empty}">
-                <td colspan="3" class="text-center italic text-gray-500" th:text="#{clubTable.noClubs}"></td>
+                <td colspan="4" class="text-center italic text-gray-500" th:text="#{clubTable.noClubs}"></td>
             </tr>
             </tbody>
         </table>

@@ -17,8 +17,20 @@ import java.util.UUID;
 public interface ClubRepository extends JpaRepository<Club, UUID> {
     List<Club> findByAccessLevelNot(AccessLevel accessLevel);
     
+    @Query("SELECT c FROM Club c WHERE :profile MEMBER OF c.members AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR :search IS NULL) AND (:accessLevel IS NULL OR c.accessLevel = :accessLevel) ORDER BY SIZE(c.members) ASC")
+    Page<Club> findClubsJoinedByProfileOrderBySizeAsc(@Param("profile") Profile profile, @Param("search") String search, @Param("accessLevel") AccessLevel accessLevel, Pageable pageable);
+    
+    @Query("SELECT c FROM Club c WHERE :profile MEMBER OF c.members AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR :search IS NULL) AND (:accessLevel IS NULL OR c.accessLevel = :accessLevel) ORDER BY SIZE(c.members) DESC")
+    Page<Club> findClubsJoinedByProfileOrderBySizeDesc(@Param("profile") Profile profile, @Param("search") String search, @Param("accessLevel") AccessLevel accessLevel, Pageable pageable);
+    
     @Query("SELECT c FROM Club c WHERE :profile MEMBER OF c.members AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR :search IS NULL) AND (:accessLevel IS NULL OR c.accessLevel = :accessLevel)")
     Page<Club> findClubsJoinedByProfile(@Param("profile") Profile profile, @Param("search") String search, @Param("accessLevel") AccessLevel accessLevel, Pageable pageable);
+    
+    @Query("SELECT c FROM Club c WHERE :profile NOT MEMBER OF c.members AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR :search IS NULL) AND (:accessLevel IS NULL OR c.accessLevel = :accessLevel) ORDER BY SIZE(c.members) ASC")
+    Page<Club> findClubsNotJoinedByProfileOrderBySizeAsc(@Param("profile") Profile profile, @Param("search") String search, @Param("accessLevel") AccessLevel accessLevel, Pageable pageable);
+    
+    @Query("SELECT c FROM Club c WHERE :profile NOT MEMBER OF c.members AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR :search IS NULL) AND (:accessLevel IS NULL OR c.accessLevel = :accessLevel) ORDER BY SIZE(c.members) DESC")
+    Page<Club> findClubsNotJoinedByProfileOrderBySizeDesc(@Param("profile") Profile profile, @Param("search") String search, @Param("accessLevel") AccessLevel accessLevel, Pageable pageable);
     
     @Query("SELECT c FROM Club c WHERE :profile NOT MEMBER OF c.members AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR :search IS NULL) AND (:accessLevel IS NULL OR c.accessLevel = :accessLevel)")
     Page<Club> findClubsNotJoinedByProfile(@Param("profile") Profile profile, @Param("search") String search, @Param("accessLevel") AccessLevel accessLevel, Pageable pageable);
