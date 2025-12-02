@@ -50,13 +50,33 @@
 <script th:inline="javascript">
     const myTab = document.getElementById("myTab");
     const allTab = document.getElementById("allTab");
+    
+    /*<![CDATA[*/
+    const currentSize = /*[[${size}]]*/ 10;
+    const currentSortBy = /*[[${sortBy}]]*/ 'name';
+    const currentDirection = /*[[${direction}]]*/ 'asc';
+    const currentSearch = /*[[${search}]]*/ '';
+    const currentAccessLevel = /*[[${accessLevel}]]*/ '';
+    /*]]>*/
 
     myTab.onclick = () => {
-        window.location.href = '/clubs?activeTab=my';
+        let url = '/clubs?activeTab=my';
+        url += '&size=' + currentSize;
+        url += '&sortBy=' + currentSortBy;
+        url += '&direction=' + currentDirection;
+        if (currentSearch) url += '&search=' + encodeURIComponent(currentSearch);
+        if (currentAccessLevel) url += '&accessLevel=' + currentAccessLevel;
+        window.location.href = url;
     };
 
     allTab.onclick = () => {
-        window.location.href = '/clubs?activeTab=all';
+        let url = '/clubs?activeTab=all';
+        url += '&size=' + currentSize;
+        url += '&sortBy=' + currentSortBy;
+        url += '&direction=' + currentDirection;
+        if (currentSearch) url += '&search=' + encodeURIComponent(currentSearch);
+        if (currentAccessLevel) url += '&accessLevel=' + currentAccessLevel;
+        window.location.href = url;
     };
 </script>
 <footer th:insert="~{layout/footer :: footer}"></footer>
