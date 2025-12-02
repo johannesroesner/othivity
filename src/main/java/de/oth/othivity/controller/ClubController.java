@@ -24,6 +24,8 @@ import de.oth.othivity.dto.ClubDto;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import de.oth.othivity.validator.ClubDtoValidator;
+import org.springframework.data.domain.Pageable;
+import de.oth.othivity.service.PagingService;
 import java.util.UUID;
 
 
@@ -38,6 +40,7 @@ public class ClubController {
     private final ClubDtoValidator clubDtoValidator;
     private final ProfileService profileService;
     private final IReportService reportService;
+    private final PagingService pagingService;
 
     @InitBinder("clubDto")
     protected void initBinder(WebDataBinder binder) {
@@ -45,10 +48,40 @@ public class ClubController {
     }
 
     @GetMapping("/clubs")
-    public String clubs(HttpSession session, Model model) {
-        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(session));
-        model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(session));
+    public String clubs(HttpSession session, Model model,
+                       @RequestParam(defaultValue = "0") int myPage,
+                       @RequestParam(defaultValue = "0") int allPage,
+                       @RequestParam(defaultValue = "10") int size,
+                       @RequestParam(defaultValue = "my") String activeTab,
+                       @RequestParam(defaultValue = "name") String sortBy,
+                       @RequestParam(defaultValue = "asc") String direction,
+                       @RequestParam(required = false) String search,
+                       @RequestParam(required = false) String accessLevel) {
+        
+        AccessLevel accessLevelEnum = null;
+        if (accessLevel != null && !accessLevel.isEmpty() && !accessLevel.equals("all")) {
+            try {
+                accessLevelEnum = AccessLevel.valueOf(accessLevel);
+            } catch (IllegalArgumentException e) {
+                accessLevelEnum = null;
+            }
+        }
+        
+        Pageable myPageable = pagingService.createPageable(myPage, size, sortBy, direction);
+        Pageable allPageable = pagingService.createPageable(allPage, size, sortBy, direction);
+        
+        model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(session, myPageable, search, accessLevelEnum));
+        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(session, allPageable, search, accessLevelEnum));
         model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(session));
+        
+        model.addAttribute("activeTab", activeTab);
+        model.addAttribute("size", size);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+        model.addAttribute("search", search);
+        model.addAttribute("accessLevel", accessLevel);
+        model.addAttribute("allAccessLevels", AccessLevel.values());
+        
         return "club-overview";
     }
 

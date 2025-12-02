@@ -1,5 +1,6 @@
 package de.oth.othivity.service;
 
+import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import jakarta.servlet.http.HttpSession;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Service;
 import de.oth.othivity.dto.ClubDto;
 import de.oth.othivity.model.main.Profile;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 import java.util.List;
@@ -21,9 +24,13 @@ public interface ClubService {
 
     List<Club> getClubsJoinedByProfile(HttpSession session);
     
+    Page<Club> getClubsJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel);
+    
     List<Club> getClubsManagedByProfile(HttpSession session);
 
     List<Club> getClubsNotJoinedByProfile(HttpSession session);
+    
+    Page<Club> getClubsNotJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel);
 
     Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage);
 
