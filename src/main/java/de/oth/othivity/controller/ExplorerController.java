@@ -1,6 +1,5 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.service.ClubService;
 import de.oth.othivity.service.IExplorerService;
 import de.oth.othivity.model.main.Activity;
 
@@ -16,11 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @Controller
 public class ExplorerController {
-    private final ClubService clubService;
     private final IExplorerService explorerService;
 
     @GetMapping("/explorer")
-    public String clubs(HttpSession session, Model model, @RequestParam(required = false) Double lat, @RequestParam(required = false) Double lon) {
+    public String explorer(HttpSession session, Model model, @RequestParam(required = false) Double lat, @RequestParam(required = false) Double lon) {
         if (lat == null || lon == null) {
             lat = 49.0179;
             lon = 12.0968;

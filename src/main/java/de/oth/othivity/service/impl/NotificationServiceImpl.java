@@ -23,6 +23,9 @@ import de.oth.othivity.service.IPushNotificationService;
 
 import java.util.Comparator;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -36,12 +39,12 @@ public class NotificationServiceImpl implements INotificationService {
     private final IPushNotificationService pushNotificationService;
 
     @Override
-    public <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField) {
-        sendNotification(type, entity, recipient, messageField, null);
+    public <T> void sendNotification(T entity, Profile recipient, String messageField, NotificationType... types) {
+        sendNotification(entity, recipient, messageField, null, types);
     }
 
     @Override
-    public <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField, Profile issuer) {
+    public <T> void sendNotification(T entity, Profile recipient, String messageField, Profile issuer, NotificationType... types) {
         Locale locale;
         if (recipient != null && recipient.getLanguage() != null) {
             switch (recipient.getLanguage()) {
@@ -78,20 +81,18 @@ public class NotificationServiceImpl implements INotificationService {
 
         createNotification(recipient, subject, formattedMessage);
 
-        if(type == NotificationType.SMS) {
-            // send email - forrmattedMessage
-            return;
-        }
+        if (types != null && types.length > 0) {
+            Set<NotificationType> uniqueTypes = Arrays.stream(types).collect(Collectors.toSet());
 
-        if(type == NotificationType.PUSH_NOTIFICATION) {
-            pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);
-            return;
-        }
-
-        if(type == NotificationType.EMAIL) {
-            // send push notification - formattedMessageWithLink
-            emailService.sendEmail(recipient, subject, formattedMessageWithLink);
-            return;
+            for (NotificationType type : uniqueTypes) {
+                switch (type) {
+                    case SMS -> {
+                        // TODO: Implement SMS logic
+                    }
+                    case PUSH_NOTIFICATION -> pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);
+                    case EMAIL -> emailService.sendEmail(recipient, subject, formattedMessageWithLink);
+                }
+            }
         }
 
     }

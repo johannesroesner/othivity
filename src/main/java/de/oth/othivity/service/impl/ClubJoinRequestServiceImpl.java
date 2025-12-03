@@ -45,7 +45,7 @@ public class ClubJoinRequestServiceImpl implements ClubJoinRequestService {
         joinRequest.setText(clubJoinRequestDto.getText());
         ClubJoinRequest savedRequest = clubJoinRequestRepository.save(joinRequest);
         for (Profile admin : club.getAdmins()) {
-            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, admin, "notification.club.join.request.created", profile);
+            notificationService.sendNotification(club, admin, "notification.club.join.request.created", profile, NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
         }
         return savedRequest;
     }
@@ -58,7 +58,7 @@ public class ClubJoinRequestServiceImpl implements ClubJoinRequestService {
             club.getMembers().add(profile);
             clubRepository.save(club);
             clubJoinRequestRepository.delete(joinRequest);
-            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, profile, "notification.club.join.request.accepted");
+            notificationService.sendNotification(club, profile, "notification.club.join.request.accepted", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
         }
     }
     
@@ -67,7 +67,7 @@ public class ClubJoinRequestServiceImpl implements ClubJoinRequestService {
         ClubJoinRequest joinRequest = clubJoinRequestRepository.findById(requestId).orElse(null);
         if (joinRequest != null) {
             clubJoinRequestRepository.delete(joinRequest);
-            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, joinRequest.getClub(), joinRequest.getProfile(), "notification.club.join.request.declined");
+            notificationService.sendNotification(joinRequest.getClub(), joinRequest.getProfile(), "notification.club.join.request.declined", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
         }
     }
 }

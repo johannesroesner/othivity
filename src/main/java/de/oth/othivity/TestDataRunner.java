@@ -123,11 +123,15 @@ public class TestDataRunner {
             image4.setUrl("https://res.cloudinary.com/dz90z0pvg/image/upload/v1764334381/othivity_images/slesgbgu6ndns6xhdna0.jpg");
             image4.setPublicId("othivity_images/slesgbgu6ndns6xhdna0");
 
+            Email email4  = new Email();
+            email4.setAddress("sebastian@moritz-furth.de");
+            email4.setVerified(true);
+
             Profile profile4 = new Profile();
             profile4.setFirstName("Sebastian");
             profile4.setLastName("Moritz");
             profile4.setUsername("moe");
-            profile4.setEmail(new Email("sebastian@moritz-furth.de"));
+            profile4.setEmail(email4);
             profile4.setAboutMe("Ich bin ein Testprofil.");
             profile4.setRole(Role.MODERATOR);
             profile4.setLanguage(Language.ENGLISH);
