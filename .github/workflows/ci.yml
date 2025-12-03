@@ -54,6 +54,10 @@ jobs:
           echo "JWT_SECRET=$JWT_SECRET" >> .env
         shell: bash
 
+      - name: verify .env file content
+        run: cat .env
+        shell: bash
+
       - name: set up jdk
         uses: actions/setup-java@v4
         with:
