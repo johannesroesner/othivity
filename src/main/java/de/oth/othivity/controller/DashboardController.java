@@ -31,7 +31,8 @@ public class DashboardController {
         model.addAttribute("soonestActivityTimeUntil", activityService.getActivityTimeUntil(soonestActivity));
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("activeTab", "dashboard");
-        model.addAttribute("soonestActivities", explorerService.getSoonestActivities(5));
+        //model.addAttribute("soonestActivities", explorerService.getSoonestActivities(5)); 
+        //TODO sbm
         model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
         model.addAttribute("clubs", sessionService.getProfileFromSession(session).getClubs());
         return "dashboard";

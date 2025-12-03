@@ -1,8 +1,12 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.service.IExplorerService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 
@@ -10,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Service
@@ -18,56 +23,76 @@ public class ExplorerServiceImpl implements IExplorerService {
     private final ActivityRepository activityRepository;
 
     @Override
-    public List<Activity> getClosestActivities(double lat, double lon, int limit) {
-        LocalDateTime now = LocalDateTime.now();
-
-        return activityRepository.findAll().stream()
-                .filter(a -> a.getDate().isAfter(now))
-                .filter(a -> a.getAddress() != null)
-                .filter(a -> a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
+    public Page<Activity> getClosestActivities(double lat, double lon, Pageable pageable, String search, Tag tag) {
+        List<Activity> filtered = getBaseStream(search, tag)
+                .filter(a -> a.getAddress() != null && a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
                 .sorted(Comparator.comparingDouble(a -> calculateDistance(lat, lon, a.getAddress().getLatitude(), a.getAddress().getLongitude())))
-                .limit(limit)
                 .toList();
+
+        return createPageFromList(filtered, pageable);
     }
 
     @Override
-    public List<Activity> getSoonestActivities(int limit) {
-        LocalDateTime now = LocalDateTime.now();
-
-        return activityRepository.findAll().stream()
-                .filter(a -> a.getDate().isAfter(now))
-                .filter(a -> a.getAddress() != null)
+    public Page<Activity> getSoonestActivities(Pageable pageable, String search, Tag tag) {
+        List<Activity> filtered = getBaseStream(search, tag)
                 .sorted(Comparator.comparing(Activity::getDate))
-                .limit(limit)
                 .toList();
+
+        return createPageFromList(filtered, pageable);
     }
 
     @Override
-    public List<Activity> getBestMixActivities(double lat, double lon, int limit) {
+    public Page<Activity> getBestMixActivities(double lat, double lon, Pageable pageable, String search, Tag tag) {
         LocalDateTime now = LocalDateTime.now();
-
-        return activityRepository.findAll().stream()
-                .filter(a -> a.getDate().isAfter(now))
-                .filter(a -> a.getAddress() != null)
-                .filter(a -> a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
+        List<Activity> filtered = getBaseStream(search, tag)
+                .filter(a -> a.getAddress() != null && a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
                 .sorted(Comparator.comparingDouble(a -> {
                     double distance = calculateDistance(lat, lon, a.getAddress().getLatitude(), a.getAddress().getLongitude());
                     long minutesUntilStart = ChronoUnit.MINUTES.between(now, a.getDate());
                     // Heuristic: 1 km is equivalent to 60 minutes of waiting
-                    // This balances distance more heavily against time
                     return distance * 60 + minutesUntilStart;
                 }))
-                .limit(limit)
                 .toList();
+
+        return createPageFromList(filtered, pageable);
     }
 
     @Override
-    public List<Activity> getAllFutureActivities() {
-        LocalDateTime now = LocalDateTime.now();
-        return activityRepository.findAll().stream()
-                .filter(a -> a.getDate().isAfter(now))
+    public Page<Activity> getAllFutureActivities(Pageable pageable, String search, Tag tag) {
+        List<Activity> filtered = getBaseStream(search, tag)
                 .sorted(Comparator.comparing(Activity::getDate))
                 .toList();
+        
+        return createPageFromList(filtered, pageable);
+    }
+
+    private Stream<Activity> getBaseStream(String search, Tag tag) {
+        LocalDateTime now = LocalDateTime.now();
+        Stream<Activity> stream = activityRepository.findAll().stream()
+                .filter(a -> a.getDate().isAfter(now));
+
+        if (tag != null) {
+            stream = stream.filter(a -> a.getTags().contains(tag));
+        }
+
+        if (search != null && !search.isBlank()) {
+            String searchLower = search.toLowerCase();
+            stream = stream.filter(a -> a.getTitle().toLowerCase().contains(searchLower));
+        }
+
+        return stream;
+    }
+
+    private Page<Activity> createPageFromList(List<Activity> activities, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), activities.size());
+        
+        if (start > activities.size()) {
+             return new PageImpl<>(List.of(), pageable, activities.size());
+        }
+        
+        List<Activity> pageContent = activities.subList(start, end);
+        return new PageImpl<>(pageContent, pageable, activities.size());
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
