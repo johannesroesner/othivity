@@ -100,7 +100,7 @@ public class ActivityController {
             return "activity-edit";
         }
 
-        activityService.createActivity(activityDto, uploadedImage,session);
+        activityService.createActivity(activityDto, uploadedImage,sessionService.getProfileFromSession(session));
 
         return "redirect:/activities";
     }
@@ -125,7 +125,7 @@ public class ActivityController {
     @PostMapping("/activities/join/{id}")
     public String joinActivity(@PathVariable("id") String activityId, HttpSession session) {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
-        if (activity != null && sessionService.canJoin(session, activity)) activityService.joinActivity(activity, session);
+        if (activity != null && sessionService.canJoin(session, activity)) activityService.joinActivity(activity, sessionService.getProfileFromSession(session));
         return "redirect:/activities/" + activityId;
     }
 
@@ -176,7 +176,7 @@ public class ActivityController {
             return "activity-edit";
         }
 
-        activityService.updateActivity(activity, activityDto, uploadedImage, session);
+        activityService.updateActivity(activity, activityDto, uploadedImage, sessionService.getProfileFromSession(session));
 
         return "redirect:/activities/" + activityId;
     }

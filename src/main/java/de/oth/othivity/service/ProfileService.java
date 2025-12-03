@@ -34,6 +34,8 @@ public interface ProfileService {
 
     Profile getProfileById(java.util.UUID profileId);
 
+    Profile getProfileByEmail(String email);
+
     Profile getProfileByUsername(String username);
 
     Profile getCurrentProfile(HttpSession session);

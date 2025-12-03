@@ -84,14 +84,18 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Activity createActivity(ActivityDto activityDto, MultipartFile uploadedImage, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public Activity createActivity(ActivityDto activityDto, MultipartFile uploadedImage, Profile profile) {
         if (profile == null) return null;
 
         Activity activity = new Activity();
         activity.setTitle(activityDto.getTitle());
         activity.setDescription(activityDto.getDescription());
-        activity.setImage(imageService.saveImage(activity,uploadedImage));
+
+        //image handling
+        if(uploadedImage != null && uploadedImage.getSize() != 0) activity.setImage(imageService.saveImage(activity,uploadedImage));
+        else if(activityDto.getImage() != null) activity.setImage(imageService.saveImage(activity,activityDto.getImage()));
+        else return null;
+
         activity.setDate(activityDto.getDate());
         activity.setLanguage(activityDto.getLanguage());
         activity.setGroupSize(activityDto.getGroupSize());
@@ -112,8 +116,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Activity updateActivity(Activity activity, ActivityDto activityDto, MultipartFile uploadedImage, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public Activity updateActivity(Activity activity, ActivityDto activityDto, MultipartFile uploadedImage, Profile profile) {
         if (profile == null) return null;
 
         activity.setTitle(activityDto.getTitle());
@@ -130,7 +133,9 @@ public class ActivityServiceImpl implements ActivityService {
 
         if(uploadedImage != null && uploadedImage.getSize() != 0) {
             activity.setImage(imageService.saveImage(activity, uploadedImage));
-            activityRepository.save(activity);
+        }
+        if(activityDto.getImage()!= null && activityDto.getImage().getUrl() != null && !activity.getImage().getUrl().equals(activityDto.getImage().getUrl())) {
+            activity.setImage(imageService.saveImage(activity, activityDto.getImage()));
         }
 
         for(Profile participant : activity.getTakePart() ) {
@@ -164,8 +169,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Activity joinActivity(Activity activity, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public Activity joinActivity(Activity activity, Profile profile) {
         if (profile == null) return null;
 
         List<Profile> participants = activity.getTakePart();
@@ -279,5 +283,11 @@ public class ActivityServiceImpl implements ActivityService {
         } catch (Exception e) {}
 
         return json;
+    }
+
+    @Override
+    public Activity resetTakePart(Activity activity) {
+        activity.setTakePart(new ArrayList<>());
+        return activityRepository.save(activity);
     }
 }

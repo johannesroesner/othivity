@@ -26,15 +26,15 @@ public interface ActivityService {
 
     List<String> getActivityDatesForProfile(HttpSession session);
 
-    Activity createActivity(ActivityDto activityCreateRequest, MultipartFile uploadedImage, HttpSession session);
+    Activity createActivity(ActivityDto activityCreateRequest, MultipartFile uploadedImage, Profile profile);
 
-    Activity updateActivity(Activity activity, ActivityDto activityUpdateRequest, MultipartFile uploadedImage, HttpSession session) ;
+    Activity updateActivity(Activity activity, ActivityDto activityUpdateRequest, MultipartFile uploadedImage, Profile profile) ;
 
     Activity getActivityById(UUID activityId);
 
     ActivityDto activityToDto(Activity activity);
 
-    Activity joinActivity(Activity activity, HttpSession session);
+    Activity joinActivity(Activity activity, Profile profile);
 
     Activity leaveActivity(Activity activity, HttpSession session);
 
@@ -49,4 +49,6 @@ public interface ActivityService {
     String getActivityTimeUntil(Activity activity);
 
     String getAllActivitiesWithGeoCoordinates();
+
+    Activity resetTakePart(Activity activity);
 }
