@@ -124,8 +124,11 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public String getReturnUrlFromSession(HttpSession session, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
-        
-        if (referer != null 
+        String currentUri = request.getRequestURI();
+
+        if ("GET".equalsIgnoreCase(request.getMethod())
+            && referer != null 
+            && !referer.contains(currentUri) 
             && !referer.contains("/profile/") 
             && !referer.contains("/settings")
             && !referer.contains("/login") 
@@ -136,6 +139,17 @@ public class SessionServiceImpl implements SessionService {
         }
         
         String returnUrl = (String) session.getAttribute("profileReturnUrl");
+        
+        if (returnUrl != null && returnUrl.contains(currentUri)) {
+            if (currentUri.startsWith("/activities")) {
+                returnUrl = "/activities";
+            } else if (currentUri.startsWith("/clubs")) {
+                returnUrl = "/clubs"; 
+            } else {
+                returnUrl = "/dashboard";
+            }
+        }
+        
         if (returnUrl == null) returnUrl = "/dashboard";
         return returnUrl;
     }
