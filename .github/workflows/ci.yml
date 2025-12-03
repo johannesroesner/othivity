@@ -31,6 +31,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: create .env file
+        run: |
+          echo "CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME" >> .env
+          echo "CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY" >> .env
+          echo "CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET" >> .env
+          
+          echo "TWILIO_ACCOUNT_SID=$TWILIO_ACCOUNT_SID" >> .env
+          echo "TWILIO_AUTH_TOKEN=$TWILIO_AUTH_TOKEN" >> .env
+          echo "TWILIO_TRIAL_NUMBER=$TWILIO_TRIAL_NUMBER" >> .env
+          echo "TWILIO_VERIFY_SERVICE_SID=$TWILIO_VERIFY_SERVICE_SID" >> .env
+          
+          echo "VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY" >> .env
+          echo "VAPID_PRIVATE_KEY=$VAPID_PRIVATE_KEY" >> .env
+          echo "VAPID_SUBJECT=$VAPID_SUBJECT" >> .env
+          
+          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> .env
+          
+          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
+          
+          echo "JWT_SECRET=$JWT_SECRET" >> .env
+        shell: bash
+
       - name: set up jdk
         uses: actions/setup-java@v4
         with:
