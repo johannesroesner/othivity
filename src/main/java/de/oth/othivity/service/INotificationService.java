@@ -12,9 +12,9 @@ import de.oth.othivity.model.main.Profile;
 @Service
 public interface INotificationService {
     
-    <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField);
+    <T> void sendNotification(T entity, Profile recipient, String messageField, NotificationType... types);
 
-    <T> void sendNotification(NotificationType type, T entity, Profile recipient, String messageField, Profile issuer);
+    <T> void sendNotification(T entity, Profile recipient, String messageField, Profile issuer, NotificationType... types);
 
     void createNotification(Profile profile, String subject, String message);
 
