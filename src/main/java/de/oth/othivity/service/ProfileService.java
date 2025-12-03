@@ -12,6 +12,7 @@ import de.oth.othivity.model.security.User;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.model.enumeration.Theme;
 import java.util.Locale;
 
 
@@ -55,5 +56,7 @@ public interface ProfileService {
     Profile setUsername(Profile profile, String username);
 
     void setVerificationForEmail(Profile profile);
+
+    void updateProfileTheme(Profile profile, Theme theme);
 
 }

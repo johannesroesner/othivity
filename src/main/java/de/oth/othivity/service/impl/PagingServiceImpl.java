@@ -19,7 +19,9 @@ public class PagingServiceImpl implements PagingService {
 
         int validPage = Math.max(page, 0);
 
-        Sort sort = "desc".equalsIgnoreCase(direction) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        String actualSortField = "size".equals(sortBy) ? "members.size" : sortBy;
+        
+        Sort sort = "desc".equalsIgnoreCase(direction) ? Sort.by(actualSortField).descending() : Sort.by(actualSortField).ascending();
 
         return PageRequest.of(validPage, validSize, sort);
     }

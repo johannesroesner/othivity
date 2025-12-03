@@ -59,6 +59,14 @@ public class GlobalControllerAdvice {
     }
 
     @ModelAttribute
+    public void addCurrentProfileTheme(HttpSession session, Model model) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile != null) {
+            model.addAttribute("currentThemeName", profile.getTheme().getDaisyUiName());
+        }
+    }
+
+    @ModelAttribute
     public void addReturnUrl(HttpSession session, HttpServletRequest request, Model model) {
         String returnUrl = sessionService.getReturnUrlFromSession(session, request);
         if (returnUrl != null) model.addAttribute("returnUrl", returnUrl);

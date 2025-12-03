@@ -1,5 +1,6 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
@@ -11,6 +12,9 @@ import de.oth.othivity.repository.main.ActivityRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
@@ -45,6 +49,27 @@ public class ClubServiceImpl implements ClubService {
         if (profile == null) return List.of();
         return profile.getClubs();
     }
+    
+    @Override
+    public Page<Club> getClubsJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null) return Page.empty();
+        
+        if (pageable.getSort().isSorted()) {
+            var order = pageable.getSort().iterator().next();
+            if ("members.size".equals(order.getProperty())) {
+                Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+                if (order.isAscending()) {
+                    return clubRepository.findClubsJoinedByProfileOrderBySizeAsc(profile, search, accessLevel, unsortedPageable);
+                } else {
+                    return clubRepository.findClubsJoinedByProfileOrderBySizeDesc(profile, search, accessLevel, unsortedPageable);
+                }
+            }
+        }
+        
+        return clubRepository.findClubsJoinedByProfile(profile, search, accessLevel, pageable);
+    }
+    
     @Override
     public List<Club> getClubsManagedByProfile(HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);
@@ -58,6 +83,26 @@ public class ClubServiceImpl implements ClubService {
         List<Club> allClubs = new ArrayList<>(clubRepository.findAll());
         allClubs.removeAll(profile.getClubs());
         return allClubs;
+    }
+    
+    @Override
+    public Page<Club> getClubsNotJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (profile == null) return Page.empty();
+        
+        if (pageable.getSort().isSorted()) {
+            var order = pageable.getSort().iterator().next();
+            if ("members.size".equals(order.getProperty())) {
+                Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+                if (order.isAscending()) {
+                    return clubRepository.findClubsNotJoinedByProfileOrderBySizeAsc(profile, search, accessLevel, unsortedPageable);
+                } else {
+                    return clubRepository.findClubsNotJoinedByProfileOrderBySizeDesc(profile, search, accessLevel, unsortedPageable);
+                }
+            }
+        }
+        
+        return clubRepository.findClubsNotJoinedByProfile(profile, search, accessLevel, pageable);
     }
     @Override
     public Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage) {
@@ -172,7 +217,7 @@ public class ClubServiceImpl implements ClubService {
 
         if (club.getAdmins().contains(profile)) {
             for(Profile member : club.getMembers()) {
-                notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, member, "notification.club.deleted");
+                notificationService.sendNotification(club, member, "notification.club.deleted", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
             }
             clubRepository.delete(club);
         }
@@ -188,7 +233,7 @@ public class ClubServiceImpl implements ClubService {
             if (!club.getAdmins().contains(profile)) {
                 club.getAdmins().add(profile);
                 clubRepository.save(club);
-                notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, profile, "notification.club.admin.added");
+                notificationService.sendNotification(club, profile, "notification.club.admin.added", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
             }
         }
     }
@@ -202,7 +247,7 @@ public class ClubServiceImpl implements ClubService {
         if (club.getAdmins().contains(currentProfile) && !club.getAdmins().contains(profile)) {
             club.getMembers().remove(profile);
             clubRepository.save(club);
-            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION, club, profile, "notification.club.member.removed");
+            notificationService.sendNotification(club, profile, "notification.club.member.removed", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
         }
 
     }

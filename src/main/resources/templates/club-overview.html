@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:data-theme="${currentThemeName}">
 <head th:insert="~{layout/head :: head(#{clubOverview.pageTitle})}"></head>
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='clubs')}"></nav>
@@ -12,14 +12,35 @@
         <div class="lg:col-span-3 mb-8 lg:mb-0">
             <div class="flex justify-between items-center mb-6">
                 <div role="tablist" class="tabs tabs-border flex space-x-2">
-                    <a role="tab" class="tab tab-active" id="myTab" th:text="#{clubOverview.myTab}"></a>
-                    <a role="tab" class="tab" id="allTab" th:text="#{clubOverview.allTab}"></a>
+                    <a role="tab" class="tab" id="myTab" th:classappend="${activeTab == 'my'} ? 'tab-active'" th:text="#{clubOverview.myTab}"></a>
+                    <a role="tab" class="tab" id="allTab" th:classappend="${activeTab == 'all'} ? 'tab-active'" th:text="#{clubOverview.allTab}"></a>
                 </div>
                 <button class="btn btn-primary shadow-2xl" onclick="window.location.href='/clubs/create'" th:text="#{clubOverview.createButton}"></button>
             </div>
             
-            <div id="myTable" th:insert="fragments/club-table :: clubTable(title=#{clubOverview.myTab}, clubs=${joinedClubs})"></div>
-            <div id="allTable" class="hidden" th:insert="fragments/club-table :: clubTable(title=#{clubOverview.allTab}, clubs=${allClubs})"></div>
+            <div id="myTable" th:classappend="${activeTab != 'my'} ? 'hidden'"
+                 th:insert="fragments/club-table ::clubTable(
+                 title=#{clubOverview.myTab},
+                 clubs=${joinedClubs},
+                 pageParam='myPage',
+                 activeTab=${activeTab},
+                 size=${size},
+                 sortBy=${sortBy},
+                 direction=${direction},
+                 search=${search})">
+            </div>
+            
+            <div id="allTable" th:classappend="${activeTab != 'all'} ? 'hidden'"
+                 th:insert="fragments/club-table ::clubTable(
+                 title=#{clubOverview.allTab},
+                 clubs=${allClubs},
+                 pageParam='allPage',
+                 activeTab=${activeTab},
+                 size=${size},
+                 sortBy=${sortBy},
+                 direction=${direction},
+                 search=${search})">
+            </div>
         </div>
     </div>
 </div>
@@ -29,21 +50,33 @@
 <script th:inline="javascript">
     const myTab = document.getElementById("myTab");
     const allTab = document.getElementById("allTab");
-    const myTable = document.getElementById("myTable");
-    const allTable = document.getElementById("allTable");
+    
+    /*<![CDATA[*/
+    const currentSize = /*[[${size}]]*/ 10;
+    const currentSortBy = /*[[${sortBy}]]*/ 'name';
+    const currentDirection = /*[[${direction}]]*/ 'asc';
+    const currentSearch = /*[[${search}]]*/ '';
+    const currentAccessLevel = /*[[${accessLevel}]]*/ '';
+    /*]]>*/
 
     myTab.onclick = () => {
-        myTab.classList.add("tab-active");
-        allTab.classList.remove("tab-active");
-        myTable.classList.remove("hidden");
-        allTable.classList.add("hidden");
+        let url = '/clubs?activeTab=my';
+        url += '&size=' + currentSize;
+        url += '&sortBy=' + currentSortBy;
+        url += '&direction=' + currentDirection;
+        if (currentSearch) url += '&search=' + encodeURIComponent(currentSearch);
+        if (currentAccessLevel) url += '&accessLevel=' + currentAccessLevel;
+        window.location.href = url;
     };
 
     allTab.onclick = () => {
-        allTab.classList.add("tab-active");
-        myTab.classList.remove("tab-active");
-        allTable.classList.remove("hidden");
-        myTable.classList.add("hidden");
+        let url = '/clubs?activeTab=all';
+        url += '&size=' + currentSize;
+        url += '&sortBy=' + currentSortBy;
+        url += '&direction=' + currentDirection;
+        if (currentSearch) url += '&search=' + encodeURIComponent(currentSearch);
+        if (currentAccessLevel) url += '&accessLevel=' + currentAccessLevel;
+        window.location.href = url;
     };
 </script>
 <footer th:insert="~{layout/footer :: footer}"></footer>

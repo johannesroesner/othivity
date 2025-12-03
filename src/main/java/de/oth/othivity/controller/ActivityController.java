@@ -78,6 +78,10 @@ public class ActivityController {
 
         model.addAttribute("tag", selectedTag);
         model.addAttribute("allTags", Tag.values());
+
+        Profile profile = sessionService.getProfileFromSession(session);
+        model.addAttribute("calendarTheme", (profile != null && profile.getTheme().isDark()) ? "dark" : "light");
+
         return "activity-overview";
     }
 

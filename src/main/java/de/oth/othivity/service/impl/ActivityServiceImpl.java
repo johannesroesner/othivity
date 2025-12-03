@@ -139,9 +139,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
 
         for(Profile participant : activity.getTakePart() ) {
-            //TODO moe
-            notificationService.sendNotification(NotificationType.EMAIL,activity,participant, "notification.activity.updated");
-            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,participant, "notification.activity.updated");
+            notificationService.sendNotification(activity, participant, "notification.activity.updated", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
         }
 
         return activityRepository.save(activity);
@@ -176,9 +174,7 @@ public class ActivityServiceImpl implements ActivityService {
         participants.add(profile);
         activity.setTakePart(participants);
 
-        //TODO moe
-        notificationService.sendNotification(NotificationType.EMAIL,activity,activity.getStartedBy(), "notification.activity.joined");
-        notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,activity.getStartedBy(), "notification.activity.joined");
+        notificationService.sendNotification(activity, activity.getStartedBy(), "notification.activity.joined", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
 
         return activityRepository.save(activity);
     }
@@ -191,9 +187,7 @@ public class ActivityServiceImpl implements ActivityService {
         participants.removeIf(p -> p.getId().equals(profile.getId()));
         activity.setTakePart(participants);
 
-        //TODO moe
-        notificationService.sendNotification(NotificationType.EMAIL,activity,activity.getStartedBy(), "notification.activity.left");
-        notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,activity.getStartedBy(), "notification.activity.left");
+        notificationService.sendNotification(activity, activity.getStartedBy(), "notification.activity.left", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
 
         return activityRepository.save(activity);
     }
@@ -202,18 +196,14 @@ public class ActivityServiceImpl implements ActivityService {
     public Activity kickParticipant(Activity activity, Profile profile) {
         activity.getTakePart().removeIf(p -> p.getId().equals(profile.getId()));
 
-        //TODO moe
-        notificationService.sendNotification(NotificationType.EMAIL,activity,profile, "notification.activity.kicked");
-        notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,profile, "notification.activity.kicked");
+        notificationService.sendNotification(activity, profile, "notification.activity.kicked", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
         return activityRepository.save(activity);
     }
 
     @Override
     public void deleteActivity(Activity activity) {
         for (Profile profile : activity.getTakePart()) {
-            //TODO moe
-            notificationService.sendNotification(NotificationType.EMAIL,activity,profile, "notification.activity.deleted");
-            notificationService.sendNotification(NotificationType.PUSH_NOTIFICATION,activity,profile, "notification.activity.deleted");
+            notificationService.sendNotification(activity, profile, "notification.activity.deleted", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
         }
 
         activityRepository.delete(activity);
