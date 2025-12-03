@@ -19,13 +19,9 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.repository.main.ClubRepository;
 import de.oth.othivity.model.main.Activity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import de.oth.othivity.repository.report.ClubReportRepository;
 import de.oth.othivity.repository.report.ActivityReportRepository;
 import de.oth.othivity.repository.report.ProfileReportRepository;
