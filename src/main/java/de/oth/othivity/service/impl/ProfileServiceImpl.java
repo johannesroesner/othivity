@@ -110,6 +110,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public Profile getProfileByEmail(String email) {
+        return profileRepository.findByEmailAddress(email).orElse(null);
+    }
+
+    @Override
     public Profile getProfileByUsername(String username) {
         return profileRepository.findByusername(username);
     }

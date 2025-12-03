@@ -37,7 +37,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             OidcUser oidcUser = (OidcUser) principal;
             String email = oidcUser.getEmail();
 
-            profile = profileRepository.findByEmailAddress(email);
+            profile = profileRepository.findByEmailAddress(email).orElse(null);
 
         }
         if (profile != null) {

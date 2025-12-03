@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface ImageService {
+    Image saveImage(HasImage entity, Image providedImage);
     Image saveImage(HasImage entity, MultipartFile file);
     void deleteImage(Image image);
 }

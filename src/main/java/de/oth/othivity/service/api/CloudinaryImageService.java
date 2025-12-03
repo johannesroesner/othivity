@@ -31,6 +31,14 @@ public class CloudinaryImageService implements ImageService {
     }
 
     @Override
+    public Image saveImage(HasImage entity, Image providedImage) {
+        Image image = new Image();
+        image.setUrl(providedImage.getUrl());
+        image.setPublicId(providedImage.getPublicId());
+        return imageRepository.save(image);
+    }
+
+    @Override
     public Image saveImage(HasImage entity, MultipartFile file) {
         Image image = new Image();
         try {

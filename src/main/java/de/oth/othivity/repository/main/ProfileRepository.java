@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -17,5 +18,5 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
     Profile findByusername(String username);
 
-    Profile findByEmailAddress(String address);
+    Optional<Profile> findByEmailAddress(String address);
 }
