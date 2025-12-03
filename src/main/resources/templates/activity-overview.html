@@ -69,7 +69,7 @@
                     <span class="text-3xl">📅</span>
                     <h2 class="card-title mb-0" th:text="#{activityOverview.calendar}"></h2>
                 </div>
-                <div id="calendar" class="bg-base-100 border rounded-lg shadow p-4"></div>
+                <div id="calendar" th:data-vc-theme="${calendarTheme}" class="bg-base-100 border rounded-lg shadow p-4"></div>
             </div>
         </div>
     </div>
@@ -127,10 +127,13 @@
     else showMy();
 
     const daysToMark = /*[[${daysToMark}]]*/ [];
+    const calendarTheme = /*[[${calendarTheme}]]*/ 'light';
 </script>
 <script type="module">
     import { Calendar } from 'https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@3.0.5/+esm'
     const options = {
+        themeAttrDetect: false,
+        selectedTheme: calendarTheme,
         inputMode: false,
         selectionDatesMode: 'multiple',
         selectedDates: daysToMark,
