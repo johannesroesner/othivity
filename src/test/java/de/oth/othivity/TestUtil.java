@@ -10,10 +10,14 @@ import de.oth.othivity.service.ProfileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -111,5 +115,15 @@ public class TestUtil {
     public void makeModerator(Profile profile) throws Exception {
         profile.setRole(Role.MODERATOR);
         profileRepository.save(profile);
+    }
+
+    // test image
+    public MockMultipartFile setValidImageFile() throws Exception {
+        return new MockMultipartFile(
+                "uploadedImage",
+                "test-image.png",
+                "image/png",
+                Files.readAllBytes(Paths.get("src/test/resources/test-image.png"))
+        );
     }
 }
