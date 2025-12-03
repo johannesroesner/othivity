@@ -92,7 +92,7 @@ public class ActivityRestController {
             activityDto = entityConverter.ApiDtoToActivityDto(apiDto);
             if(apiDto.getStartedBy() == null) throw new IllegalArgumentException("startedBy is null");
             if (apiDto.getTakePart() == null || apiDto.getTakePart().length == 0) throw new IllegalArgumentException("takePart array is null or empty.");
-            if(Arrays.stream((String[]) apiDto.getTakePart()).noneMatch(takePartId -> takePartId.equals(profile.getId().toString()))) throw  new IllegalArgumentException("startedBy has to be in takePart array.");
+            if(Arrays.stream((String[]) apiDto.getTakePart()).noneMatch(takePartId -> takePartId.equals(apiDto.getStartedBy()))) throw  new IllegalArgumentException("startedBy has to be in takePart array.");
         } catch (Exception error) {
             return ResponseEntity
                     .status(400)

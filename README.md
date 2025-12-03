@@ -74,6 +74,7 @@ Returns all activities.
 
 **Response:**  
 `200 OK` → `List<ActivityApiDto>`
+
 ---
 
 #### GET `/api/activities/{id}`
