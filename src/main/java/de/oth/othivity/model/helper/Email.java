@@ -29,4 +29,8 @@ public class Email {
 
     @Column(nullable = false)
     private Boolean verified = false;
+
+    public Boolean isVerified() {
+    return verified;
+    }
 }
