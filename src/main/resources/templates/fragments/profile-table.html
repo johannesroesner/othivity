@@ -1,0 +1,96 @@
+<div th:fragment="profileTable(title, profiles, pageParam, size, sortBy, direction, search, baseUrl)">
+
+    <div class="bg-base-200 p-4 rounded-2xl shadow-2xl mb-6">
+        <form method="get" th:action="@{${baseUrl}}" class="flex flex-col lg:flex-row gap-4 justify-between items-center">
+
+            <div class="form-control w-full">
+                <label class="label py-1">
+                    <span class="label-text text-xs font-semibold uppercase text-gray-500" th:text="#{profileTable.search}"></span>
+                </label>
+                <div class="join w-full">
+                    <input type="text" name="search" class="input input-bordered input-md join-item w-full" 
+                           th:placeholder="#{profileTable.searchPlaceholder}" th:value="${search}" />
+                    <button type="submit" class="btn btn-md btn-primary join-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <input type="hidden" name="size" th:value="${size}"/>
+            <input type="hidden" name="sortBy" th:value="${sortBy}"/>
+            <input type="hidden" name="direction" th:value="${direction}"/>
+        </form>
+    </div>
+
+    <div th:if="${search != null && !search.isBlank()}" class="overflow-x-auto rounded-2xl shadow-2xl mb-4">
+        <table class="table w-full">
+            <thead>
+            <tr class="bg-base-200">
+                <th></th>
+                <th th:text="#{profileTable.username}"></th>
+                <th th:text="#{profileTable.name}"></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${profiles.content}">
+                <td>
+                    <div class="avatar">
+                        <div class="w-10 rounded-full">
+                            <img th:if="${p.image != null}" th:src="${p.image.url}" />
+                            <img th:unless="${p.image != null}" th:src="@{/images/johannes.png}" />
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <a th:href="@{'/profile/' + ${p.username}}" class="font-bold link link-hover" th:text="${p.username}"></a>
+                </td>
+                <td th:text="${p.firstName + ' ' + p.lastName}"></td>
+                <td class="text-right">
+                    <div th:if="${currentUsername != p.username}" class="flex items-center justify-end h-full">
+                        <a th:href="@{'/profile/' + ${p.username}}" class="btn btn-primary">
+                            <span th:text="#{profileTable.view}"></span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${profiles.empty}">
+                <td colspan="4" class="text-center italic text-gray-500" th:text="#{profileTable.noProfiles}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div th:if="${search == null || search.isBlank()}" class="text-center py-10 text-gray-500">
+        <p class="text-xl" th:text="#{profileTable.startSearch}"></p>
+    </div>
+
+    <div th:if="${profiles.totalPages > 1}" class="flex justify-center my-4">
+        <div class="join shadow-2xl">
+            <a class="join-item btn btn-square"
+               th:classappend="${profiles.first} ? 'btn-disabled'"
+               th:href="@{${baseUrl}((${pageParam})=0,size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">«</a>
+            <a class="join-item btn btn-square"
+               th:classappend="${profiles.first} ? 'btn-disabled'"
+               th:href="@{${baseUrl}((${pageParam})=${profiles.number - 1},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">‹</a>
+
+            <th:block th:with="startPage=${T(java.lang.Math).max(0, profiles.number - 2)},endPage=${T(java.lang.Math).min(profiles.totalPages - 1, profiles.number + 2)}">
+                <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">
+                    <input class="join-item btn btn-square" type="radio" name="options" th:aria-label="${i + 1}" 
+                           th:checked="${i == profiles.number}" 
+                           th:classappend="${i == profiles.number} ? 'btn-active bg-primary text-white'" 
+                           th:onclick="|window.location.href='@{${baseUrl}((${pageParam})=${i},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}'|"/>
+                </th:block>
+            </th:block>
+
+            <a class="join-item btn btn-square"
+               th:classappend="${profiles.last} ? 'btn-disabled'"
+               th:href="@{${baseUrl}((${pageParam})=${profiles.number + 1},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">›</a>
+            <a class="join-item btn btn-square"
+               th:classappend="${profiles.last} ? 'btn-disabled'"
+               th:href="@{${baseUrl}((${pageParam})=${profiles.totalPages - 1},size=${size},sortBy=${sortBy},direction=${direction},search=${search})}">»</a>
+        </div>
+    </div>
+</div>

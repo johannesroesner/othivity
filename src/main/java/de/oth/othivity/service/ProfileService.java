@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import de.oth.othivity.model.security.User;
@@ -58,5 +60,7 @@ public interface ProfileService {
     void setVerificationForEmail(Profile profile);
 
     void updateProfileTheme(Profile profile, Theme theme);
+
+    Page<Profile> searchProfiles(String search, Pageable pageable);
 
 }

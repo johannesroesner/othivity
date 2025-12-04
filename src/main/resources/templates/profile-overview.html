@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:data-theme="${currentThemeName}">
+<head th:insert="~{layout/head :: head(#{profileOverview.pageTitle})}"></head>
+<body class="flex flex-col min-h-screen">
+<nav th:insert="~{layout/nav :: nav(activeTab='chat')}"></nav>
+<div class="container mx-auto px-6 py-8 grow">
+    <h1 class="text-3xl font-bold mb-6" th:text="#{profileOverview.pageTitle}"></h1>
+
+    <div class="grid grid-cols-1 gap-8">
+        <div>
+            <div th:insert="~{fragments/profile-table :: profileTable(
+                 title=#{profileOverview.results},
+                 profiles=${profiles},
+                 pageParam='page',
+                 size=${size},
+                 sortBy=${sortBy},
+                 direction=${direction},
+                 search=${search},
+                 baseUrl='/profiles')}">
+            </div>
+        </div>
+    </div>
+    </div>
+<footer th:insert="~{layout/footer :: footer}"></footer>
+</body>
+</html>
