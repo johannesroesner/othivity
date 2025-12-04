@@ -22,7 +22,9 @@
                 </div>
                 <button class="btn btn-primary shadow-2xl" onclick="window.location.href='/activities/create'" th:text="#{activityOverview.createButton}"></button>
             </div>
-            <div id="myTable"th:insert="fragments/activity-table ::activityTable(title=#{activityOverview.myTab},
+            
+            <div id="myTable" th:insert="~{fragments/activity-table :: activityTable(
+                 title=#{activityOverview.myTab},
                  activities=${profileActivities},
                  pageParam='myPage',
                  activeTab=${activeTab},
@@ -31,11 +33,13 @@
                  direction=${direction},
                  tag=${tag},
                  search=${search},
-                 allTags=${allTags})">
+                 allTags=${allTags},
+                 baseUrl='/activities',
+                 hideSort=false)}">
             </div>
 
             <div id="createdTable" class="hidden"
-                 th:insert="fragments/activity-table ::activityTable(
+                 th:insert="~{fragments/activity-table :: activityTable(
                  title=#{activityOverview.createdTab},
                  activities=${createdActivities},
                  pageParam='createdPage',
@@ -45,11 +49,13 @@
                  direction=${direction},
                  tag=${tag},
                  search=${search},
-                 allTags=${allTags})">
+                 allTags=${allTags},
+                 baseUrl='/activities',
+                 hideSort=false)}">
             </div>
 
             <div id="allTable" class="hidden"
-                 th:insert="fragments/activity-table ::activityTable(
+                 th:insert="~{fragments/activity-table :: activityTable(
                  title=#{activityOverview.allTab},
                  activities=${allActivities},
                  pageParam='allPage',
@@ -59,7 +65,9 @@
                  direction=${direction},
                  tag=${tag},
                  search=${search},
-                 allTags=${allTags})">
+                 allTags=${allTags},
+                 baseUrl='/activities',
+                 hideSort=false)}">
             </div>
         </div>
 
