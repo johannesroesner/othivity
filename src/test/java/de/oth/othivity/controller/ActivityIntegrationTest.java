@@ -47,6 +47,27 @@ public class ActivityIntegrationTest {
         session = testUtil.loginUser(mockMvc, "test@example.com", "password");
     }
 
+    private void createTestActivity() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
+                        .file(testUtil.setValidImageFile())
+                        .session(session)
+                        .with(csrf())
+                        .param("title", "test activity")
+                        .param("description", "test description")
+                        .param("date", "3000-12-03T12:00:00")
+                        .param("language", "ENGLISH")
+                        .param("groupSize", "5")
+                        .param("address.street", "test street")
+                        .param("address.houseNumber", "123")
+                        .param("address.city", "test city")
+                        .param("address.postalCode", "123")
+                        .param("tag", "OUTDOOR")
+
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/activities"));
+    }
+
     @Test
     void testGetActivitiesPage_success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/activities")
@@ -74,25 +95,7 @@ public class ActivityIntegrationTest {
 
     @Test
     void testCreateActivityViaForm_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
         assertEquals("test activity", activity.getTitle());
     }
@@ -117,26 +120,9 @@ public class ActivityIntegrationTest {
 
     @Test
     void testGetActivityDetail_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
+
         mockMvc.perform(MockMvcRequestBuilders.get("/activities/" + activity.getId())
                         .session(session))
                 .andExpect(status().isOk())
@@ -158,25 +144,7 @@ public class ActivityIntegrationTest {
     @Test
     @Transactional
     void testJoinActivity_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         testUtil.registerUser(mockMvc, "joiner", "joiner@example.com", "password");
@@ -196,26 +164,9 @@ public class ActivityIntegrationTest {
     @Transactional
     @Test
     void testJoinActivity_joinAbleFalse_fail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
+
         mockMvc.perform(MockMvcRequestBuilders.post("/activities/join/" + activity.getId())
                         .session(session)
                         .with(csrf()))
@@ -234,25 +185,7 @@ public class ActivityIntegrationTest {
     @Test
     @Transactional
     void testLeaveActivity_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         testUtil.registerUser(mockMvc, "joiner", "joiner@example.com", "password");
@@ -280,25 +213,7 @@ public class ActivityIntegrationTest {
     @Test
     @Transactional
     void testLeaveActivity_leaveAbleFalse_fail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/activities/leave/" + activity.getId())
@@ -319,25 +234,7 @@ public class ActivityIntegrationTest {
 
     @Test
     void testDeleteActivity_asOwner_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/activities/delete/" + activity.getId())
@@ -351,25 +248,7 @@ public class ActivityIntegrationTest {
 
     @Test
     void testDeleteActivity_unauthorized_fail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         testUtil.registerUser(mockMvc, "user2", "user2@example.com", "password");
@@ -386,25 +265,7 @@ public class ActivityIntegrationTest {
 
     @Test
     void testDeleteActivity_asModerator_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         Profile profile2 = testUtil.registerUser(mockMvc, "user2", "user2@example.com", "password");
@@ -430,25 +291,7 @@ public class ActivityIntegrationTest {
     @Test
     @Transactional
     void kickParticipant_asOwner_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         Profile joiner = testUtil.registerUser(mockMvc, "joiner", "joiner@example.com", "password");
@@ -477,28 +320,9 @@ public class ActivityIntegrationTest {
     @Test
     @Transactional
     void kickParticipant_unauthorized_fail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
-        Profile joiner = testUtil.registerUser(mockMvc, "joiner", "joiner@example.com", "password");
         session = testUtil.loginUser(mockMvc, "joiner@example.com", "password");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/activities/join/" + activity.getId())
@@ -523,25 +347,7 @@ public class ActivityIntegrationTest {
     @Test
     @Transactional
     void kickParticipant_asModerator_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         Profile joiner = testUtil.registerUser(mockMvc, "joiner", "joiner@example.com", "password");
@@ -577,25 +383,7 @@ public class ActivityIntegrationTest {
 
     @Test
     void showUpdateForm_asOwner_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/activities/update/" + activity.getId())
@@ -610,26 +398,9 @@ public class ActivityIntegrationTest {
 
     @Test
     void showUpdateForm_unauthorized_fail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
+
         testUtil.registerUser(mockMvc, "user2", "user2@example.com", "password");
         session = testUtil.loginUser(mockMvc, "user2@example.com", "password");
 
@@ -642,26 +413,9 @@ public class ActivityIntegrationTest {
 
     @Test
     void showUpdateForm_asModerator_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
+
         Profile profile2 = testUtil.registerUser(mockMvc, "user2", "user2@example.com", "password");
         testUtil.makeModerator(profile2);
         session = testUtil.loginUser(mockMvc, "user2@example.com", "password");
@@ -685,25 +439,7 @@ public class ActivityIntegrationTest {
 
     @Test
     void updateActivity_asOwner_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/update/" + activity.getId())
@@ -730,25 +466,7 @@ public class ActivityIntegrationTest {
 
     @Test
     void updateActivity_allowedButBadInput_fail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/update/" + activity.getId())
@@ -774,26 +492,9 @@ public class ActivityIntegrationTest {
 
     @Test
     void updateActivity_unauthorized_fail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
+
         testUtil.registerUser(mockMvc, "user2", "user2@example.com", "password");
         session = testUtil.loginUser(mockMvc, "user2@example.com", "password");
 
@@ -821,26 +522,9 @@ public class ActivityIntegrationTest {
 
     @Test
     void updateActivity_asModerator_success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/activities/create")
-                        .file(testUtil.setValidImageFile())
-                        .session(session)
-                        .with(csrf())
-                        .param("title", "test activity")
-                        .param("description", "test description")
-                        .param("date", "3000-12-03T12:00:00")
-                        .param("language", "ENGLISH")
-                        .param("groupSize", "5")
-                        .param("address.street", "test street")
-                        .param("address.houseNumber", "123")
-                        .param("address.city", "test city")
-                        .param("address.postalCode", "123")
-                        .param("tag", "OUTDOOR")
-
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/activities"));
-
+        createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
+
         Profile profile2 = testUtil.registerUser(mockMvc, "user2", "user2@example.com", "password");
         testUtil.makeModerator(profile2);
         session = testUtil.loginUser(mockMvc, "user2@example.com", "password");
