@@ -140,8 +140,8 @@
     function rotateCards() {
         currentIndex++;
         updateColumn('bestmix-card', currentIndex);
-        setTimeout(() => updateColumn('soonest-card', currentIndex), 100);
-        setTimeout(() => updateColumn('closest-card', currentIndex), 200);
+        setTimeout(() => updateColumn('soonest-card', currentIndex), 200);
+        setTimeout(() => updateColumn('closest-card', currentIndex), 400);
     }
 
     function updateColumn(className, index) {

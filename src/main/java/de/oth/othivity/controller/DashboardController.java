@@ -8,6 +8,8 @@ import de.oth.othivity.service.IExplorerService;
 import de.oth.othivity.service.SessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
@@ -31,8 +33,7 @@ public class DashboardController {
         model.addAttribute("soonestActivityTimeUntil", activityService.getActivityTimeUntil(soonestActivity));
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("activeTab", "dashboard");
-        //model.addAttribute("soonestActivities", explorerService.getSoonestActivities(5)); 
-        //TODO sbm
+        model.addAttribute("soonestActivities", explorerService.getSoonestActivities(PageRequest.of(0, 5), null, null).getContent());
         model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
         model.addAttribute("clubs", sessionService.getProfileFromSession(session).getClubs());
         return "dashboard";
