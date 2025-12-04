@@ -13,6 +13,7 @@ import de.oth.othivity.model.main.Profile;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Email {
 
     public Email(String address) {

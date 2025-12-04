@@ -5,7 +5,6 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.model.weather.WeatherSnapshot;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.PagingService;
 import de.oth.othivity.service.ProfileService;
@@ -15,6 +14,7 @@ import de.oth.othivity.service.IWeatherService;
 import de.oth.othivity.validator.ActivityDtoValidator;
 import de.oth.othivity.validator.ImageUploadValidator;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -95,12 +95,13 @@ public class ActivityController {
     }
 
     @PostMapping("/activities/create")
-    public String createActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model) {
+    public String createActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model, HttpServletResponse response) {
         if (bindingResult.hasErrors() || imageUploadValidator.validateRequired(uploadedImage) != null ) {
             model.addAttribute("imageFileError", imageUploadValidator.validateRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
             model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+            response.setStatus(400);
             return "activity-edit";
         }
 
@@ -120,9 +121,7 @@ public class ActivityController {
         model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
         model.addAttribute("weather", weatherService.getForecastForTime(activity.getAddress(),activity.getDate()));
         model.addAttribute("isReportable", reportService.isReportableActivity(sessionService.getProfileFromSession(session), activity));
-
-
-    model.addAttribute("activity", activity);
+        model.addAttribute("activity", activity);
         return "activity-detail";
     }
 
@@ -169,7 +168,7 @@ public class ActivityController {
     }
 
     @PostMapping("/activities/update/{activityId}")
-    public String updateActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @PathVariable("activityId") String activityId, HttpServletRequest request, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model) {
+    public String updateActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @PathVariable("activityId") String activityId, HttpServletRequest request, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model, HttpServletResponse response) {
         Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
         if (bindingResult.hasErrors() || imageUploadValidator.validateNotRequired(uploadedImage) != null ) {
@@ -177,6 +176,7 @@ public class ActivityController {
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
             model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+            response.setStatus(400);
             return "activity-edit";
         }
 

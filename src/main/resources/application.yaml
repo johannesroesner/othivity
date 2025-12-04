@@ -60,3 +60,14 @@ vapid:
 
 jwt:
   secret: ${JWT_SECRET:9a4f2c8d3b7e15f90a2b5c8d4e6f3a1b7c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f}
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dummy-cloud-name}
+  api-key: ${CLOUDINARY_API_KEY:dummy-api-key}
+  api-secret: ${CLOUDINARY_API_SECRET:dummy-api-secret}
+
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID:dummy-account-sid}
+  auth-token: ${TWILIO_AUTH_TOKEN:dummy-auth-token}
+  phone-number: ${TWILIO_PHONE_NUMBER:dummy-phone-number}
+  verify-service-sid: ${TWILIO_VERIFY_SERVICE_SID:dummy-verify-service-sid}
