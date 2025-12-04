@@ -32,7 +32,7 @@ public class EntityConverter {
         return collection == null ? new String[0] : collection.stream().map(mapper).toArray(String[]::new);
     }
 
-    public ActivityApiDto   ActivityToApiDto(Activity activity) {
+    public ActivityApiDto ActivityToApiDto(Activity activity) {
 
         ActivityApiDto response = new ActivityApiDto();
 

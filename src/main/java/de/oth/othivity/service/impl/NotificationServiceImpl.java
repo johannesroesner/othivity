@@ -1,5 +1,6 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.service.SmsService;
 import lombok.AllArgsConstructor;
 
 import java.text.MessageFormat;
@@ -19,7 +20,7 @@ import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.repository.helper.NotificationRepository;
 import de.oth.othivity.model.enumeration.Language;
 import org.springframework.context.MessageSource;
-import de.oth.othivity.service.IPushNotificationService;    
+import de.oth.othivity.service.IPushNotificationService;
 
 import java.util.Comparator;
 import java.util.UUID;
@@ -36,6 +37,7 @@ public class NotificationServiceImpl implements INotificationService {
     private final MessageSource messageSource;
     private final NotificationRepository notificationRepository;
     private final EmailServiceImpl emailService;
+    private final SmsService smsService;
     private final IPushNotificationService pushNotificationService;
 
     @Override
@@ -79,16 +81,16 @@ public class NotificationServiceImpl implements INotificationService {
             formattedMessageWithLink = MessageFormat.format(message, recipient.getFirstName(), setLink(issuer), setLink(entity));
         }
 
-        createNotification(recipient, subject, formattedMessage);
+        if(!messageField.equals("profile.deleteNotification")) {
+            createNotification(recipient, subject, formattedMessage);
+        }
 
         if (types != null && types.length > 0) {
             Set<NotificationType> uniqueTypes = Arrays.stream(types).collect(Collectors.toSet());
 
             for (NotificationType type : uniqueTypes) {
                 switch (type) {
-                    case SMS -> {
-                        // TODO: Implement SMS logic
-                    }
+                    case SMS -> smsService.sendSms(recipient,subject);
                     case PUSH_NOTIFICATION -> pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);
                     case EMAIL -> emailService.sendEmail(recipient, subject, formattedMessageWithLink);
                 }
@@ -103,7 +105,6 @@ public class NotificationServiceImpl implements INotificationService {
         notification.setProfile(profile);
         notification.setSubject(subject);
         notification.setMessage(message);
-        notificationRepository.save(notification);
     }
 
     @Override
