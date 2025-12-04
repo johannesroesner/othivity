@@ -12,6 +12,8 @@ import java.security.Principal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,6 +27,7 @@ import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
 import java.util.UUID;
 
+import de.oth.othivity.service.PagingService;
 import de.oth.othivity.validator.ImageUploadValidator;
 import de.oth.othivity.service.ProfileService;
 import de.oth.othivity.service.SessionService;
@@ -50,6 +53,7 @@ public class ProfileController {
     private final VerificationTokenRepository tokenRepository;
     private final IApiTokenService apiTokenService; 
     private final IReportService reportService;
+    private final PagingService pagingService;
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
@@ -59,6 +63,37 @@ public class ProfileController {
     @InitBinder("profileDto")
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(profileDtoValidator);
+    }
+
+    @GetMapping("/profiles")
+    public String searchProfiles(HttpSession session, Model model,
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "10") int size,
+                                 @RequestParam(defaultValue = "username") String sortBy,
+                                 @RequestParam(defaultValue = "asc") String direction,
+                                 @RequestParam(required = false) String search) {
+
+        Pageable pageable = pagingService.createPageable(page, size, sortBy, direction);
+        
+        // Logik: Keine Suche -> Leere Seite
+        Page<Profile> profiles;
+        if (search == null || search.isBlank()) {
+            profiles = Page.empty(pageable);
+        } else {
+            profiles = profileService.searchProfiles(search, pageable);
+        }
+
+        model.addAttribute("profiles", profiles);
+        model.addAttribute("search", search);
+        model.addAttribute("size", size);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+        model.addAttribute("activeTab", "profiles"); 
+
+        Profile profile = sessionService.getProfileFromSession(session);
+        model.addAttribute("currentThemeName", (profile != null && profile.getTheme().isDark()) ? "dark" : "light");
+
+        return "profile-overview";
     }
 
     @GetMapping("/profile/{username}")

@@ -16,17 +16,24 @@ import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ClubRepository;
 
+
 import de.oth.othivity.service.ImageService;
 import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.model.enumeration.Theme;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -173,6 +180,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public boolean isSetupComplete(Profile profile) {
         return profile.getSetupComplete();
+    }
+
+    @Override
+    public Page<Profile> searchProfiles(String search, Pageable pageable) {
+        return profileRepository.findAllByFilter(search, pageable);
     }
 
     private Language localeToLanguage(Locale locale) {
