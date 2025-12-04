@@ -323,6 +323,7 @@ public class ActivityIntegrationTest {
         createTestActivity();
         Activity activity = activityRepository.findAll().getFirst();
 
+        testUtil.registerUser(mockMvc, "joiner", "joiner@example.com", "password");
         session = testUtil.loginUser(mockMvc, "joiner@example.com", "password");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/activities/join/" + activity.getId())
