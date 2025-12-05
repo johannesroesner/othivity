@@ -293,6 +293,7 @@ Requires `MODERATOR` or `ADMIN` role.
   "password": "securePassword123",
   "firstName": "Max",
   "lastName": "Mustermann",
+  "imageUrl": "https://example.com/image.jpg",
   "language": "ENGLISH",
   "theme": "DARK"
 }
