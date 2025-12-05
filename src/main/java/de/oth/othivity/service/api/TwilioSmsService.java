@@ -5,6 +5,7 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.SmsService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,9 +47,10 @@ public class TwilioSmsService implements SmsService {
     }
 
     @Override
-    public void sendSms(String phoneNumber, String message) {
+    public void sendSms(Profile profile, String message) {
         try {
-            Message.creator(new PhoneNumber(phoneNumber), this.twilioPhoneNumber, message).create();
+            if(profile == null || profile.getPhone().getNumber() == null || profile.getPhone().getVerified() == false ) return;
+            Message.creator(new PhoneNumber(profile.getPhone().getNumber()), this.twilioPhoneNumber, message).create();
         } catch (Exception error) {
             System.err.println(error.getMessage());
         }
