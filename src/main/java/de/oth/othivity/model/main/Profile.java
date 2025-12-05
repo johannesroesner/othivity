@@ -1,6 +1,5 @@
 package de.oth.othivity.model.main;
 
-import de.oth.othivity.listener.ProfileEntityListener;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.chat.Chat;
 import de.oth.othivity.model.helper.Image;
@@ -22,7 +21,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "profile")
-@EntityListeners(ProfileEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor

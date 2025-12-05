@@ -1,5 +1,6 @@
 package de.oth.othivity.service.impl;
 
+import de.oth.othivity.model.enumeration.NotificationType;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.helper.Email;
@@ -7,8 +8,7 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ProfileService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.*;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.repository.main.ProfileRepository;
@@ -17,8 +17,6 @@ import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.repository.main.ClubRepository;
 
 
-import de.oth.othivity.service.ImageService;
-import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.model.enumeration.Theme;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -42,9 +40,9 @@ public class ProfileServiceImpl implements ProfileService {
     private final SessionService sessionService;
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
-    private final ActivityRepository activityRepository;
-    private final ClubRepository clubRepository;
     private final ImageService imageService;
+    private final ClubService clubService;
+    private final ActivityService activityService;
     private final INotificationService notificationService;
 
     @Override
@@ -152,7 +150,22 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void deleteProfile(Profile profile) {
-        userRepository.delete(profile.getUser()); //TODO SBM delete profile
+
+        for(Club club : profile.getClubs()) {
+            club.getMembers().remove(profile);
+            if(club.getAdmins().contains(profile)){
+                if(club.getAdmins().size() == 1) clubService.deleteClub(club,profile);
+                else {
+                    club.getAdmins().remove(profile);
+                }
+            }
+        }
+
+        activityService.removeProfileFromActivities(profile);
+
+        notificationService.sendNotification(profile,profile,"profile.deleteNotification", NotificationType.EMAIL, NotificationType.SMS);
+
+        userRepository.delete(profile.getUser());
     }
 
     @Override

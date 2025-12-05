@@ -1,7 +1,9 @@
 package de.oth.othivity.service;
 
+import de.oth.othivity.model.main.Profile;
+
 public interface SmsService {
-    void sendSms(String phoneNumber, String message);
+    void sendSms(Profile profile, String message);
 
     void startVerification(String phoneNumber);
 
