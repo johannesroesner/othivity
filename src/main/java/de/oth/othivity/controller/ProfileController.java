@@ -3,6 +3,7 @@ package de.oth.othivity.controller;
 import de.oth.othivity.service.ChatService;
 import de.oth.othivity.validator.ProfileDtoValidator;
 import de.oth.othivity.validator.EmailVerificationDtoValidator;
+import de.oth.othivity.validator.UsernameDtoValidator; // Import hinzugefügt
 
 import java.util.Calendar;
 
@@ -59,10 +60,17 @@ public class ProfileController {
     private final ProfileDtoValidator profileDtoValidator;
     private final ChatService chatService;
     private final EmailVerificationDtoValidator emailVerificationDtoValidator;
+    private final UsernameDtoValidator usernameDtoValidator; // Validator injizieren
 
     @InitBinder("profileDto")
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(profileDtoValidator);
+    }
+    
+    // InitBinder für UsernameDto hinzufügen
+    @InitBinder("usernameDto")
+    protected void initBinderUsername(WebDataBinder binder) {
+        binder.addValidators(usernameDtoValidator);
     }
 
     @GetMapping("/profiles")
@@ -227,7 +235,8 @@ public class ProfileController {
     }
     
     @PostMapping("/profile/username/update")
-    public String updateUsername(@ModelAttribute UsernameDto usernameDto, BindingResult bindingResult, Model model, HttpSession session , HttpServletRequest request, HttpServletResponse response) {
+    // @Valid Hinzugefügt
+    public String updateUsername(@Valid @ModelAttribute UsernameDto usernameDto, BindingResult bindingResult, Model model, HttpSession session , HttpServletRequest request, HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "setup";
         }

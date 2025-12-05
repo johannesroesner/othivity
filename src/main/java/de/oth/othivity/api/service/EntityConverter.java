@@ -9,17 +9,12 @@ import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ClubService;
-import de.oth.othivity.api.dto.ProfileApiDto;
-import de.oth.othivity.dto.ProfileDto;
-import de.oth.othivity.dto.RegisterDto;
-import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.model.helper.Phone;
-import de.oth.othivity.model.helper.Email;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import de.oth.othivity.model.main.Activity;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -195,6 +190,14 @@ public class EntityConverter {
         ProfileDto profileDto = new ProfileDto();
 
         profileDto.setAboutMe(request.getAboutMe());
+        
+        // Hinzugefügt: Mapping für die Felder, die validiert werden sollen
+        profileDto.setFirstName(request.getFirstName());
+        profileDto.setLastName(request.getLastName());
+        
+        if (request.getEmail() != null) {
+            profileDto.setEmail(new Email(request.getEmail()));
+        }
 
         if (request.getPhone() != null) {
             profileDto.setPhone(new Phone(request.getPhone()));
@@ -237,5 +240,4 @@ public class EntityConverter {
 
         return registerDto;
     }
-
 }
