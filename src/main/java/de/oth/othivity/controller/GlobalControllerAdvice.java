@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
 
 import de.oth.othivity.model.enumeration.Role;
 
@@ -29,7 +32,8 @@ import de.oth.othivity.model.enumeration.Role;
     ExplorerController.class,
     NotificationController.class,
     ReportController.class,
-    VerificationController.class
+    VerificationController.class,
+    Exception.class
 })
 public class GlobalControllerAdvice {
 
@@ -113,5 +117,24 @@ public class GlobalControllerAdvice {
         model.addAttribute("vapidPublicKey", vapidPublicKey);
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleException(Exception ex, Model model) {
+        // Hier erstellen wir das Objekt, das error.html erwartet
+        ErrorViewModel errorViewModel = new ErrorViewModel(
+            "Ups!", 
+            "Da ist etwas schiefgelaufen."
+        );
+        
+        // Wir überschreiben das Standard-"error" (String) mit unserem Objekt
+        model.addAttribute("error", errorViewModel);
+        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        
+        return "error";
+    }
+
+    // Kleines DTO für die View (kann auch in eine eigene Datei)
+    public record ErrorViewModel(String headline, String subtitle) {}
     
 }
