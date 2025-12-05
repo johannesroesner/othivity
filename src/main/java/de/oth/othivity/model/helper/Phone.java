@@ -17,6 +17,11 @@ public class Phone {
         this.verified = false;
     }
 
+    public Phone(String number) {
+        this.number = number;
+        this.verified = false;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

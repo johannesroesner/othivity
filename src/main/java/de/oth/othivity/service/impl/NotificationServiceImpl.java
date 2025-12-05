@@ -89,7 +89,11 @@ public class NotificationServiceImpl implements INotificationService {
                     case SMS -> {
                         // TODO: Implement SMS logic
                     }
-                    case PUSH_NOTIFICATION -> pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);
+                    case PUSH_NOTIFICATION -> {
+                        if (recipient.getEmail() != null && recipient.getEmail().isVerified()) {
+                            pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);
+                        }
+                    }
                     case EMAIL -> emailService.sendEmail(recipient, subject, formattedMessageWithLink);
                 }
             }
@@ -149,13 +153,14 @@ public class NotificationServiceImpl implements INotificationService {
 
     @Override
     public String sendVerificationEmail(Profile recipient) {
-        String token = UUID.randomUUID().toString();
-
+        
         VerificationToken existingToken = verificationTokenRepository.findByProfile(recipient);
         if (existingToken != null) {
-            verificationTokenRepository.delete(existingToken);
+            emailService.sendEmail(recipient, "Verification Email", "Please verify your email using this token: " + existingToken.getToken());
+            return existingToken.getToken();
         }
-
+        
+        String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken(token, recipient);
         verificationTokenRepository.save(verificationToken);
 
