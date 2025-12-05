@@ -199,6 +199,13 @@ public class EntityConverter {
         if (request.getPhone() != null) {
             profileDto.setPhone(new Phone(request.getPhone()));
         }
+
+        if(request.getImageUrl() != null){
+            Image image = new Image();
+            image.setPublicId("not stored in claudinary");
+            image.setUrl(request.getImageUrl());
+            profileDto.setImage(image);
+        }
         
         return profileDto;
     }
@@ -220,6 +227,13 @@ public class EntityConverter {
 
         if (request.getPassword() != null) registerDto.setPassword(request.getPassword());
         else throw new IllegalArgumentException("password is null");
+
+        if(request.getImageUrl() != null){
+            Image image = new Image();
+            image.setPublicId("not stored in claudinary");
+            image.setUrl(request.getImageUrl());
+            registerDto.setImage(image);
+        }
 
         return registerDto;
     }
