@@ -58,7 +58,7 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                    .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/images/**").permitAll()
+                    .requestMatchers("/", "/login", "/register", "/process-register", "/h2-console/**", "/css/**", "/js/**", "/images/**", "/webjars/**", "/images/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             )
             .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
