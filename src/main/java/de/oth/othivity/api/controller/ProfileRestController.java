@@ -76,7 +76,7 @@ public class ProfileRestController {
         Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
         if (requesterProfile == null || !requesterProfile.getRole().equals(Role.MODERATOR)) {
             return ResponseEntity
-                    .status(401)
+                    .status(403)
                     .body("error: unauthorized");
         }
 

@@ -99,7 +99,7 @@ Creates a new activity.
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Authentication required
+`403 Forbidden` → Insufficient permissions
 
 **Example Request:**
 ```json
@@ -135,7 +135,7 @@ Only the creator (`startedBy`) or users with the role `MODERATOR` are allowed to
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Authentication required
+`403 Forbidden` → Insufficient permissions
 
 **Example Request:**
 ```json
@@ -165,11 +165,11 @@ Only the creator (`startedBy`) or users with the role `MODERATOR` are allowed to
 
 **Responses:**
 
-`204 NO CONTENT` -> Activity deleted successfully
+`204 NO CONTENT` → Activity deleted successfully
 
 `404 NOT FOUND` → Activity not found
 
-`401 UNAUTHORIZED` → Authentication required
+`403 Forbidden` → Insufficient permissions
 
 ---
 
