@@ -1,6 +1,6 @@
 package de.oth.othivity.dto;
 
-import de.oth.othivity.model.helper.Email;
+import de.oth.othivity.model.helper.Image;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,4 +22,6 @@ public class RegisterDto {
     private String password;
     
     private String matchingPassword;
+
+    private Image image;
 }

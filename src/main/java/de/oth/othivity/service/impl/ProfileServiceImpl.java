@@ -46,6 +46,11 @@ public class ProfileServiceImpl implements ProfileService {
     private final INotificationService notificationService;
 
     @Override
+    public List<Profile> getAllProfiles(){
+        return profileRepository.findAll();
+    }
+
+    @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
@@ -59,7 +64,8 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setFirstName(registerDto.getFirstName());
         profile.setLastName(registerDto.getLastName());
         profile.setUsername(registerDto.getUsername());
-        profile.setEmail(new Email(registerDto.getEmail()));
+        profile.setEmail(new Email(registerDto.getEmail().toLowerCase()));
+        if(registerDto.getImage() != null) profile.setImage(imageService.saveImage(profile,registerDto.getImage()));
         if (!needSetup) {
             profile.setSetupComplete(true);
         }
@@ -74,11 +80,13 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage) {
-        if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile, uploadedImage));
+    public Profile updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage) {
+        if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile,uploadedImage));
+        else if(profileDto.getImage() != null) profile.setImage(imageService.saveImage(profile,profileDto.getImage()));
         if(profileDto.getPhone() != null && !profileDto.getPhone().getNumber().isEmpty()) profile.setPhone(profileDto.getPhone());;
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);
+        return profile;
     }
 
     @Override
@@ -116,12 +124,12 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Profile getProfileByEmail(String email) {
-        return profileRepository.findByEmailAddress(email).orElse(null);
+        return profileRepository.findByEmailAddress(email.toLowerCase()).orElse(null);
     }
 
     @Override
     public Profile getProfileByUsername(String username) {
-        return profileRepository.findByusername(username);
+        return profileRepository.findByUsername(username);
     }
 
     @Override

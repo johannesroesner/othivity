@@ -21,11 +21,13 @@ import java.util.Locale;
 @Service
 public interface ProfileService {
 
+    List<Profile> getAllProfiles();
+
     List<Club> allJoinedClubsByProfile(HttpSession session);
 
     Profile createProfileFromUser(User user, RegisterDto registerDto, Locale clientLocale, boolean needSetup, boolean setEmailVerified);
     
-    void updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage);
+    Profile updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage);
 
     void updateProfileLanguage(Profile profile, Locale clientLocale);
 

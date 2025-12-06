@@ -2,12 +2,23 @@ package de.oth.othivity.api.service;
 
 import de.oth.othivity.api.dto.ActivityApiDto;
 import de.oth.othivity.api.dto.ClubApiDto;
+import de.oth.othivity.api.dto.ProfileApiDto;
 import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.dto.ClubDto;
+import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.helper.Address;
+import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.helper.Image;
+import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ClubService;
+import de.oth.othivity.api.dto.ProfileApiDto;
+import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.dto.RegisterDto;
+import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Email;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import de.oth.othivity.model.main.Activity;
@@ -149,6 +160,85 @@ public class EntityConverter {
         } else  throw new IllegalArgumentException("imageUrl is null");
 
         return activity;
+    }
+
+    public ProfileApiDto ProfileToApiDto(Profile profile) {
+        ProfileApiDto response = new ProfileApiDto();
+        
+        response.setId(safe(profile.getId()));
+        response.setFirstName(safe(profile.getFirstName()));
+        response.setLastName(safe(profile.getLastName()));
+        response.setAboutMe(safe(profile.getAboutMe()));
+        response.setUsername(safe(profile.getUsername()));
+        
+        response.setLanguage(
+            profile.getLanguage() != null ? profile.getLanguage().name() : null
+        );
+
+        response.setTheme(
+            profile.getTheme() != null ? profile.getTheme().name() : null
+        );
+        
+        response.setEmail(
+            profile.getEmail() != null ? profile.getEmail().getAddress() : null
+        );
+        
+        response.setPhone(
+            profile.getPhone() != null ? profile.getPhone().getNumber() : null
+        );
+        
+        response.setImageUrl(
+            profile.getImage() != null ? profile.getImage().getUrl() : null
+        );
+
+        return response;
+    }
+
+    public ProfileDto ApiDtoToProfileDto(ProfileApiDto request) {
+        ProfileDto profileDto = new ProfileDto();
+
+        profileDto.setAboutMe(request.getAboutMe());
+
+        if (request.getPhone() != null) {
+            profileDto.setPhone(new Phone(request.getPhone()));
+        }
+
+        if(request.getImageUrl() != null){
+            Image image = new Image();
+            image.setPublicId("not stored in claudinary");
+            image.setUrl(request.getImageUrl());
+            profileDto.setImage(image);
+        }
+        
+        return profileDto;
+    }
+
+    public RegisterDto ApiDtoToRegisterDto(ProfileApiDto request) {
+        RegisterDto registerDto = new RegisterDto();
+
+        if (request.getFirstName() != null) registerDto.setFirstName(request.getFirstName());
+        else throw new IllegalArgumentException("firstName is null");
+
+        if (request.getLastName() != null) registerDto.setLastName(request.getLastName());
+        else throw new IllegalArgumentException("lastName is null");
+
+        if (request.getUsername() != null) registerDto.setUsername(request.getUsername().toLowerCase());
+        else throw new IllegalArgumentException("username is null");
+
+        if (request.getEmail() != null) registerDto.setEmail(request.getEmail().toLowerCase());
+        else throw new IllegalArgumentException("email is null");
+
+        if (request.getPassword() != null) registerDto.setPassword(request.getPassword());
+        else throw new IllegalArgumentException("password is null");
+
+        if(request.getImageUrl() != null){
+            Image image = new Image();
+            image.setPublicId("not stored in claudinary");
+            image.setUrl(request.getImageUrl());
+            registerDto.setImage(image);
+        }
+
+        return registerDto;
     }
 
     public ClubApiDto ClubToApiDto(Club club) {

@@ -6,6 +6,7 @@ import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.main.Club;
+import de.oth.othivity.model.helper.Image;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,4 +32,6 @@ public class ProfileDto {
     private String aboutMe;
 
     private Phone phone;
+    
+    private Image image;
 }
