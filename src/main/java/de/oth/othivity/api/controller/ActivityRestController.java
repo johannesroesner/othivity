@@ -61,8 +61,8 @@ public class ActivityRestController {
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null) {
             return ResponseEntity
-                    .status(401)
-                    .body("error: unauthorized");
+                    .status(403)
+                    .body("error: forbidden");
         }
 
         ActivityDto activityDto;
@@ -117,8 +117,8 @@ public class ActivityRestController {
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!activity.getStartedBy().getId().equals(profile.getId()) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
-                    .status(401)
-                    .body("error: unauthorized");
+                    .status(403)
+                    .body("error: forbidden");
         }
 
         ActivityDto activityDto;
@@ -170,8 +170,8 @@ public class ActivityRestController {
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!activity.getStartedBy().getId().equals(profile.getId()) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
-                    .status(401)
-                    .body("error: unauthorized");
+                    .status(403)
+                    .body("error: forbidden");
         }
 
         activityService.deleteActivity(activity);
