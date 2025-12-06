@@ -103,7 +103,8 @@ public class ClubController {
             model.addAttribute("pageTitle", "clubCreate.pageTitle");
             return "club-edit";
         }
-        clubService.createClubForUser(clubDto, session, uploadedImage);
+        Profile profile = sessionService.getProfileFromSession(session);
+        clubService.createClubForUser(clubDto, profile, uploadedImage);
         return "redirect:/clubs";
     }
 

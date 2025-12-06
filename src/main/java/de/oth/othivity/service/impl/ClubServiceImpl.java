@@ -105,8 +105,7 @@ public class ClubServiceImpl implements ClubService {
         return clubRepository.findClubsNotJoinedByProfile(profile, search, accessLevel, pageable);
     }
     @Override
-    public Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public Club createClubForUser(ClubDto clubDto, Profile profile, MultipartFile uploadedImage) {
         if (profile == null) { return null; }
         Club club = new Club();
         club.setName(clubDto.getName());
