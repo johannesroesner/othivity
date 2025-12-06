@@ -32,6 +32,6 @@ public class Email {
     private Boolean verified = false;
 
     public Boolean isVerified() {
-    return verified;
+        return verified;
     }
 }

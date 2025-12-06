@@ -18,9 +18,6 @@ public class EmailServiceImpl implements IEmailService {
     @Override
     public void sendEmail(Profile recipient, String subject, String message) {
         try {
-            if (recipient.getEmail() == null || !recipient.getEmail().isVerified()) {
-                return; 
-            }
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
             helper.setFrom("othivity@gmail.com");

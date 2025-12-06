@@ -32,7 +32,7 @@ public class UserServiceImpl implements IUserService {
 
         User user = new User();
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setEmail(registerDto.getEmail());
+        user.setEmail(registerDto.getEmail().toLowerCase());
         
         User savedUser = userRepository.save(user);
         

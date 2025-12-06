@@ -70,7 +70,7 @@ public class ProfileIntegrationTest {
     }
 
     private void makeModerator(String username) {
-        Profile profile = profileRepository.findByusername(username);
+        Profile profile = profileRepository.findByUsername(username);
         profile.setRole(Role.MODERATOR);
         profileRepository.save(profile);
     }
@@ -94,7 +94,7 @@ public class ProfileIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile/user1"));
 
-        Profile updatedProfile = profileRepository.findByusername("user1");
+        Profile updatedProfile = profileRepository.findByUsername("user1");
         assertEquals("New Bio", updatedProfile.getAboutMe());
     }
 
@@ -125,7 +125,7 @@ public class ProfileIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
 
-        assertNull(profileRepository.findByusername("user1"));
+        assertNull(profileRepository.findByUsername("user1"));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class ProfileIntegrationTest {
                         .param("aboutMe", "Mod Bio"))
                 .andExpect(status().is3xxRedirection());
                 
-        Profile updatedProfile = profileRepository.findByusername("mod1");
+        Profile updatedProfile = profileRepository.findByUsername("mod1");
         assertEquals("Mod Bio", updatedProfile.getAboutMe());
     }
 
@@ -174,7 +174,7 @@ public class ProfileIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile/user1"));
 
-        Profile updatedProfile = profileRepository.findByusername("user1");
+        Profile updatedProfile = profileRepository.findByUsername("user1");
         assertEquals("Edited by Mod", updatedProfile.getAboutMe());
 
         // Delete Other Profile
@@ -183,7 +183,7 @@ public class ProfileIntegrationTest {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection()); // Redirects to dashboard or referer
 
-        assertNull(profileRepository.findByusername("user1"));
-        assertNotNull(profileRepository.findByusername("mod1")); // Mod still exists
+        assertNull(profileRepository.findByUsername("user1"));
+        assertNotNull(profileRepository.findByUsername("mod1")); // Mod still exists
     }
 }
