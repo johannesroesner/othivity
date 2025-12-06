@@ -211,7 +211,7 @@ class ActivityRestIntegrationTest {
 
         mockMvc.perform(delete("/api/activities/" + activityId)
                         .header("Authorization", "Bearer " + otherToken))
-                .andExpect(status().is(401))
+                .andExpect(status().is(403))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("error")));
     }
 
