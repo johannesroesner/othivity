@@ -19,13 +19,10 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Othivity REST API")
                         .version("1.0")
-                        .description("REST API für Othivity - Club und Activity Management System")
+                        .description("REST API for Othivity")
                         .contact(new Contact()
                                 .name("Othivity Team")
-                                .email("othivity@gmail.com"))
-                        .license(new License()
-                                .name("MIT License")
-                                .url("https://opensource.org/licenses/MIT")))
+                                .email("othivity@gmail.com")))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components()
                         .addSecuritySchemes("Bearer Authentication",
@@ -33,6 +30,6 @@ public class OpenApiConfig {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
-                                        .description("JWT Token Authentication - Erstelle einen Token unter /settings")));
+                                        .description("JWT Token Authentication - Create a Token under /settings")));
     }
 }
