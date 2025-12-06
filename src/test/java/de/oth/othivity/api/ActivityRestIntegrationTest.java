@@ -148,7 +148,7 @@ class ActivityRestIntegrationTest {
                         .header("Authorization", "Bearer " + otherToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(apiDto)))
-                .andExpect(status().is(401))
+                .andExpect(status().is(403))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("error")));
     }
 
