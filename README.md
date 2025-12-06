@@ -173,6 +173,140 @@ Only the creator (`startedBy`) or users with the role `MODERATOR` are allowed to
 
 ---
 
+## Club API Documentation
+
+**Base URL:** `/api/clubs`
+
+Authentication via JWT is required (see Activity API).
+
+### Data Model: `ClubApiDto`
+
+| Field | Type | Description | Create | Update |
+|---|---|---|---|---|
+| `id` | `String (UUID)` | club identifier (response only) | - | required |
+| `name` | `String` | club name | required | required |
+| `description` | `String` | club description | required | required |
+| `accessLevel` | `String (Enum)` | club access level: `OPEN`, `PRIVATE`, `PUBLIC` | required | required |
+| `imageUrl` | `String` | club image URL | optional | optional |
+| `admins` | `String[] (UUID)` | club admin profile UUIDs (response only) | - | - |
+| `members` | `String[] (UUID)` | club member profile UUIDs (response only) | - | - |
+| `addition` | `String` | address addition | optional | optional |
+| `street` | `String` | address street | required | required |
+| `houseNumber` | `String` | address house number | required | required |
+| `postalCode` | `String` | address postal code | required | required |
+| `city` | `String` | address city | required | required |
+| `country` | `String` | address country | optional | optional |
+| `latitude` | `String` | address latitude (response only) | - | - |
+| `longitude` | `String` | address longitude (response only) | - | - |
+
+#### ENUMS
+- `accessLevel`:
+    - `OPEN` - Anyone can join
+    - `PRIVATE` - Invitation only
+    - `PUBLIC` - Visible to all, requires approval to join
+
+### Endpoints
+
+#### GET `/api/clubs`
+
+Returns all clubs.
+
+**Response:**  
+`200 OK` → `List<ClubApiDto>`
+
+---
+
+#### GET `/api/clubs/{id}`
+
+Returns one club by its ID.
+
+**Response:**
+
+`200 OK` → `ClubApiDto`
+
+`404 NOT FOUND` → Club not found
+
+---
+
+#### POST `/api/clubs`
+
+Creates a new club. The creator automatically becomes an admin.
+
+**Responses:**
+
+`201 CREATED` → `ClubApiDto`
+
+`400 BAD REQUEST` → Validation errors
+
+**Example Request:**
+```json
+{
+  "name": "Hiking Club",
+  "description": "A club for hiking enthusiasts",
+  "accessLevel": "OPEN",
+  "imageUrl": "https://example.com/club.jpg",
+  "street": "University Street",
+  "houseNumber": "10",
+  "postalCode": "93053",
+  "city": "Regensburg",
+  "country": "Germany"
+}
+```
+
+---
+
+#### PUT `/api/clubs/{id}`
+
+Updates an existing club.
+Only club admins or users with the role `MODERATOR` are allowed to update.
+
+**Responses:**
+
+`200 OK` → `ClubApiDto`
+
+`400 BAD REQUEST` → Validation errors
+
+`401 UNAUTHORIZED` → Not authenticated
+
+`403 FORBIDDEN` → Insufficient permissions (not an admin)
+
+`404 NOT FOUND` → Club not found
+
+**Example Request:**
+```json
+{
+  "id": "ffcbf39a-5839-4937-8fe1-7bb40499d678",
+  "name": "Updated Hiking Club",
+  "description": "Updated description",
+  "accessLevel": "PUBLIC",
+  "imageUrl": "https://example.com/new-image.jpg",
+  "street": "University Street",
+  "houseNumber": "10",
+  "postalCode": "93053",
+  "city": "Regensburg",
+  "country": "Germany"
+}
+```
+
+---
+
+#### DELETE `/api/clubs/{id}`
+
+Deletes an existing club.
+Only club admins or users with the role `MODERATOR` are allowed to delete.
+
+**Responses:**
+
+`204 NO CONTENT` → Club deleted successfully
+
+`401 UNAUTHORIZED` → Not authenticated
+
+`403 FORBIDDEN` → Insufficient permissions (not an admin)
+
+`404 NOT FOUND` → Club not found
+
+---
+
 ## Profile API Documentation
 
 **Base URL:** `/api/profile`
