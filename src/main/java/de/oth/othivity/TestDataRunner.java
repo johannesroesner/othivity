@@ -88,12 +88,12 @@ public class TestDataRunner {
             profileRepository.save(profile2);
 
             Email email3  = new Email();
-            email3.setAddress("moritz@example.com");
+            email3.setAddress("msemmelmann@freenet.de");
             email3.setVerified(true);
             
 
             User user3 = new User();
-            user3.setEmail("moritz@example.com");
+            user3.setEmail("msemmelmann@freenet.de");
             user3.setPassword(passwordEncoder.encode("password"));
             userRepository.save(user3);
 

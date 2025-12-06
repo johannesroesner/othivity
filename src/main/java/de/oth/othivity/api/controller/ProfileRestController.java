@@ -11,7 +11,15 @@ import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Theme;
 import de.oth.othivity.service.ProfileService;
-import de.oth.othivity.service.IUserService; 
+import de.oth.othivity.service.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +35,19 @@ import java.util.UUID;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/profile")
+@Tag(name = "Profiles", description = "Profile Management API")
+@SecurityRequirement(name = "Bearer Authentication")
 public class ProfileRestController {
 
     private final ProfileService profileService;
     private final EntityConverter entityConverter;
     private final IUserService userService; 
 
+    @Operation(summary = "Get all profiles", description = "Returns a list of all profiles in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of profiles",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileApiDto.class)))
+    })
     @GetMapping ("/all")
     public List<ProfileApiDto> getAllProfiles() {
         return profileService.getAllProfiles()
@@ -41,6 +56,12 @@ public class ProfileRestController {
                 .toList();
     }
 
+    @Operation(summary = "Get current user profile", description = "Returns the profile of the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved profile",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileApiDto.class))),
+            @ApiResponse(responseCode = "404", description = "Profile not found")
+    })
     @GetMapping("/me")
     public ResponseEntity<Object> getProfileByPrincipal(@AuthenticationPrincipal UserDetails userDetail) {
         Profile profile = profileService.getProfileByEmail(userDetail.getUsername());
@@ -53,8 +74,17 @@ public class ProfileRestController {
         return ResponseEntity.status(200).body(response);
     }
 
+    @Operation(summary = "Get profile by username", description = "Returns a profile by username. Only moderators can access this endpoint.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved profile",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileApiDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden - User is not a moderator"),
+            @ApiResponse(responseCode = "404", description = "Profile not found")
+    })
     @GetMapping("/{username}")
-    public ResponseEntity<Object> getProfileByUsername(@AuthenticationPrincipal CustomUserDetails userDetail, @PathVariable String username) {
+    public ResponseEntity<Object> getProfileByUsername(
+            @AuthenticationPrincipal CustomUserDetails userDetail,
+            @Parameter(description = "Username of the profile to retrieve", required = true) @PathVariable String username) {
         Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
         
         if(requesterProfile == null || !requesterProfile.getRole().equals(Role.MODERATOR)){
@@ -71,6 +101,14 @@ public class ProfileRestController {
         return ResponseEntity.status(200).body(response);
     }
 
+    @Operation(summary = "Create a new profile", description = "Creates a new profile with user account. Only moderators can create profiles.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Profile successfully created",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileApiDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - User is not a moderator"),
+            @ApiResponse(responseCode = "409", description = "Conflict - Email or username already taken")
+    })
     @PostMapping
     public ResponseEntity<Object> createProfile(@AuthenticationPrincipal CustomUserDetails userDetail, @RequestBody ProfileApiDto apiDto) {
         Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
@@ -134,8 +172,18 @@ public class ProfileRestController {
         return ResponseEntity.status(201).body(entityConverter.ProfileToApiDto(createdProfile));
     }
 
+    @Operation(summary = "Update a profile", description = "Updates an existing profile. Users can update their own profile, moderators can update any profile. First name, last name, and email cannot be changed.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profile successfully updated",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileApiDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data or attempt to change immutable fields"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to update this profile")
+    })
     @PutMapping("/{username}")
-    public ResponseEntity<Object> updateProfile(@AuthenticationPrincipal CustomUserDetails userDetail, @PathVariable String username, @RequestBody ProfileApiDto apiDto) {
+    public ResponseEntity<Object> updateProfile(
+            @AuthenticationPrincipal CustomUserDetails userDetail,
+            @Parameter(description = "Username of the profile to update", required = true) @PathVariable String username,
+            @RequestBody ProfileApiDto apiDto) {
         Profile profileToUpdate = profileService.getProfileByUsername(username);
         Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
 
@@ -186,8 +234,15 @@ public class ProfileRestController {
         return ResponseEntity.status(200).body(entityConverter.ProfileToApiDto(updatedProfile));
     }
 
+    @Operation(summary = "Delete a profile", description = "Deletes a profile. Users can delete their own profile, moderators can delete any profile.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Profile successfully deleted"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - User is not authorized to delete this profile")
+    })
     @DeleteMapping("/{username}")
-    public ResponseEntity<Object> deleteProfile(@AuthenticationPrincipal UserDetails userDetails, @PathVariable String username) {
+    public ResponseEntity<Object> deleteProfile(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "Username of the profile to delete", required = true) @PathVariable String username) {
         Profile profileToDelete = profileService.getProfileByUsername(username);
         Profile requesterProfile = profileService.getProfileByEmail(userDetails.getUsername());
 
