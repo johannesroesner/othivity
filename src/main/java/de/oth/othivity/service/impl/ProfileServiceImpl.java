@@ -83,7 +83,12 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage) {
         if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile,uploadedImage));
         else if(profileDto.getImage() != null) profile.setImage(imageService.saveImage(profile,profileDto.getImage()));
-        if(profileDto.getPhone() != null && !profileDto.getPhone().getNumber().isEmpty()) profile.setPhone(profileDto.getPhone());;
+        
+        if(profileDto.getPhone() != null && !profileDto.getPhone().getNumber().isEmpty()) profile.setPhone(profileDto.getPhone());
+        
+        if(profileDto.getFirstName() != null && !profileDto.getFirstName().isEmpty()) profile.setFirstName(profileDto.getFirstName());
+        if(profileDto.getLastName() != null && !profileDto.getLastName().isEmpty()) profile.setLastName(profileDto.getLastName());
+        
         profile.setAboutMe(profileDto.getAboutMe());
         profileRepository.save(profile);
         return profile;
@@ -185,6 +190,8 @@ public class ProfileServiceImpl implements ProfileService {
             profileDto.setPhone(profile.getPhone());
         }
         profileDto.setAboutMe(profile.getAboutMe());
+        profileDto.setFirstName(profile.getFirstName());
+        profileDto.setLastName(profile.getLastName());
         return profileDto;
     }
 

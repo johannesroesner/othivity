@@ -37,10 +37,14 @@
             <tbody>
             <tr th:each="p : ${profiles.content}">
                 <td>
-                    <div class="avatar">
+                    <div class="avatar" th:if="${p.image != null}">
                         <div class="w-10 rounded-full">
-                            <img th:if="${p.image != null}" th:src="${p.image.url}" />
-                            <img th:unless="${p.image != null}" th:src="@{/images/johannes.png}" />
+                            <img th:src="${p.image.url}" />
+                        </div>
+                    </div>
+                    <div class="avatar placeholder" th:unless="${p.image != null}">
+                        <div class="w-10 rounded-full bg-primary text-white flex items-center justify-center">
+                            <span class="font-semibold" th:text="${#strings.substring(p.firstName,0,1) + #strings.substring(p.lastName,0,1)}"></span>
                         </div>
                     </div>
                 </td>

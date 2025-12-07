@@ -361,7 +361,7 @@ Only club admins or users with the role `MODERATOR` are allowed to delete.
 
 ### Endpoints
 
-#### GET `/api/profile/all`
+#### GET `/api/profiles/all`
 Returns a list of all profiles.
 
 **Response:**
@@ -370,7 +370,7 @@ Returns a list of all profiles.
 
 ---
 
-#### GET `/api/profile/me`
+#### GET `/api/profiles/me`
 Returns the profile of the currently authenticated user.
 
 **Response:**
@@ -381,7 +381,7 @@ Returns the profile of the currently authenticated user.
 
 ---
 
-#### GET `/api/profile/{username}`
+#### GET `/api/profiles/{username}`
 Returns a specific profile by username.
 Requires `MODERATOR` or `ADMIN` role.
 
@@ -395,7 +395,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 ---
 
-#### POST `/api/profile`
+#### POST `/api/profiles`
 Creates a new profile (and user account).
 Requires `MODERATOR` or `ADMIN` role.
 
@@ -425,7 +425,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 ---
 
-#### PUT `/api/profile/{username}`
+#### PUT `/api/profiles/{username}`
 Updates an existing profile.
 Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 Note: `username`, `email`, `firstName`, and `lastName` cannot be changed via this endpoint.
@@ -451,7 +451,7 @@ Note: `username`, `email`, `firstName`, and `lastName` cannot be changed via thi
 
 ---
 
-#### DELETE `/api/profile/{username}`
+#### DELETE `/api/profiles/{username}`
 Deletes a profile.
 Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 

@@ -3,14 +3,20 @@ package de.oth.othivity.api.service;
 import de.oth.othivity.api.dto.ActivityApiDto;
 import de.oth.othivity.api.dto.ClubApiDto;
 import de.oth.othivity.api.dto.ProfileApiDto;
+import de.oth.othivity.api.dto.ProfileApiDto;
 import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.dto.ClubDto;
+import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ClubService;
 import de.oth.othivity.api.dto.ProfileApiDto;
@@ -21,7 +27,6 @@ import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.helper.Email;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 
 import java.util.Arrays;
@@ -198,6 +203,13 @@ public class EntityConverter {
         ProfileDto profileDto = new ProfileDto();
 
         profileDto.setAboutMe(request.getAboutMe());
+        
+        profileDto.setFirstName(request.getFirstName());
+        profileDto.setLastName(request.getLastName());
+        
+        if (request.getEmail() != null) {
+            profileDto.setEmail(new Email(request.getEmail()));
+        }
 
         if (request.getPhone() != null) {
             profileDto.setPhone(new Phone(request.getPhone()));
