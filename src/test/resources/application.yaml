@@ -71,3 +71,6 @@ twilio:
   auth-token: ${TWILIO_AUTH_TOKEN:dummy-auth-token}
   phone-number: ${TWILIO_PHONE_NUMBER:dummy-phone-number}
   verify-service-sid: ${TWILIO_VERIFY_SERVICE_SID:dummy-verify-service-sid}
+
+moderator:
+  password: ${MODERATOR_PASSWORD:dummy-moderator-password}
