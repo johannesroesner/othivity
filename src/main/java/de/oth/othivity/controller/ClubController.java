@@ -235,8 +235,9 @@ public class ClubController {
         if (club == null || profile == null) {
             return "redirect:/clubs/" + clubId;
         }
+        Profile currentProfile = sessionService.getProfileFromSession(session);
 
-        clubService.makeProfileAdminOfClub(profile, club, session);
+        clubService.makeProfileAdminOfClub(profile, club, currentProfile);
         if (isLeaving) {
             Profile currentProfile = sessionService.getProfileFromSession(session);
             clubService.leaveClubForProfile(currentProfile, club);
@@ -249,11 +250,12 @@ public class ClubController {
     public String removeMember(@PathVariable("clubId") String clubId, @PathVariable("profileId") String profileId, HttpSession session) {
         Club club = clubService.getClubById(UUID.fromString(clubId));
         Profile profile = profileService.getProfileById(UUID.fromString(profileId));
+        Profile currentProfile = sessionService.getProfileFromSession(session);
         if (club == null || profile == null) {
             return "redirect:/clubs/" + clubId;
         }
 
-        clubService.removeProfileFromClub(profile, club, session);
+        clubService.removeProfileFromClub(profile, club, currentProfile);
 
         return "redirect:/clubs/" + clubId;
     }
