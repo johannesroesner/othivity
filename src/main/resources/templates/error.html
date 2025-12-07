@@ -4,29 +4,28 @@
 </head>
 <body class="flex flex-col min-h-screen">
     
-    <nav th:replace="~{layout/nav :: nav('error')}"></nav>
+    <nav th:replace="~{layout/empty-nav :: nav('error')}"></nav>
 
     <main class="flex-grow container mx-auto p-4 text-center">
         <div class="hero bg-base-200 rounded-box p-10 mt-10">
             <div class="hero-content text-center">
                 <div class="max-w-md">
                     <h1 class="text-5xl font-bold text-error" 
-                        th:text="${error instanceof T(String)} ? 'Fehler' : ${error.headline}">Ups!</h1>
+                        th:text="${isCustomError} ? ${error.headline} : #{error.default.headline}">Ups!</h1>
                         
                     <p class="py-6 text-xl" 
-                    th:text="${error instanceof T(String)} ? 'Ein unerwarteter Fehler ist aufgetreten.' : ${error.subtitle}">
-                    Da ist etwas schiefgelaufen.
+                    th:text="${isCustomError} ? ${error.subtitle} : #{error.default.subtitle}">
                     </p>
                     
                     <div class="alert alert-error shadow-lg mb-6" th:if="${status}">
                         <div>
-                            <span th:text="${status} + ' - ' + (${error instanceof T(String)} ? ${error} : 'Details siehe unten')">404 - Error</span>
+                            <span th:text="${status} + ' - ' + (${isCustomError} ? 'Details siehe unten' : ${error})"></span>
                         </div>
                     </div>
                     
                     <p th:text="${message}" class="mb-4 text-gray-500"></p>
 
-                    <a href="/dashboard" class="btn btn-primary" th:text="#{error.backToDashboard}">Zurück zum Dashboard</a>
+                    <a href="/dashboard" class="btn btn-primary" th:text="#{error.backToDashboard}"></a>
                 </div>
             </div>
         </div>

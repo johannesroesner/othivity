@@ -32,8 +32,7 @@ import de.oth.othivity.model.enumeration.Role;
     ExplorerController.class,
     NotificationController.class,
     ReportController.class,
-    VerificationController.class,
-    Exception.class
+    VerificationController.class
 })
 public class GlobalControllerAdvice {
 
@@ -120,21 +119,20 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleException(Exception ex, Model model) {
-        // Hier erstellen wir das Objekt, das error.html erwartet
         ErrorViewModel errorViewModel = new ErrorViewModel(
-            "Ups!", 
-            "Da ist etwas schiefgelaufen."
+            "Error", 
+            "An unexpected error has occurred."
         );
         
-        // Wir überschreiben das Standard-"error" (String) mit unserem Objekt
         model.addAttribute("error", errorViewModel);
         model.addAttribute("message", ex.getMessage());
         model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         
+        model.addAttribute("isCustomError", true);
+        
         return "error";
     }
 
-    // Kleines DTO für die View (kann auch in eine eigene Datei)
     public record ErrorViewModel(String headline, String subtitle) {}
     
 }
