@@ -219,8 +219,7 @@ public class ClubServiceImpl implements ClubService {
         }
     }
     @Override
-    public void makeProfileAdminOfClub(Profile profile, Club club, HttpSession session) {
-        Profile currentProfile = sessionService.getProfileFromSession(session);
+    public void makeProfileAdminOfClub(Profile profile, Club club, Profile currentProfile) {
         if (currentProfile == null || club == null || profile == null) {
             return;
         }
@@ -234,8 +233,7 @@ public class ClubServiceImpl implements ClubService {
         }
     }
     @Override
-    public void removeProfileFromClub (Profile profile, Club club, HttpSession session) {
-        Profile currentProfile = sessionService.getProfileFromSession(session);
+    public void removeProfileFromClub (Profile profile, Club club, Profile currentProfile) {
         if (currentProfile == null || club == null || profile == null) {
             return;
         }

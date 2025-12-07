@@ -93,7 +93,7 @@ public class ClubRestController {
                 UUID adminId = UUID.fromString(s);
                 Profile admin = profileService.getProfileById(adminId);
                 if (admin != null && club.getMembers().contains(admin)) {
-                    clubService.makeProfileAdminOfClub(admin, club, null);
+                    clubService.makeProfileAdminOfClub(admin, club, profile);
                 }
             }
         }
