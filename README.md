@@ -3,7 +3,7 @@
 Our idea is to build a platform for our university, OTH Regensburg, where students can post activities,
 connect with others and find new people to engage with.
 
-## Activity API Documentation
+## API Documentation
 
 **Base URL:** `/api/activities`
 
@@ -16,6 +16,8 @@ This API uses **JWT (JSON Web Token)** for authentication:
 ```http
 Authorization: Bearer <YOUR_JWT_TOKEN>
 ```
+
+`401 UNAUTHORIZED` → Invalid or missing JWT token
 
 ### Data Model: `ActivityApiDto`
 
@@ -177,8 +179,6 @@ Only the creator (`startedBy`) or users with the role `MODERATOR` are allowed to
 
 **Base URL:** `/api/clubs`
 
-Authentication via JWT is required (see Activity API).
-
 ### Data Model: `ClubApiDto`
 
 | Field | Type | Description | Create | Update |
@@ -266,8 +266,6 @@ Only club admins or users with the role `MODERATOR` are allowed to update.
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Not authenticated
-
 `403 FORBIDDEN` → Insufficient permissions (not an admin)
 
 `404 NOT FOUND` → Club not found
@@ -299,8 +297,6 @@ Only club admins or users with the role `MODERATOR` are allowed to delete.
 
 `204 NO CONTENT` → Club deleted successfully
 
-`401 UNAUTHORIZED` → Not authenticated
-
 `403 FORBIDDEN` → Insufficient permissions (not an admin)
 
 `404 NOT FOUND` → Club not found
@@ -309,9 +305,7 @@ Only club admins or users with the role `MODERATOR` are allowed to delete.
 
 ## Profile API Documentation
 
-**Base URL:** `/api/profile`
-
-Authentication via JWT is required (see Activity API).
+ **Base URL:** `/api/profiles`
 
 ### Data Model: `ProfileApiDto`
 
@@ -415,7 +409,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Authentication required
+`403 FORBIDDEN` → Insufficient permissions
 
 `409 CONFLICT` → Email or Username already taken
 

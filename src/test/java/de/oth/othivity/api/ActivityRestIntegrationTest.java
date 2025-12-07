@@ -128,7 +128,7 @@ class ActivityRestIntegrationTest {
 
 
     @Test
-    void updateActivity_unauthorized_shouldReturn401() throws Exception {
+    void updateActivity_forbidden_shouldReturn403() throws Exception {
         ActivityApiDto apiDto = testUtil.createValidActivityApiDto();
         String response = mockMvc.perform(post("/api/activities")
                         .header("Authorization", "Bearer " + jwtToken)
@@ -196,7 +196,7 @@ class ActivityRestIntegrationTest {
 
 
     @Test
-    void deleteActivity_unauthorized_shouldReturn401() throws Exception {
+    void deleteActivity_forbidden_shouldReturn403() throws Exception {
         ActivityApiDto apiDto = testUtil.createValidActivityApiDto();
         String response = mockMvc.perform(post("/api/activities")
                         .header("Authorization", "Bearer " + jwtToken)

@@ -71,8 +71,3 @@ twilio:
   auth-token: ${TWILIO_AUTH_TOKEN:dummy-auth-token}
   phone-number: ${TWILIO_TRIAL_NUMBER:dummy-phone-number}
   verify-service-sid: ${TWILIO_VERIFY_SERVICE_SID:dummy-verify-service-sid}
-
-logging:
-  level:
-    org.hibernate: DEBUG
-    org.hibernate.engine.internal.Cascade: TRACE

@@ -51,7 +51,6 @@ public class ClubRestController {
             @ApiResponse(responseCode = "201", description = "Club successfully created",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClubApiDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing token")
     })
     @PostMapping
     public ResponseEntity<Object> createClub(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ClubApiDto apiDto) {
@@ -107,7 +106,6 @@ public class ClubRestController {
             @ApiResponse(responseCode = "200", description = "Club successfully updated",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClubApiDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing token"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User is not an admin of this club"),
             @ApiResponse(responseCode = "404", description = "Club not found")
     })
@@ -126,7 +124,7 @@ public class ClubRestController {
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!club.getAdmins().contains(profile) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
-                    .status(401)
+                    .status(403)
                     .body("error: unauthorized");
         }
 
@@ -148,7 +146,6 @@ public class ClubRestController {
     @Operation(summary = "Delete a club", description = "Deletes an existing club. Only club admins can delete the club.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Club successfully deleted"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing token"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User is not an admin of this club"),
             @ApiResponse(responseCode = "404", description = "Club not found")
     })
@@ -167,8 +164,8 @@ public class ClubRestController {
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!club.getAdmins().contains(profile) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
-                    .status(401)
-                    .body("error: unauthorized");
+                    .status(403)
+                    .body("error: forbidden");
         }
 
         clubService.deleteClub(club, profile);
