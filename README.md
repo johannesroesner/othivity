@@ -3,6 +3,9 @@
 Our idea is to build a platform for our university, OTH Regensburg, where students can post activities,
 connect with others and find new people to engage with.
 
+
+## Swagger API Documentation URL: ** `swagger-ui/index.html`
+
 ## Activity API Documentation
 
 **Base URL:** `/api/activities`
