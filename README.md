@@ -361,7 +361,7 @@ Only club admins or users with the role `MODERATOR` are allowed to delete.
 
 ### Endpoints
 
-#### GET `/api/profile/all`
+#### GET `/api/profiles/all`
 Returns a list of all profiles.
 
 **Response:**
@@ -370,7 +370,7 @@ Returns a list of all profiles.
 
 ---
 
-#### GET `/api/profile/me`
+#### GET `/api/profiles/me`
 Returns the profile of the currently authenticated user.
 
 **Response:**
@@ -381,7 +381,7 @@ Returns the profile of the currently authenticated user.
 
 ---
 
-#### GET `/api/profile/{username}`
+#### GET `/api/profiles/{username}`
 Returns a specific profile by username.
 Requires `MODERATOR` or `ADMIN` role.
 
@@ -395,7 +395,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 ---
 
-#### POST `/api/profile`
+#### POST `/api/profiles`
 Creates a new profile (and user account).
 Requires `MODERATOR` or `ADMIN` role.
 
@@ -425,7 +425,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 ---
 
-#### PUT `/api/profile/{username}`
+#### PUT `/api/profiles/{username}`
 Updates an existing profile.
 Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 Note: `username`, `email`, `firstName`, and `lastName` cannot be changed via this endpoint.
@@ -451,175 +451,7 @@ Note: `username`, `email`, `firstName`, and `lastName` cannot be changed via thi
 
 ---
 
-#### DELETE `/api/profile/{username}`
-Deletes a profile.
-Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
-
-**Response:**
-
-`204 NO CONTENT` → Success
-
-`403 FORBIDDEN` → Insufficient permissions
-
-`404 NOT FOUND` → Profile not found
-
----
-
-## Profile API Documentation
-
-**Base URL:** `/api/profile`
-
-Authentication via JWT is required (see Activity API).
-
-### Data Model: `ProfileApiDto`
-
-| Field | Type | Description | Create | Update |
-|---|---|---|---|---|
-| `id` | `String (UUID)` | profile identifier (response only) | - | - |
-| `username` | `String` | unique username | required | - |
-| `email` | `String` | unique email address | required | - |
-| `firstName` | `String` | first name | required | - |
-| `lastName` | `String` | last name | required | - |
-| `password` | `String` | password (write-only) | required | - |
-| `aboutMe` | `String` | profile description | optional | optional |
-| `phone` | `String` | phone number | optional | optional |
-| `imageUrl` | `String` | profile image url | optional | optional |
-| `language` | `String (Enum)` | language preference | optional | optional |
-| `theme` | `String (Enum)` | theme preference | optional | optional |
-
-#### ENUMS
-- `language`:
-    - `ENGLISH`
-    - `GERMAN`
-    - `FRENCH`
-    - `SPANISH`
-- `themes`:
-    - `LIGHT` ☀️
-    - `DARK` 🌑
-    - `CUPCAKE` 🧁
-    - `BUMBLEBEE` 🐝
-    - `EMERALD` ✳️
-    - `CORPORATE` 🏢
-    - `SYNTHWAVE` 🌃
-    - `RETRO` 📼
-    - `CYBERPUNK` 🤖
-    - `VALENTINE` 🌸
-    - `HALLOWEEN` 🎃
-    - `GARDEN` 🌷
-    - `FOREST` 🌲
-    - `AQUA` 💧
-    - `LOFI` 📻
-    - `PASTEL` 🎨
-    - `FANTASY` 🧚
-    - `WIREFRAME` 📝
-    - `BLACK` 🖤
-    - `LUXURY` 💎
-    - `DRACULA` 🧛
-    - `CMYK` 🖨️
-    - `AUTUMN` 🍂
-    - `BUSINESS` 💼
-    - `ACID` 🧪
-    - `LEMONADE` 🍋
-    - `NIGHT` 🌙
-    - `COFFEE` ☕
-    - `WINTER` ❄️
-    - `DIM` 🔅
-    - `NORD` ❄️
-    - `SUNSET` 🌅
-
-### Endpoints
-
-#### GET `/api/profile/all`
-Returns a list of all profiles.
-
-**Response:**
-
-`200 OK` → `List<ProfileApiDto>`
-
----
-
-#### GET `/api/profile/me`
-Returns the profile of the currently authenticated user.
-
-**Response:**
-
-`200 OK` → `ProfileApiDto`
-
-`404 NOT FOUND` → Profile not found
-
----
-
-#### GET `/api/profile/{username}`
-Returns a specific profile by username.
-Requires `MODERATOR` or `ADMIN` role.
-
-**Response:**
-
-`200 OK` → `ProfileApiDto`
-
-`403 FORBIDDEN` → Insufficient permissions
-
-`404 NOT FOUND` → Profile not found
-
----
-
-#### POST `/api/profile`
-Creates a new profile (and user account).
-Requires `MODERATOR` or `ADMIN` role.
-
-**Response:**
-
-`201 CREATED` → `ProfileApiDto`
-
-`400 BAD REQUEST` → Validation errors
-
-`401 UNAUTHORIZED` → Authentication required
-
-`409 CONFLICT` → Email or Username already taken
-
-**Example Request:**
-```json
-{
-  "username": "newuser",
-  "email": "user@example.com",
-  "password": "securePassword123",
-  "firstName": "Max",
-  "lastName": "Mustermann",
-  "imageUrl": "https://example.com/image.jpg",
-  "language": "ENGLISH",
-  "theme": "DARK"
-}
-```
-
----
-
-#### PUT `/api/profile/{username}`
-Updates an existing profile.
-Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
-Note: `username`, `email`, `firstName`, and `lastName` cannot be changed via this endpoint.
-
-**Response:**
-
-`200 OK` → `ProfileApiDto`
-
-`400 BAD REQUEST` → Validation errors
-
-`403 FORBIDDEN` → Insufficient permissions
-
-`404 NOT FOUND` → Profile not found
-
-**Example Request:**
-```json
-{
-  "aboutMe": "Updated description",
-  "theme": "LIGHT",
-  "phone": "+123456789"
-}
-```
-
----
-
-#### DELETE `/api/profile/{username}`
+#### DELETE `/api/profiles/{username}`
 Deletes a profile.
 Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 
