@@ -8,11 +8,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class OthivityApplication {
 
 	public static void main(String[] args) {
+        try { Dotenv dotenv = Dotenv.load();
+            dotenv.entries().forEach(entry ->
+                    System.setProperty(entry.getKey(), entry.getValue())
+            );
+        } catch (Exception e) {
+           System.err.println("Could not load .env file, make sure environment variables are set properly.");
+        }
 
-        Dotenv dotenv = Dotenv.load();
-        dotenv.entries().forEach(entry ->
-                System.setProperty(entry.getKey(), entry.getValue())
-        );
 		SpringApplication.run(OthivityApplication.class, args);
 	}
 
