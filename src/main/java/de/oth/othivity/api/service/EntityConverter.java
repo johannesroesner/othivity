@@ -204,7 +204,6 @@ public class EntityConverter {
 
         profileDto.setAboutMe(request.getAboutMe());
         
-        // Hinzugefügt: Mapping für die Felder, die validiert werden sollen
         profileDto.setFirstName(request.getFirstName());
         profileDto.setLastName(request.getLastName());
         

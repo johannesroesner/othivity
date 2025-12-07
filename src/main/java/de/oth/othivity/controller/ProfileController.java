@@ -3,7 +3,7 @@ package de.oth.othivity.controller;
 import de.oth.othivity.service.ChatService;
 import de.oth.othivity.validator.ProfileDtoValidator;
 import de.oth.othivity.validator.EmailVerificationDtoValidator;
-import de.oth.othivity.validator.UsernameDtoValidator; // Import hinzugefügt
+import de.oth.othivity.validator.UsernameDtoValidator; 
 
 import java.util.Calendar;
 
@@ -60,14 +60,13 @@ public class ProfileController {
     private final ProfileDtoValidator profileDtoValidator;
     private final ChatService chatService;
     private final EmailVerificationDtoValidator emailVerificationDtoValidator;
-    private final UsernameDtoValidator usernameDtoValidator; // Validator injizieren
+    private final UsernameDtoValidator usernameDtoValidator; 
 
     @InitBinder("profileDto")
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(profileDtoValidator);
     }
     
-    // InitBinder für UsernameDto hinzufügen
     @InitBinder("usernameDto")
     protected void initBinderUsername(WebDataBinder binder) {
         binder.addValidators(usernameDtoValidator);
@@ -83,7 +82,6 @@ public class ProfileController {
 
         Pageable pageable = pagingService.createPageable(page, size, sortBy, direction);
         
-        // Logik: Keine Suche -> Leere Seite
         Page<Profile> profiles;
         if (search == null || search.isBlank()) {
             profiles = Page.empty(pageable);
@@ -222,7 +220,7 @@ public class ProfileController {
         if (profile != null) {
             profileService.updateProfileTheme(profile, theme);
         }
-        // Redirect zurück zur Seite, von der der Request kam
+
         String referer = request.getHeader("Referer");
         return "redirect:" + (referer != null ? referer : "/settings");
     }
@@ -235,7 +233,6 @@ public class ProfileController {
     }
     
     @PostMapping("/profile/username/update")
-    // @Valid Hinzugefügt
     public String updateUsername(@Valid @ModelAttribute UsernameDto usernameDto, BindingResult bindingResult, Model model, HttpSession session , HttpServletRequest request, HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
             return "setup";
@@ -291,7 +288,6 @@ public class ProfileController {
 
         profileService.setVerificationForEmail(profile);
         
-        // Session aktualisieren mit neuem verified-Status
         profile.getEmail().setVerified(true);
         session.setAttribute("profile", profile);
 
