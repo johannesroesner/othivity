@@ -51,11 +51,6 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<Profile> getAllProfiles(){
-        return profileRepository.findAll();
-    }
-
-    @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
@@ -135,12 +130,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile getProfileByEmail(String email) {
         return profileRepository.findByEmailAddress(email.toLowerCase()).orElse(null);
-        return profileRepository.findByEmailAddress(email.toLowerCase()).orElse(null);
     }
 
     @Override
     public Profile getProfileByUsername(String username) {
-        return profileRepository.findByUsername(username);
         return profileRepository.findByUsername(username);
     }
 
