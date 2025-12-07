@@ -34,7 +34,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api/profiles")
 @Tag(name = "Profiles", description = "Profile Management API")
 @SecurityRequirement(name = "Bearer Authentication")
 public class ProfileRestController {
@@ -106,7 +106,6 @@ public class ProfileRestController {
             @ApiResponse(responseCode = "201", description = "Profile successfully created",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProfileApiDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - User is not a moderator"),
             @ApiResponse(responseCode = "409", description = "Conflict - Email or username already taken")
     })
     @PostMapping
@@ -115,7 +114,7 @@ public class ProfileRestController {
         if (requesterProfile == null || !requesterProfile.getRole().equals(Role.MODERATOR)) {
             return ResponseEntity
                     .status(403)
-                    .body("error: unauthorized");
+                    .body("error: forbidden");
         }
 
         RegisterDto registerDto;

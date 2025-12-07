@@ -53,7 +53,6 @@ public class ActivityRestController {
             @ApiResponse(responseCode = "201", description = "Activity successfully created",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityApiDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing token")
     })
     @PostMapping
     public ResponseEntity<Object> createActivity(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ActivityApiDto apiDto) {
@@ -98,7 +97,6 @@ public class ActivityRestController {
             @ApiResponse(responseCode = "200", description = "Activity successfully updated",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityApiDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing token"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User is not a participant of this activity"),
             @ApiResponse(responseCode = "404", description = "Activity not found")
     })
@@ -151,7 +149,6 @@ public class ActivityRestController {
     @Operation(summary = "Delete an activity", description = "Deletes an existing activity. Only the activity creator or moderators can delete the activity.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Activity successfully deleted"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing token"),
             @ApiResponse(responseCode = "403", description = "Forbidden - User is not the creator or a moderator"),
             @ApiResponse(responseCode = "404", description = "Activity not found")
     })

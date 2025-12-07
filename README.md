@@ -4,11 +4,9 @@ Our idea is to build a platform for our university, OTH Regensburg, where studen
 connect with others and find new people to engage with.
 
 
+## API Documentation
 ## Swagger API Documentation URL: ** `swagger-ui/index.html`
 
-## Activity API Documentation
-
-**Base URL:** `/api/activities`
 
 This API uses **JWT (JSON Web Token)** for authentication:
 
@@ -20,7 +18,11 @@ This API uses **JWT (JSON Web Token)** for authentication:
 Authorization: Bearer <YOUR_JWT_TOKEN>
 ```
 
+`401 UNAUTHORIZED` → Invalid or missing JWT token
+
 ### Data Model: `ActivityApiDto`
+
+**Base URL:** `/api/activities`
 
 | Field         | Type              | Description                                                        | Create   | Update                              |
 |---------------|-------------------|--------------------------------------------------------------------|----------|-------------------------------------|
@@ -176,13 +178,9 @@ Only the creator (`startedBy`) or users with the role `MODERATOR` are allowed to
 
 ---
 
-## Club API Documentation
+### Data Model: `ClubApiDto`
 
 **Base URL:** `/api/clubs`
-
-Authentication via JWT is required (see Activity API).
-
-### Data Model: `ClubApiDto`
 
 | Field | Type | Description | Create | Update |
 |---|---|---|---|---|
@@ -269,8 +267,6 @@ Only club admins or users with the role `MODERATOR` are allowed to update.
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Not authenticated
-
 `403 FORBIDDEN` → Insufficient permissions (not an admin)
 
 `404 NOT FOUND` → Club not found
@@ -302,21 +298,15 @@ Only club admins or users with the role `MODERATOR` are allowed to delete.
 
 `204 NO CONTENT` → Club deleted successfully
 
-`401 UNAUTHORIZED` → Not authenticated
-
 `403 FORBIDDEN` → Insufficient permissions (not an admin)
 
 `404 NOT FOUND` → Club not found
 
 ---
 
-## Profile API Documentation
-
-**Base URL:** `/api/profile`
-
-Authentication via JWT is required (see Activity API).
-
 ### Data Model: `ProfileApiDto`
+
+**Base URL:** `/api/profiles`
 
 | Field | Type | Description | Create | Update |
 |---|---|---|---|---|
@@ -374,7 +364,7 @@ Authentication via JWT is required (see Activity API).
 
 ### Endpoints
 
-#### GET `/api/profile/all`
+#### GET `/api/profiles/all`
 Returns a list of all profiles.
 
 **Response:**
@@ -383,7 +373,7 @@ Returns a list of all profiles.
 
 ---
 
-#### GET `/api/profile/me`
+#### GET `/api/profiles/me`
 Returns the profile of the currently authenticated user.
 
 **Response:**
@@ -394,7 +384,7 @@ Returns the profile of the currently authenticated user.
 
 ---
 
-#### GET `/api/profile/{username}`
+#### GET `/api/profiles/{username}`
 Returns a specific profile by username.
 Requires `MODERATOR` or `ADMIN` role.
 
@@ -408,7 +398,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 ---
 
-#### POST `/api/profile`
+#### POST `/api/profiles`
 Creates a new profile (and user account).
 Requires `MODERATOR` or `ADMIN` role.
 
@@ -418,7 +408,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Authentication required
+`403 FORBIDDEN` → Insufficient permissions
 
 `409 CONFLICT` → Email or Username already taken
 
@@ -438,7 +428,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 ---
 
-#### PUT `/api/profile/{username}`
+#### PUT `/api/profiles/{username}`
 Updates an existing profile.
 Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 Note: `username`, `email`, `firstName`, and `lastName` cannot be changed via this endpoint.
@@ -464,7 +454,7 @@ Note: `username`, `email`, `firstName`, and `lastName` cannot be changed via thi
 
 ---
 
-#### DELETE `/api/profile/{username}`
+#### DELETE `/api/profiles/{username}`
 Deletes a profile.
 Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 
