@@ -125,14 +125,14 @@ class ProfileRestIntegrationTest {
     }
 
     @Test
-    void createProfile_asNormalUser_shouldReturn401() throws Exception {
+    void createProfile_asNormalUser_shouldReturn403() throws Exception {
         ProfileApiDto newProfile = createValidProfileApiDto("hacker", "hacker@example.com");
 
         mockMvc.perform(post("/api/profiles")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(newProfile)))
-                .andExpect(status().is(401));
+                .andExpect(status().is(403));
     }
 
     @Test
