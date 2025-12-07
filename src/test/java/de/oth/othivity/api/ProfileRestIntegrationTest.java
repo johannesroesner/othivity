@@ -62,7 +62,7 @@ class ProfileRestIntegrationTest {
 
     @Test
     void getAllProfiles_shouldReturn200() throws Exception {
-        mockMvc.perform(get("/api/profile/all")
+        mockMvc.perform(get("/api/profiles/all")
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().is(200))
                 .andExpect(content().contentType("application/json"))
@@ -71,7 +71,7 @@ class ProfileRestIntegrationTest {
 
     @Test
     void getProfileMe_shouldReturn200() throws Exception {
-        mockMvc.perform(get("/api/profile/me")
+        mockMvc.perform(get("/api/profiles/me")
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.email").value("test@example.com"))
@@ -80,7 +80,7 @@ class ProfileRestIntegrationTest {
 
     @Test
     void getProfileByUsername_asNormalUser_shouldReturn403() throws Exception {
-        mockMvc.perform(get("/api/profile/test")
+        mockMvc.perform(get("/api/profiles/test")
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().is(403));
     }
@@ -91,7 +91,7 @@ class ProfileRestIntegrationTest {
         testUtil.makeModerator(modProfile);
         String modToken = apiTokenService.createToken(modProfile, "modToken", 12);
 
-        mockMvc.perform(get("/api/profile/test")
+        mockMvc.perform(get("/api/profiles/test")
                         .header("Authorization", "Bearer " + modToken))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.username").value("test"));
@@ -103,7 +103,7 @@ class ProfileRestIntegrationTest {
         testUtil.makeModerator(modProfile);
         String modToken = apiTokenService.createToken(modProfile, "modToken", 12);
 
-        mockMvc.perform(get("/api/profile/gibtsnicht")
+        mockMvc.perform(get("/api/profiles/gibtsnicht")
                         .header("Authorization", "Bearer " + modToken))
                 .andExpect(status().is(404));
     }
@@ -116,7 +116,7 @@ class ProfileRestIntegrationTest {
 
         ProfileApiDto newProfile = createValidProfileApiDto("newUser", "new@example.com");
 
-        mockMvc.perform(post("/api/profile")
+        mockMvc.perform(post("/api/profiles")
                         .header("Authorization", "Bearer " + modToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(newProfile)))
@@ -128,7 +128,7 @@ class ProfileRestIntegrationTest {
     void createProfile_asNormalUser_shouldReturn401() throws Exception {
         ProfileApiDto newProfile = createValidProfileApiDto("hacker", "hacker@example.com");
 
-        mockMvc.perform(post("/api/profile")
+        mockMvc.perform(post("/api/profiles")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(newProfile)))
@@ -143,7 +143,7 @@ class ProfileRestIntegrationTest {
 
         ProfileApiDto duplicateDto = createValidProfileApiDto("dupUser", "test@example.com");
 
-        mockMvc.perform(post("/api/profile")
+        mockMvc.perform(post("/api/profiles")
                         .header("Authorization", "Bearer " + modToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(duplicateDto)))
@@ -159,7 +159,7 @@ class ProfileRestIntegrationTest {
         updateDto.setAboutMe("Updated Bio via API");
         updateDto.setTheme("DARK");
 
-        mockMvc.perform(put("/api/profile/test")
+        mockMvc.perform(put("/api/profiles/test")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(updateDto)))
@@ -175,7 +175,7 @@ class ProfileRestIntegrationTest {
         ProfileApiDto updateDto = new ProfileApiDto();
         updateDto.setFirstName("ChangedName");
 
-        mockMvc.perform(put("/api/profile/test")
+        mockMvc.perform(put("/api/profiles/test")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(updateDto)))
@@ -195,7 +195,7 @@ class ProfileRestIntegrationTest {
         updateDto.setEmail(profile.getEmail().getAddress());
         updateDto.setAboutMe("Moderated Content");
 
-        mockMvc.perform(put("/api/profile/test")
+        mockMvc.perform(put("/api/profiles/test")
                         .header("Authorization", "Bearer " + modToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(updateDto)))
@@ -211,7 +211,7 @@ class ProfileRestIntegrationTest {
         ProfileApiDto updateDto = new ProfileApiDto();
         updateDto.setAboutMe("Hacked");
 
-        mockMvc.perform(put("/api/profile/test")
+        mockMvc.perform(put("/api/profiles/test")
                         .header("Authorization", "Bearer " + otherToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(updateDto)))
@@ -220,7 +220,7 @@ class ProfileRestIntegrationTest {
 
     @Test
     void deleteProfile_asOwner_shouldReturn204() throws Exception {
-        mockMvc.perform(delete("/api/profile/test")
+        mockMvc.perform(delete("/api/profiles/test")
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().is(204));
     }
@@ -231,7 +231,7 @@ class ProfileRestIntegrationTest {
         testUtil.makeModerator(modProfile);
         String modToken = apiTokenService.createToken(modProfile, "modToken", 12);
 
-        mockMvc.perform(delete("/api/profile/test")
+        mockMvc.perform(delete("/api/profiles/test")
                         .header("Authorization", "Bearer " + modToken))
                 .andExpect(status().is(204));
     }
@@ -241,7 +241,7 @@ class ProfileRestIntegrationTest {
         Profile otherProfile = testUtil.registerUser(mockMvc, "other", "other@example.com", "password");
         String otherToken = apiTokenService.createToken(otherProfile, "otherToken", 12);
 
-        mockMvc.perform(delete("/api/profile/test")
+        mockMvc.perform(delete("/api/profiles/test")
                         .header("Authorization", "Bearer " + otherToken))
                 .andExpect(status().is(403));
     }
