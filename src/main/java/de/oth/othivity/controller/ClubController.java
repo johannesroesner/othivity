@@ -69,10 +69,13 @@ public class ClubController {
         
         Pageable myPageable = pagingService.createPageable(myPage, size, sortBy, direction);
         Pageable allPageable = pagingService.createPageable(allPage, size, sortBy, direction);
-        
-        model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(session, myPageable, search, accessLevelEnum));
-        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(session, allPageable, search, accessLevelEnum));
-        model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(session));
+        Profile profile = sessionService.getProfileFromSession(session);
+        if(profile == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(profile, myPageable, search, accessLevelEnum));
+        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(profile, allPageable, search, accessLevelEnum));
+        model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(profile));
         
         model.addAttribute("activeTab", activeTab);
         model.addAttribute("size", size);
@@ -165,8 +168,8 @@ public class ClubController {
     public String joinClub(@PathVariable("id") String clubId, HttpSession session) {
         Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) return "redirect:/clubs";
-
-        clubService.joinClubForProfile(session, club);
+        Profile profile = sessionService.getProfileFromSession(session);
+        clubService.joinClubForProfile(profile, club);
 
         return "redirect:/clubs/" + clubId;
     }
@@ -174,12 +177,12 @@ public class ClubController {
     public String leaveClub(@PathVariable("id") String clubId, HttpSession session) {
         Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) return "redirect:/clubs";
-        if (clubService.wouldLeaveRequireAdminSelection(session, club)) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (clubService.wouldLeaveRequireAdminSelection(profile, club)) {
             return "redirect:/clubs/" + clubId + "/select-admin?leaving=true";
         }
         
-        clubService.leaveClubForProfile(session, club);
-
+        clubService.leaveClubForProfile(profile, club);
         return "redirect:/clubs/" + clubId;
     }
 
@@ -235,7 +238,8 @@ public class ClubController {
 
         clubService.makeProfileAdminOfClub(profile, club, session);
         if (isLeaving) {
-            clubService.leaveClubForProfile(session, club);
+            Profile currentProfile = sessionService.getProfileFromSession(session);
+            clubService.leaveClubForProfile(currentProfile, club);
             return "redirect:/clubs";
         }
 

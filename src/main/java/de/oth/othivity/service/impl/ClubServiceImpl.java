@@ -44,15 +44,13 @@ public class ClubServiceImpl implements ClubService {
         return clubRepository.findById(clubId).orElse(null);
     }
     @Override
-    public List<Club> getClubsJoinedByProfile(HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public List<Club> getClubsJoinedByProfile(Profile profile) {
         if (profile == null) return List.of();
         return profile.getClubs();
     }
     
     @Override
-    public Page<Club> getClubsJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public Page<Club> getClubsJoinedByProfile(Profile profile, Pageable pageable, String search, AccessLevel accessLevel) {
         if (profile == null) return Page.empty();
         
         if (pageable.getSort().isSorted()) {
@@ -71,14 +69,12 @@ public class ClubServiceImpl implements ClubService {
     }
     
     @Override
-    public List<Club> getClubsManagedByProfile(HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public List<Club> getClubsManagedByProfile(Profile profile) {
         if (profile == null) return List.of();
         return profile.getAdminClubs();
     }       
     @Override
-    public List<Club> getClubsNotJoinedByProfile(HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public List<Club> getClubsNotJoinedByProfile(Profile profile) {
         if (profile == null) return List.of();
         List<Club> allClubs = new ArrayList<>(clubRepository.findAll());
         allClubs.removeAll(profile.getClubs());
@@ -86,8 +82,7 @@ public class ClubServiceImpl implements ClubService {
     }
     
     @Override
-    public Page<Club> getClubsNotJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public Page<Club> getClubsNotJoinedByProfile(Profile profile, Pageable pageable, String search, AccessLevel accessLevel) {
         if (profile == null) return Page.empty();
         
         if (pageable.getSort().isSorted()) {
@@ -168,8 +163,7 @@ public class ClubServiceImpl implements ClubService {
         return membersWithoutAdmins;
     }
     @Override
-    public void joinClubForProfile(HttpSession session, Club club) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public void joinClubForProfile(Profile profile, Club club) {
         if (profile == null || club == null) {
             return;
         }
@@ -180,8 +174,7 @@ public class ClubServiceImpl implements ClubService {
         }
     }
     @Override
-    public void leaveClubForProfile(HttpSession session, Club club) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public void leaveClubForProfile(Profile profile, Club club) {
         if (profile == null || club == null) {
             return;
         }
@@ -200,8 +193,7 @@ public class ClubServiceImpl implements ClubService {
     }
     
     @Override
-    public boolean wouldLeaveRequireAdminSelection(HttpSession session, Club club) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public boolean wouldLeaveRequireAdminSelection(Profile profile, Club club) {
         if (profile == null || club == null) {
             return false;
         }

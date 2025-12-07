@@ -22,15 +22,15 @@ public interface ClubService {
 
     Club getClubById(UUID clubId);
 
-    List<Club> getClubsJoinedByProfile(HttpSession session);
+    List<Club> getClubsJoinedByProfile(Profile profile);
     
-    Page<Club> getClubsJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel);
+    Page<Club> getClubsJoinedByProfile(Profile profile, Pageable pageable, String search, AccessLevel accessLevel);
     
-    List<Club> getClubsManagedByProfile(HttpSession session);
+    List<Club> getClubsManagedByProfile(Profile profile);
 
-    List<Club> getClubsNotJoinedByProfile(HttpSession session);
+    List<Club> getClubsNotJoinedByProfile(Profile profile);
     
-    Page<Club> getClubsNotJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel);
+    Page<Club> getClubsNotJoinedByProfile(Profile profile, Pageable pageable, String search, AccessLevel accessLevel);
 
     Club createClubForUser(ClubDto clubDto, Profile profile, MultipartFile uploadedImage);
 
@@ -42,11 +42,11 @@ public interface ClubService {
 
     List<Profile> getMembersOfClubWithoutAdmins(Club club);
 
-    void joinClubForProfile(HttpSession session, Club club);
+    void joinClubForProfile(Profile profile, Club club);
 
-    void leaveClubForProfile(HttpSession session, Club club);
+    void leaveClubForProfile(Profile profile, Club club);
 
-    boolean wouldLeaveRequireAdminSelection(HttpSession session, Club club);
+    boolean wouldLeaveRequireAdminSelection(Profile profile, Club club);
 
     void deleteClub(Club club, Profile profile);
 

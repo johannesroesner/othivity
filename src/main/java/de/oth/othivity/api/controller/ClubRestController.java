@@ -83,7 +83,7 @@ public class ClubRestController {
                 UUID memberId = UUID.fromString(s);
                 Profile member = profileService.getProfileById(memberId);
                 if (member != null) {
-                    clubService.joinClubForProfile(null, club);
+                    clubService.joinClubForProfile(member, club);
                 }
             }
         }
