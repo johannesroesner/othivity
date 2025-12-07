@@ -5,9 +5,7 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ClubRepository;
-import de.oth.othivity.service.ClubService;
-import de.oth.othivity.service.SessionService;
-import de.oth.othivity.service.INotificationService;
+import de.oth.othivity.service.*;
 import de.oth.othivity.repository.main.ActivityRepository;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import de.oth.othivity.dto.ClubDto;
 import org.springframework.web.multipart.MultipartFile;
-import de.oth.othivity.service.ImageService;
 import de.oth.othivity.model.enumeration.NotificationType;
 import java.util.UUID;
 
@@ -34,6 +31,7 @@ public class ClubServiceImpl implements ClubService {
     private final ImageService imageService;
     private final ActivityRepository activityRepository;
     private final INotificationService notificationService;
+    private final GeocodingService geocodingService;
 
     @Override
     public List<Club> getAllClubs() {
@@ -106,7 +104,7 @@ public class ClubServiceImpl implements ClubService {
         club.setName(clubDto.getName());
         club.setDescription(clubDto.getDescription());
         club.setAccessLevel(clubDto.getAccessLevel());
-        club.setAddress(clubDto.getAddress());
+        club.setAddress(geocodingService.geocode(clubDto.getAddress()));
     
         club.getMembers().add(profile);
         club.getAdmins().add(profile);
