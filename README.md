@@ -5,8 +5,6 @@ connect with others and find new people to engage with.
 
 ## API Documentation
 
-**Base URL:** `/api/activities`
-
 This API uses **JWT (JSON Web Token)** for authentication:
 
 1.  **Get your Token:** You can generate your personal JWT in the application GUI under **Settings**.
@@ -20,6 +18,8 @@ Authorization: Bearer <YOUR_JWT_TOKEN>
 `401 UNAUTHORIZED` → Invalid or missing JWT token
 
 ### Data Model: `ActivityApiDto`
+
+**Base URL:** `/api/activities`
 
 | Field         | Type              | Description                                                        | Create   | Update                              |
 |---------------|-------------------|--------------------------------------------------------------------|----------|-------------------------------------|
@@ -175,11 +175,9 @@ Only the creator (`startedBy`) or users with the role `MODERATOR` are allowed to
 
 ---
 
-## Club API Documentation
+### Data Model: `ClubApiDto`
 
 **Base URL:** `/api/clubs`
-
-### Data Model: `ClubApiDto`
 
 | Field | Type | Description | Create | Update |
 |---|---|---|---|---|
@@ -303,11 +301,9 @@ Only club admins or users with the role `MODERATOR` are allowed to delete.
 
 ---
 
-## Profile API Documentation
-
- **Base URL:** `/api/profiles`
-
 ### Data Model: `ProfileApiDto`
+
+**Base URL:** `/api/profiles`
 
 | Field | Type | Description | Create | Update |
 |---|---|---|---|---|
