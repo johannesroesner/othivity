@@ -32,7 +32,7 @@ public interface ClubService {
     
     Page<Club> getClubsNotJoinedByProfile(HttpSession session, Pageable pageable, String search, AccessLevel accessLevel);
 
-    Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage);
+    Club createClubForUser(ClubDto clubDto, Profile profile, MultipartFile uploadedImage);
 
     Club updateClub(Club club, ClubDto clubDto, MultipartFile uploadedImage, HttpSession session);
 

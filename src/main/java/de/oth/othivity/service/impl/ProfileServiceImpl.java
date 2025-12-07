@@ -51,6 +51,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public List<Profile> getAllProfiles(){
+        return profileRepository.findAll();
+    }
+
+    @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
         Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
@@ -86,7 +91,6 @@ public class ProfileServiceImpl implements ProfileService {
         
         if(profileDto.getPhone() != null && !profileDto.getPhone().getNumber().isEmpty()) profile.setPhone(profileDto.getPhone());
         
-        // HINZUGEFÜGT: Aktualisierung von Vor- und Nachname
         if(profileDto.getFirstName() != null && !profileDto.getFirstName().isEmpty()) profile.setFirstName(profileDto.getFirstName());
         if(profileDto.getLastName() != null && !profileDto.getLastName().isEmpty()) profile.setLastName(profileDto.getLastName());
         
@@ -131,10 +135,12 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile getProfileByEmail(String email) {
         return profileRepository.findByEmailAddress(email.toLowerCase()).orElse(null);
+        return profileRepository.findByEmailAddress(email.toLowerCase()).orElse(null);
     }
 
     @Override
     public Profile getProfileByUsername(String username) {
+        return profileRepository.findByUsername(username);
         return profileRepository.findByUsername(username);
     }
 

@@ -8,6 +8,14 @@ import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ProfileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +29,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/activities")
+@Tag(name = "Activities", description = "Activity Management API")
+@SecurityRequirement(name = "Bearer Authentication")
 public class ActivityRestController {
 
     private final ActivityService activityService;
@@ -28,19 +38,30 @@ public class ActivityRestController {
     private final EntityConverter entityConverter;
     private final ProfileService profileService;
 
+    @Operation(summary = "Get all activities", description = "Returns a list of all activities in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of activities",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityApiDto.class)))
+    })
     @GetMapping
     public List<ActivityApiDto> getAllActivities() {
         return activityService.getAllActivities().stream().map(entityConverter::ActivityToApiDto).toList();
     }
 
+    @Operation(summary = "Create a new activity", description = "Creates a new activity with the provided details. Requires authentication.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Activity successfully created",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityApiDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+    })
     @PostMapping
     public ResponseEntity<Object> createActivity(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ActivityApiDto apiDto) {
         String email = userDetails.getUsername();
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null) {
             return ResponseEntity
-                    .status(401)
-                    .body("error: unauthorized");
+                    .status(403)
+                    .body("error: forbidden");
         }
 
         ActivityDto activityDto;
@@ -71,8 +92,19 @@ public class ActivityRestController {
         return ResponseEntity.status(201).body(entityConverter.ActivityToApiDto(activityService.getActivityById(activity.getId())));
     }
 
+    @Operation(summary = "Update an activity", description = "Updates an existing activity. Only activity participants can update the activity.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Activity successfully updated",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityApiDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - User is not a participant of this activity"),
+            @ApiResponse(responseCode = "404", description = "Activity not found")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateActivity(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID id,@RequestBody ActivityApiDto apiDto) {
+    public ResponseEntity<Object> updateActivity(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "Activity ID", required = true) @PathVariable UUID id,
+            @RequestBody ActivityApiDto apiDto) {
         Activity activity = activityService.getActivityById(id);
         if(activity == null) {
             return ResponseEntity
@@ -83,8 +115,8 @@ public class ActivityRestController {
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!activity.getStartedBy().getId().equals(profile.getId()) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
-                    .status(401)
-                    .body("error: unauthorized");
+                    .status(403)
+                    .body("error: forbidden");
         }
 
         ActivityDto activityDto;
@@ -114,8 +146,16 @@ public class ActivityRestController {
         return ResponseEntity.status(200).body(entityConverter.ActivityToApiDto(activityService.getActivityById(activity.getId())));
     }
 
+    @Operation(summary = "Delete an activity", description = "Deletes an existing activity. Only the activity creator or moderators can delete the activity.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Activity successfully deleted"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - User is not the creator or a moderator"),
+            @ApiResponse(responseCode = "404", description = "Activity not found")
+    })
     @DeleteMapping("/{id}")
-    public  ResponseEntity<Object> deleteMapping(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID id) {
+    public  ResponseEntity<Object> deleteMapping(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "Activity ID", required = true) @PathVariable UUID id) {
         Activity activity = activityService.getActivityById(id);
         if(activity == null) {
             return ResponseEntity
@@ -127,16 +167,22 @@ public class ActivityRestController {
         Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!activity.getStartedBy().getId().equals(profile.getId()) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
-                    .status(401)
-                    .body("error: unauthorized");
+                    .status(403)
+                    .body("error: forbidden");
         }
 
         activityService.deleteActivity(activity);
         return ResponseEntity.status(204).body("success");
     }
 
+    @Operation(summary = "Get activity by ID", description = "Returns details of a specific activity by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved activity",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityApiDto.class))),
+            @ApiResponse(responseCode = "404", description = "Activity not found")
+    })
     @GetMapping("/{id}")
-    public  ResponseEntity<Object> getActivityById(@PathVariable UUID id) {
+    public  ResponseEntity<Object> getActivityById(@Parameter(description = "Activity ID", required = true) @PathVariable UUID id) {
         Activity activity = activityService.getActivityById(id);
         if(activity == null) {
             return ResponseEntity

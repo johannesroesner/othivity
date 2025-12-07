@@ -4,6 +4,7 @@ import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.pushnotification.PushSubscription;
 import de.oth.othivity.repository.pushnotification.PushSubscriptionRepository;
 import de.oth.othivity.service.SessionService;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import de.oth.othivity.dto.PushSubscriptionDto;
 
+@Hidden
 @RestController
 @AllArgsConstructor
 public class PushSubscriptionController {

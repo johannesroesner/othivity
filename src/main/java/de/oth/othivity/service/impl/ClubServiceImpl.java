@@ -105,8 +105,7 @@ public class ClubServiceImpl implements ClubService {
         return clubRepository.findClubsNotJoinedByProfile(profile, search, accessLevel, pageable);
     }
     @Override
-    public Club createClubForUser(ClubDto clubDto, HttpSession session, MultipartFile uploadedImage) {
-        Profile profile = sessionService.getProfileFromSession(session);
+    public Club createClubForUser(ClubDto clubDto, Profile profile, MultipartFile uploadedImage) {
         if (profile == null) { return null; }
         Club club = new Club();
         club.setName(clubDto.getName());
@@ -117,7 +116,10 @@ public class ClubServiceImpl implements ClubService {
         club.getMembers().add(profile);
         club.getAdmins().add(profile);
         
-        club.setImage(imageService.saveImage(club, uploadedImage));
+        if(uploadedImage != null && uploadedImage.getSize() != 0) club.setImage(imageService.saveImage(club, uploadedImage));
+        else if(clubDto.getImage() != null) club.setImage(imageService.saveImage(club, clubDto.getImage()));
+        else return null;
+        
         Club savedClub = clubRepository.save(club);
         
         return savedClub;
@@ -131,10 +133,12 @@ public class ClubServiceImpl implements ClubService {
         club.setDescription(clubDto.getDescription());
         club.setAccessLevel(clubDto.getAccessLevel());
         club.setAddress(clubDto.getAddress());
-
         if(uploadedImage != null && uploadedImage.getSize()>0){
             club.setImage(imageService.saveImage(club, uploadedImage));
+        } else if(clubDto.getImage() != null) {
+            club.setImage(imageService.saveImage(club, clubDto.getImage()));
         }
+        
         Club updatedClub = clubRepository.save(club);
         return updatedClub;
     }

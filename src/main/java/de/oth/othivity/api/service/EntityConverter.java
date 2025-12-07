@@ -1,20 +1,33 @@
 package de.oth.othivity.api.service;
 
 import de.oth.othivity.api.dto.ActivityApiDto;
+import de.oth.othivity.api.dto.ClubApiDto;
+import de.oth.othivity.api.dto.ProfileApiDto;
 import de.oth.othivity.api.dto.ProfileApiDto;
 import de.oth.othivity.dto.ActivityDto;
+import de.oth.othivity.dto.ClubDto;
+import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.ActivityService;
 import de.oth.othivity.service.ClubService;
+import de.oth.othivity.api.dto.ProfileApiDto;
+import de.oth.othivity.dto.ProfileDto;
+import de.oth.othivity.dto.RegisterDto;
+import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.model.helper.Phone;
+import de.oth.othivity.model.helper.Email;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import de.oth.othivity.model.main.Club;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -240,4 +253,86 @@ public class EntityConverter {
 
         return registerDto;
     }
+
+    public ClubApiDto ClubToApiDto(Club club) {
+        ClubApiDto response = new ClubApiDto();
+
+        response.setId(safe(club.getId()));
+        response.setName(club.getName());
+        response.setDescription(club.getDescription());
+        
+        response.setAccessLevel(
+                club.getAccessLevel() == null ? null : club.getAccessLevel().name()
+        );
+
+        response.setMembers(safeArray(club.getMembers(), p -> safe(p.getId())));
+        response.setAdmins(safeArray(club.getAdmins(), p -> safe(p.getId())));
+
+        response.setImageUrl(
+                club.getImage() == null ? null : club.getImage().getUrl()
+        );
+
+        if (club.getAddress() == null) {
+            response.setAddition(null);
+            response.setStreet(null);
+            response.setHouseNumber(null);
+            response.setCity(null);
+            response.setPostalCode(null);
+            response.setCountry(null);
+            response.setLatitude(null);
+            response.setLongitude(null);
+        } else {
+            Address address = club.getAddress();
+
+            response.setAddition(safe(address.getAddition()));
+            response.setStreet(safe(address.getStreet()));
+            response.setHouseNumber(safe(address.getHouseNumber()));
+            response.setCity(safe(address.getCity()));
+            response.setPostalCode(safe(address.getPostalCode()));
+            response.setCountry(safe(address.getCountry()));
+            response.setLatitude(safe(address.getLatitude()));
+            response.setLongitude(safe(address.getLongitude()));
+        }
+
+        return response;
+    }
+
+    public ClubDto ApiDtoToClubDto(ClubApiDto request) {
+        ClubDto club = new ClubDto();
+
+        if(request.getName() != null) club.setName(request.getName());
+        else throw new IllegalArgumentException("name is null");
+
+        if(request.getDescription() != null) club.setDescription(request.getDescription());
+        else throw new IllegalArgumentException("description is null");
+
+        if(request.getAccessLevel() != null) {
+            try {
+                club.setAccessLevel(Enum.valueOf(de.oth.othivity.model.enumeration.AccessLevel.class, request.getAccessLevel()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("accessLevel is invalid");
+            }
+        } else throw new IllegalArgumentException("accessLevel is null");
+
+        if(request.getStreet() != null && request.getHouseNumber() != null && request.getCity() != null && request.getPostalCode() != null) {
+            Address address = new Address();
+            address.setAddition(request.getAddition());
+            address.setStreet(request.getStreet());
+            address.setHouseNumber(request.getHouseNumber());
+            address.setCity(request.getCity());
+            address.setPostalCode(request.getPostalCode());
+            address.setCountry(request.getCountry());
+            club.setAddress(address);
+        } else throw new IllegalArgumentException("address is invalid");
+
+        if(request.getImageUrl() != null){
+            Image image = new Image();
+            image.setPublicId("not stored in claudinary");
+            image.setUrl(request.getImageUrl());
+            club.setImage(image);
+        } else throw new IllegalArgumentException("imageUrl is null");
+
+        return club;
+    }
+
 }
