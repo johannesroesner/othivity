@@ -50,8 +50,8 @@ public interface ClubService {
 
     void deleteClub(Club club, Profile profile);
 
-    void makeProfileAdminOfClub(Profile profile, Club club, HttpSession session);
+    void makeProfileAdminOfClub(Profile profile, Club club, Profile currenProfile);
 
-    void removeProfileFromClub(Profile profile, Club club, HttpSession session);
+    void removeProfileFromClub(Profile profile, Club club, Profile currentProfile);
 
 }
