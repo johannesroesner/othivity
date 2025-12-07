@@ -3,9 +3,7 @@
 Our idea is to build a platform for our university, OTH Regensburg, where students can post activities,
 connect with others and find new people to engage with.
 
-## Activity API Documentation
-
-**Base URL:** `/api/activities`
+## API Documentation
 
 This API uses **JWT (JSON Web Token)** for authentication:
 
@@ -17,7 +15,11 @@ This API uses **JWT (JSON Web Token)** for authentication:
 Authorization: Bearer <YOUR_JWT_TOKEN>
 ```
 
+`401 UNAUTHORIZED` → Invalid or missing JWT token
+
 ### Data Model: `ActivityApiDto`
+
+**Base URL:** `/api/activities`
 
 | Field         | Type              | Description                                                        | Create   | Update                              |
 |---------------|-------------------|--------------------------------------------------------------------|----------|-------------------------------------|
@@ -173,13 +175,9 @@ Only the creator (`startedBy`) or users with the role `MODERATOR` are allowed to
 
 ---
 
-## Club API Documentation
+### Data Model: `ClubApiDto`
 
 **Base URL:** `/api/clubs`
-
-Authentication via JWT is required (see Activity API).
-
-### Data Model: `ClubApiDto`
 
 | Field | Type | Description | Create | Update |
 |---|---|---|---|---|
@@ -266,8 +264,6 @@ Only club admins or users with the role `MODERATOR` are allowed to update.
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Not authenticated
-
 `403 FORBIDDEN` → Insufficient permissions (not an admin)
 
 `404 NOT FOUND` → Club not found
@@ -299,21 +295,15 @@ Only club admins or users with the role `MODERATOR` are allowed to delete.
 
 `204 NO CONTENT` → Club deleted successfully
 
-`401 UNAUTHORIZED` → Not authenticated
-
 `403 FORBIDDEN` → Insufficient permissions (not an admin)
 
 `404 NOT FOUND` → Club not found
 
 ---
 
-## Profile API Documentation
-
-**Base URL:** `/api/profile`
-
-Authentication via JWT is required (see Activity API).
-
 ### Data Model: `ProfileApiDto`
+
+**Base URL:** `/api/profiles`
 
 | Field | Type | Description | Create | Update |
 |---|---|---|---|---|
@@ -415,7 +405,7 @@ Requires `MODERATOR` or `ADMIN` role.
 
 `400 BAD REQUEST` → Validation errors
 
-`401 UNAUTHORIZED` → Authentication required
+`403 FORBIDDEN` → Insufficient permissions
 
 `409 CONFLICT` → Email or Username already taken
 

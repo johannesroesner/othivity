@@ -122,7 +122,7 @@ class ClubRestIntegrationTest {
     }
 
     @Test
-    void updateClub_unauthorized_shouldReturn401() throws Exception {
+    void updateClub_forbidden_shouldReturn403() throws Exception {
         ClubApiDto apiDto = testUtil.createValidClubApiDto();
         String response = mockMvc.perform(post("/api/clubs")
                         .header("Authorization", "Bearer " + jwtToken)
@@ -140,7 +140,7 @@ class ClubRestIntegrationTest {
                         .header("Authorization", "Bearer " + otherToken)
                         .contentType("application/json")
                         .content(testUtil.asJsonString(apiDto)))
-                .andExpect(status().is(401))
+                .andExpect(status().is(403))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("error")));
     }
 
@@ -185,7 +185,7 @@ class ClubRestIntegrationTest {
     }
 
     @Test
-    void deleteClub_unauthorized_shouldReturn401() throws Exception {
+    void deleteClub_forbidden_shouldReturn403() throws Exception {
         ClubApiDto apiDto = testUtil.createValidClubApiDto();
         String response = mockMvc.perform(post("/api/clubs")
                         .header("Authorization", "Bearer " + jwtToken)
@@ -200,7 +200,7 @@ class ClubRestIntegrationTest {
 
         mockMvc.perform(delete("/api/clubs/" + clubId)
                         .header("Authorization", "Bearer " + otherToken))
-                .andExpect(status().is(401))
+                .andExpect(status().is(403))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("error")));
     }
 
