@@ -239,7 +239,6 @@ public class ClubController {
 
         clubService.makeProfileAdminOfClub(profile, club, currentProfile);
         if (isLeaving) {
-            Profile currentProfile = sessionService.getProfileFromSession(session);
             clubService.leaveClubForProfile(currentProfile, club);
             return "redirect:/clubs";
         }
