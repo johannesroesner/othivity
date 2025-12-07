@@ -3,6 +3,7 @@ package de.oth.othivity;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.oth.othivity.api.dto.ActivityApiDto;
+import de.oth.othivity.api.dto.ClubApiDto;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ProfileRepository;
@@ -49,6 +50,21 @@ public class TestUtil {
         apiDto.setPostalCode("12345");
         apiDto.setCountry("Testland");
         apiDto.setImageUrl("http://test.com/image.jpg");
+        return apiDto;
+    }
+
+    // club api dto helper method
+    public ClubApiDto createValidClubApiDto() throws Exception {
+        ClubApiDto apiDto = new ClubApiDto();
+        apiDto.setName("Test Club");
+        apiDto.setDescription("Test Club Description");
+        apiDto.setAccessLevel("OPEN");
+        apiDto.setStreet("Main Street");
+        apiDto.setHouseNumber("1");
+        apiDto.setCity("Test City");
+        apiDto.setPostalCode("12345");
+        apiDto.setCountry("Testland");
+        apiDto.setImageUrl("http://test.com/club-image.jpg");
         return apiDto;
     }
 
