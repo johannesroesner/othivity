@@ -26,8 +26,8 @@ import jakarta.validation.Valid;
 @AllArgsConstructor
 @Controller
 public class ClubJoinRequestController {
-    private final IClubJoinRequestService IClubJoinRequestService;
-    private final ISessionService ISessionService;
+    private final IClubJoinRequestService clubJoinRequestService;
+    private final ISessionService sessionService;
     private final ClubJoinRequestDtoValidator clubJoinRequestDtoValidator;
 
     @InitBinder("clubJoinRequestDto")
@@ -39,7 +39,7 @@ public class ClubJoinRequestController {
     public String getJoinRequestsForClub(@PathVariable("clubId") String clubId, Model model, HttpSession session) {
         UUID clubUuid = UUID.fromString(clubId);
         model.addAttribute("clubId", clubId);
-        model.addAttribute("requests", IClubJoinRequestService.getJoinRequestsForClub(clubUuid));
+        model.addAttribute("requests", clubJoinRequestService.getJoinRequestsForClub(clubUuid));
         model.addAttribute("returnUrl", "/clubs/" + clubId);
         return "club-join-requests";
     }
@@ -67,8 +67,8 @@ public class ClubJoinRequestController {
             model.addAttribute("clubId", clubId);
             return "club-join-request-create";
         }
-        Profile currentProfile = ISessionService.getProfileFromSession(session);
-        IClubJoinRequestService.createJoinRequest(clubJoinRequestDto, currentProfile);
+        Profile currentProfile = sessionService.getProfileFromSession(session);
+        clubJoinRequestService.createJoinRequest(clubJoinRequestDto, currentProfile);
         return "redirect:/clubs/" + clubId;
     }
     @PostMapping("/clubs/join-requests/{clubId}/accept/{requestId}")
@@ -76,7 +76,7 @@ public class ClubJoinRequestController {
                                   @PathVariable("requestId") String requestId) {
         
         UUID requestUuid = UUID.fromString(requestId);
-        IClubJoinRequestService.acceptJoinRequest(requestUuid);
+        clubJoinRequestService.acceptJoinRequest(requestUuid);
         return "redirect:/clubs/join-requests/" + clubId;
     }
     
@@ -84,7 +84,7 @@ public class ClubJoinRequestController {
     public String declineJoinRequest(@PathVariable("clubId") String clubId,
                                    @PathVariable("requestId") String requestId) {
         UUID requestUuid = UUID.fromString(requestId);
-        IClubJoinRequestService.rejectJoinRequest(requestUuid);
+        clubJoinRequestService.rejectJoinRequest(requestUuid);
         return "redirect:/clubs/join-requests/" + clubId;
     }
     

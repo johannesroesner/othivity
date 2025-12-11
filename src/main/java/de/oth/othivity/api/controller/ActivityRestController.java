@@ -33,10 +33,10 @@ import java.util.UUID;
 @SecurityRequirement(name = "Bearer Authentication")
 public class ActivityRestController {
 
-    private final IActivityService IActivityService;
+    private final IActivityService activityService;
 
     private final EntityConverter entityConverter;
-    private final IProfileService IProfileService;
+    private final IProfileService profileService;
 
     @Operation(summary = "Get all activities", description = "Returns a list of all activities in the system")
     @ApiResponses(value = {
@@ -45,7 +45,7 @@ public class ActivityRestController {
     })
     @GetMapping
     public List<ActivityApiDto> getAllActivities() {
-        return IActivityService.getAllActivities().stream().map(entityConverter::ActivityToApiDto).toList();
+        return activityService.getAllActivities().stream().map(entityConverter::ActivityToApiDto).toList();
     }
 
     @Operation(summary = "Create a new activity", description = "Creates a new activity with the provided details. Requires authentication.")
@@ -57,7 +57,7 @@ public class ActivityRestController {
     @PostMapping
     public ResponseEntity<Object> createActivity(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ActivityApiDto apiDto) {
         String email = userDetails.getUsername();
-        Profile profile = IProfileService.getProfileByEmail(email);
+        Profile profile = profileService.getProfileByEmail(email);
         if (profile == null) {
             return ResponseEntity
                     .status(403)
@@ -73,23 +73,23 @@ public class ActivityRestController {
                     .body("error: " + error.getMessage());
         }
 
-        Activity createdActivity = IActivityService.createActivity(activityDto, null, profile);
+        Activity createdActivity = activityService.createActivity(activityDto, null, profile);
 
-        Activity activity = IActivityService.getActivityById(createdActivity.getId());
+        Activity activity = activityService.getActivityById(createdActivity.getId());
         if (activity == null) return ResponseEntity.internalServerError().body("error: internal server error");
 
         if (apiDto.getTakePart() != null) {
             for (String s : apiDto.getTakePart()) {
                 if (s.equals(profile.getId().toString())) continue;
                     UUID participantId = UUID.fromString(s);
-                    Profile participant = IProfileService.getProfileById(participantId);
+                    Profile participant = profileService.getProfileById(participantId);
                     if (participant != null) {
-                        IActivityService.joinActivity(activity, participant);
+                        activityService.joinActivity(activity, participant);
                     }
             }
         }
 
-        return ResponseEntity.status(201).body(entityConverter.ActivityToApiDto(IActivityService.getActivityById(activity.getId())));
+        return ResponseEntity.status(201).body(entityConverter.ActivityToApiDto(activityService.getActivityById(activity.getId())));
     }
 
     @Operation(summary = "Update an activity", description = "Updates an existing activity. Only activity participants can update the activity.")
@@ -105,14 +105,14 @@ public class ActivityRestController {
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Activity ID", required = true) @PathVariable UUID id,
             @RequestBody ActivityApiDto apiDto) {
-        Activity activity = IActivityService.getActivityById(id);
+        Activity activity = activityService.getActivityById(id);
         if(activity == null) {
             return ResponseEntity
                     .status(404)
                     .body("error: activity not found");
         }
         String email = userDetails.getUsername();
-        Profile profile = IProfileService.getProfileByEmail(email);
+        Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!activity.getStartedBy().getId().equals(profile.getId()) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
                     .status(403)
@@ -131,19 +131,19 @@ public class ActivityRestController {
                     .body("error: " + error.getMessage());
         }
 
-        activity = IActivityService.updateActivity(activity,activityDto,null,profile);
-        activity = IActivityService.resetTakePart(activity);
+        activity = activityService.updateActivity(activity,activityDto,null,profile);
+        activity = activityService.resetTakePart(activity);
         if (activity == null) return ResponseEntity.internalServerError().body("error: internal server error");
         for (String s : apiDto.getTakePart()) {
             UUID participantId = UUID.fromString(s);
-            Profile participant = IProfileService.getProfileById(participantId);
+            Profile participant = profileService.getProfileById(participantId);
             if (participant != null) {
-                IActivityService.joinActivity(activity, participant);
+                activityService.joinActivity(activity, participant);
             }
         }
 
 
-        return ResponseEntity.status(200).body(entityConverter.ActivityToApiDto(IActivityService.getActivityById(activity.getId())));
+        return ResponseEntity.status(200).body(entityConverter.ActivityToApiDto(activityService.getActivityById(activity.getId())));
     }
 
     @Operation(summary = "Delete an activity", description = "Deletes an existing activity. Only the activity creator or moderators can delete the activity.")
@@ -156,7 +156,7 @@ public class ActivityRestController {
     public  ResponseEntity<Object> deleteMapping(
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Activity ID", required = true) @PathVariable UUID id) {
-        Activity activity = IActivityService.getActivityById(id);
+        Activity activity = activityService.getActivityById(id);
         if(activity == null) {
             return ResponseEntity
                     .status(404)
@@ -164,14 +164,14 @@ public class ActivityRestController {
         }
 
         String email = userDetails.getUsername();
-        Profile profile = IProfileService.getProfileByEmail(email);
+        Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!activity.getStartedBy().getId().equals(profile.getId()) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
                     .status(403)
                     .body("error: forbidden");
         }
 
-        IActivityService.deleteActivity(activity);
+        activityService.deleteActivity(activity);
         return ResponseEntity.status(204).body("success");
     }
 
@@ -183,7 +183,7 @@ public class ActivityRestController {
     })
     @GetMapping("/{id}")
     public  ResponseEntity<Object> getActivityById(@Parameter(description = "Activity ID", required = true) @PathVariable UUID id) {
-        Activity activity = IActivityService.getActivityById(id);
+        Activity activity = activityService.getActivityById(id);
         if(activity == null) {
             return ResponseEntity
                     .status(404)

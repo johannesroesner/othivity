@@ -18,11 +18,11 @@ import de.oth.othivity.dto.PushSubscriptionDto;
 public class PushSubscriptionController {
 
     private final PushSubscriptionRepository subscriptionRepository;
-    private final ISessionService ISessionService;
+    private final ISessionService sessionService;
 
     @PostMapping("/push/subscribe")
     public void subscribe(@RequestBody PushSubscriptionDto dto, HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return;
 
         if (subscriptionRepository.findByEndpoint(dto.endpoint()) == null) {

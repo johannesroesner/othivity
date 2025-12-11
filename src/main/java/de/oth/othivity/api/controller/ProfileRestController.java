@@ -35,7 +35,7 @@ import java.util.Locale;
 @SecurityRequirement(name = "Bearer Authentication")
 public class ProfileRestController {
 
-    private final IProfileService IProfileService;
+    private final IProfileService profileService;
     private final EntityConverter entityConverter;
     private final IUserService userService; 
 
@@ -46,7 +46,7 @@ public class ProfileRestController {
     })
     @GetMapping ("/all")
     public List<ProfileApiDto> getAllProfiles() {
-        return IProfileService.getAllProfiles()
+        return profileService.getAllProfiles()
                 .stream()
                 .map(entityConverter::ProfileToApiDto)
                 .toList();
@@ -60,7 +60,7 @@ public class ProfileRestController {
     })
     @GetMapping("/me")
     public ResponseEntity<Object> getProfileByPrincipal(@AuthenticationPrincipal UserDetails userDetail) {
-        Profile profile = IProfileService.getProfileByEmail(userDetail.getUsername());
+        Profile profile = profileService.getProfileByEmail(userDetail.getUsername());
         if (profile == null) {
             return ResponseEntity
                     .status(404)
@@ -81,13 +81,13 @@ public class ProfileRestController {
     public ResponseEntity<Object> getProfileByUsername(
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @Parameter(description = "Username of the profile to retrieve", required = true) @PathVariable String username) {
-        Profile requesterProfile = IProfileService.getProfileByEmail(userDetail.getUsername());
+        Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
         
         if(requesterProfile == null || !requesterProfile.getRole().equals(Role.MODERATOR)){
             return ResponseEntity.status(403).body("error: forbidden");
         }
         
-        Profile profile = IProfileService.getProfileByUsername(username);
+        Profile profile = profileService.getProfileByUsername(username);
 
         if (profile == null) {
             return ResponseEntity.status(404).body("error: profile not found");
@@ -106,7 +106,7 @@ public class ProfileRestController {
     })
     @PostMapping
     public ResponseEntity<Object> createProfile(@AuthenticationPrincipal CustomUserDetails userDetail, @RequestBody ProfileApiDto apiDto) {
-        Profile requesterProfile = IProfileService.getProfileByEmail(userDetail.getUsername());
+        Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
         if (requesterProfile == null || !requesterProfile.getRole().equals(Role.MODERATOR)) {
             return ResponseEntity
                     .status(403)
@@ -119,11 +119,11 @@ public class ProfileRestController {
             registerDto = entityConverter.ApiDtoToRegisterDto(apiDto);
             profileDetailsDto = entityConverter.ApiDtoToProfileDto(apiDto);
             
-            if (IProfileService.isEmailTaken(registerDto.getEmail())) {
+            if (profileService.isEmailTaken(registerDto.getEmail())) {
                  return ResponseEntity.status(409).body("error: email already taken");
             }
 
-            if (IProfileService.isUsernameTaken(registerDto.getUsername())) {
+            if (profileService.isUsernameTaken(registerDto.getUsername())) {
                  return ResponseEntity.status(409).body("error: username already taken");
             }
         } catch (Exception error) {
@@ -138,18 +138,18 @@ public class ProfileRestController {
              return ResponseEntity.status(400).body("error creating user: " + e.getMessage());
         }
 
-        Profile createdProfile = IProfileService.getProfileByEmail(registerDto.getEmail());
+        Profile createdProfile = profileService.getProfileByEmail(registerDto.getEmail());
         
         if (createdProfile == null) {
             return ResponseEntity.internalServerError().body("error: profile creation failed internally");
         }
 
-        createdProfile = IProfileService.updateProfile(createdProfile, profileDetailsDto, null);
+        createdProfile = profileService.updateProfile(createdProfile, profileDetailsDto, null);
 
         if (apiDto.getLanguage() != null) {
              try {
                  Language language = Language.valueOf(apiDto.getLanguage());
-                 IProfileService.updateProfileLanguage(createdProfile, language);
+                 profileService.updateProfileLanguage(createdProfile, language);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -158,7 +158,7 @@ public class ProfileRestController {
         if (apiDto.getTheme() != null) {
              try {
                  Theme theme = Theme.valueOf(apiDto.getTheme());
-                 IProfileService.updateProfileTheme(createdProfile, theme);
+                 profileService.updateProfileTheme(createdProfile, theme);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -179,8 +179,8 @@ public class ProfileRestController {
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @Parameter(description = "Username of the profile to update", required = true) @PathVariable String username,
             @RequestBody ProfileApiDto apiDto) {
-        Profile profileToUpdate = IProfileService.getProfileByUsername(username);
-        Profile requesterProfile = IProfileService.getProfileByEmail(userDetail.getUsername());
+        Profile profileToUpdate = profileService.getProfileByUsername(username);
+        Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
 
         if (profileToUpdate == null || requesterProfile == null || 
             (!profileToUpdate.getId().equals(requesterProfile.getId()) && !requesterProfile.getRole().equals(Role.MODERATOR))) {
@@ -206,12 +206,12 @@ public class ProfileRestController {
                     .body("error: " + error.getMessage());
         }
         
-        Profile updatedProfile = IProfileService.updateProfile(profileToUpdate, profileDto, null);
+        Profile updatedProfile = profileService.updateProfile(profileToUpdate, profileDto, null);
 
         if (apiDto.getLanguage() != null) {
              try {
                  Language language = Language.valueOf(apiDto.getLanguage());
-                 IProfileService.updateProfileLanguage(updatedProfile, language);
+                 profileService.updateProfileLanguage(updatedProfile, language);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -220,7 +220,7 @@ public class ProfileRestController {
         if (apiDto.getTheme() != null) {
              try {
                  Theme theme = Theme.valueOf(apiDto.getTheme());
-                 IProfileService.updateProfileTheme(updatedProfile, theme);
+                 profileService.updateProfileTheme(updatedProfile, theme);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -238,15 +238,15 @@ public class ProfileRestController {
     public ResponseEntity<Object> deleteProfile(
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Username of the profile to delete", required = true) @PathVariable String username) {
-        Profile profileToDelete = IProfileService.getProfileByUsername(username);
-        Profile requesterProfile = IProfileService.getProfileByEmail(userDetails.getUsername());
+        Profile profileToDelete = profileService.getProfileByUsername(username);
+        Profile requesterProfile = profileService.getProfileByEmail(userDetails.getUsername());
 
         if (profileToDelete == null || requesterProfile == null || 
             (!profileToDelete.getId().equals(requesterProfile.getId()) && !requesterProfile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity.status(403).body("error: forbidden");
         }
 
-        IProfileService.deleteProfile(profileToDelete);
+        profileService.deleteProfile(profileToDelete);
         return ResponseEntity.status(204).build();
     }
 }

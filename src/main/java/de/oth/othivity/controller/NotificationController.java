@@ -22,11 +22,11 @@ import java.util.UUID;
 public class NotificationController {
 
     private final INotificationService notificationService;
-    private final ISessionService ISessionService;
+    private final ISessionService sessionService;
 
     @GetMapping("/notifications")
     public String clubs(HttpSession session, Model model, @RequestParam(required = false) UUID selectId) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) {
             return "redirect:/dashboard";
         }

@@ -12,13 +12,13 @@ import org.springframework.ui.Model;
 @Controller
 public class LandingController {
 
-    private final IProfileService IProfileService;
+    private final IProfileService profileService;
 
     @GetMapping("/")
     public String index(Locale local, Model model) {
 
         model.addAttribute("activeTab", "");
-        model.addAttribute("profileCounter", IProfileService.getProfileCounter());
+        model.addAttribute("profileCounter", profileService.getProfileCounter());
         model.addAttribute("browserLang", local.getLanguage());
         return "landing";
     }

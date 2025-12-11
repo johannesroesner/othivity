@@ -21,7 +21,7 @@ import de.oth.othivity.dto.RegisterDto;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
-    private final IProfileService IProfileService;
+    private final IProfileService profileService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -34,7 +34,7 @@ public class UserService implements IUserService {
         
         User savedUser = userRepository.save(user);
         
-        Profile profile = IProfileService.createProfileFromUser(savedUser, registerDto, locale, needSetup, needVerificationEmail);
+        Profile profile = profileService.createProfileFromUser(savedUser, registerDto, locale, needSetup, needVerificationEmail);
 
         savedUser.setProfile(profile);
         userRepository.save(savedUser);

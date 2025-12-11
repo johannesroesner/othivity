@@ -35,25 +35,25 @@ import de.oth.othivity.model.enumeration.Role;
 })
 public class GlobalControllerAdvice {
 
-    private final ISessionService ISessionService;
+    private final ISessionService sessionService;
     private final INotificationService notificationService;
-    private final IChatService IChatService;
+    private final IChatService chatService;
     private final IReportService reportService;
     @ModelAttribute
     public void addCurrentUsername(HttpSession session, Model model) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) model.addAttribute("currentUsername", profile.getUsername());
     }
 
     @ModelAttribute
     public void addCurrentProfileId(HttpSession session, Model model) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) model.addAttribute("currentProfileId", profile.getId().toString());
     }
 
     @ModelAttribute
     public void addCurrentProfileImage(HttpSession session, Model model) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) {
             model.addAttribute("currentProfileImage", profile.getImage() != null ? profile.getImage().getUrl() : null);
             model.addAttribute("currentProfileInitials", profile.getInitials());
@@ -62,7 +62,7 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addCurrentProfileTheme(HttpSession session, Model model) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) {
             model.addAttribute("currentThemeName", profile.getTheme().getDaisyUiName());
         }
@@ -70,14 +70,14 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addReturnUrl(HttpSession session, HttpServletRequest request, Model model) {
-        String returnUrl = ISessionService.getReturnUrlFromSession(session, request);
+        String returnUrl = sessionService.getReturnUrlFromSession(session, request);
         if (returnUrl != null) model.addAttribute("returnUrl", returnUrl);
         else model.addAttribute("returnUrl", "/dashboard");
     }
 
     @ModelAttribute
     public void addUnreadNotificationCount(HttpSession session, HttpServletRequest request, Model model) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         int count = 0;
         if (profile != null) {
             count = notificationService.getCountOfUnreadNotifications(profile);
@@ -87,7 +87,7 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addUnreadChatCount(HttpSession session, HttpServletRequest request, Model model) {
-        model.addAttribute("unreadMessageCount", IChatService.getUnreadMessageCountForProfile(session));
+        model.addAttribute("unreadMessageCount", chatService.getUnreadMessageCountForProfile(session));
     }
 
     @ModelAttribute
@@ -98,7 +98,7 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void isModerator(HttpSession session, Model model) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) {
             model.addAttribute("isModerator", profile.getRole().equals(Role.MODERATOR));
         } else {

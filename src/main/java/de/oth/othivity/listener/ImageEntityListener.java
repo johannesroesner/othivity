@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ImageEntityListener {
 
-    private static IImageService IImageService;
+    private static IImageService imageService;
 
     @Autowired
     public void init(IImageService IImageService) {
-        ImageEntityListener.IImageService = IImageService;
+        ImageEntityListener.imageService = IImageService;
     }
 
     @PreRemove
     public void preRemove(Image image) {
-        IImageService.deleteImage(image);
+        imageService.deleteImage(image);
     }
 }

@@ -20,12 +20,12 @@ public class ClubJoinRequestService implements IClubJoinRequestService {
 
     private final ClubRepository clubRepository;
     private final ClubJoinRequestRepository clubJoinRequestRepository;
-    private final IClubService IClubService;
+    private final IClubService clubService;
     private final INotificationService notificationService;
 
     @Override
     public List<ClubJoinRequest> getJoinRequestsForClub(UUID clubId) {
-        Club club = IClubService.getClubById(clubId);
+        Club club = clubService.getClubById(clubId);
         if (club == null) {
             return List.of();
         }
@@ -34,7 +34,7 @@ public class ClubJoinRequestService implements IClubJoinRequestService {
     
     @Override
     public ClubJoinRequest createJoinRequest(ClubJoinRequestDto clubJoinRequestDto, Profile profile) {
-        Club club = IClubService.getClubById(clubJoinRequestDto.getClubId());
+        Club club = clubService.getClubById(clubJoinRequestDto.getClubId());
         if (club == null) {
             throw new IllegalArgumentException("Club not found");
         }

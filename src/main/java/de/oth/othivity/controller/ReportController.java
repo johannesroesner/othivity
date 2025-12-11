@@ -31,15 +31,15 @@ import de.oth.othivity.model.enumeration.Role;
 
 public class ReportController {
     private final IReportService reportService;
-    private final IClubService IClubService;
-    private final IProfileService IProfileService;
-    private final IActivityService IActivityService;
-    private final ISessionService ISessionService;
+    private final IClubService clubService;
+    private final IProfileService profileService;
+    private final IActivityService activityService;
+    private final ISessionService sessionService;
 
     @GetMapping("/reports")
     public String getMethodName(Model model, HttpSession session) {
 
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if(profile == null || !profile.getRole().equals(Role.MODERATOR)) {
             return "redirect:/";
         }
@@ -52,8 +52,8 @@ public class ReportController {
     @GetMapping("/reports/create/club/{clubId}")
     public String getCreateClubReport(@PathVariable("clubId") String clubId, Model model, HttpSession session) {
         UUID clubUuid = UUID.fromString(clubId);
-        Profile issuer = ISessionService.getProfileFromSession(session);
-        Club club = IClubService.getClubById(clubUuid);
+        Profile issuer = sessionService.getProfileFromSession(session);
+        Club club = clubService.getClubById(clubUuid);
         if (!reportService.isReportableClub(issuer, club)) {
             return "redirect:/clubs/" + clubUuid;
         }
@@ -65,13 +65,13 @@ public class ReportController {
     public String createClubReport(@Validated @ModelAttribute ReportDto reportDto, @PathVariable("clubId") String clubId, BindingResult bindingResult, Model model, HttpSession session) {
         UUID clubUuid = UUID.fromString(clubId);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("club", IClubService.getClubById(clubUuid));
+            model.addAttribute("club", clubService.getClubById(clubUuid));
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("reportDto", reportDto);
             return "create-report-view.html";
         }
-        Profile issuer = ISessionService.getProfileFromSession(session);
-        Club club = IClubService.getClubById(clubUuid);
+        Profile issuer = sessionService.getProfileFromSession(session);
+        Club club = clubService.getClubById(clubUuid);
         if (reportService.isReportableClub(issuer, club))
             reportService.createClubReport(reportDto, issuer, club);
         return "redirect:/clubs/" + clubUuid;
@@ -80,8 +80,8 @@ public class ReportController {
     @GetMapping("/reports/create/profile/{profileId}")
     public String getCreateProfileReport(@PathVariable("profileId") String profileId, Model model, HttpSession session) {
         UUID profileUuid = UUID.fromString(profileId);
-        Profile issuer = ISessionService.getProfileFromSession(session);
-        Profile profile = IProfileService.getProfileById(profileUuid);
+        Profile issuer = sessionService.getProfileFromSession(session);
+        Profile profile = profileService.getProfileById(profileUuid);
         if (!reportService.isReportableProfile(issuer, profile)) {
             return "redirect:/profile/" + profile.getUsername();
         }
@@ -92,14 +92,14 @@ public class ReportController {
     @PostMapping("/reports/create/profile/{profileId}")
     public String createProfileReport(@Validated @ModelAttribute ReportDto reportDto, @PathVariable("profileId") String profileId, BindingResult bindingResult, Model model, HttpSession session) {
         UUID profileUuid = UUID.fromString(profileId);
-        Profile profile = IProfileService.getProfileById(profileUuid);
+        Profile profile = profileService.getProfileById(profileUuid);
         if (bindingResult.hasErrors()) {
             model.addAttribute("profile", profile);
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("reportDto", reportDto);
             return "create-report-view.html";
         }
-        Profile issuer = ISessionService.getProfileFromSession(session);
+        Profile issuer = sessionService.getProfileFromSession(session);
         if (reportService.isReportableProfile(issuer, profile))
             reportService.createProfileReport(reportDto, issuer, profile);
         return "redirect:/profile/" + profile.getUsername();
@@ -107,8 +107,8 @@ public class ReportController {
     @GetMapping("/reports/create/activity/{activityId}")
     public String getCreateActivityReport(@PathVariable("activityId") String activityId, Model model, HttpSession session) {
         UUID activityUuid = UUID.fromString(activityId);
-        Profile issuer = ISessionService.getProfileFromSession(session);
-        Activity activity = IActivityService.getActivityById(activityUuid);
+        Profile issuer = sessionService.getProfileFromSession(session);
+        Activity activity = activityService.getActivityById(activityUuid);
         if (!reportService.isReportableActivity(issuer, activity)) {
             return "redirect:/activities/" + activityUuid;
         }
@@ -120,13 +120,13 @@ public class ReportController {
     public String createActivityReport(@Validated @ModelAttribute ReportDto reportDto, @PathVariable("activityId") String activityId, BindingResult bindingResult, Model model, HttpSession session) {
         UUID activityUuid = UUID.fromString(activityId);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("activity", IActivityService.getActivityById(activityUuid));
+            model.addAttribute("activity", activityService.getActivityById(activityUuid));
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("reportDto", reportDto);
             return "create-report-view.html";
         }
-        Profile issuer = ISessionService.getProfileFromSession(session);
-        Activity activity = IActivityService.getActivityById(activityUuid);
+        Profile issuer = sessionService.getProfileFromSession(session);
+        Activity activity = activityService.getActivityById(activityUuid);
         if (reportService.isReportableActivity(issuer, activity))
             reportService.createActivityReport(reportDto, issuer, activity);
         return "redirect:/activities/" + activityUuid;

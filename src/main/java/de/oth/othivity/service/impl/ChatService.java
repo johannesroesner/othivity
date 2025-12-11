@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 public class ChatService implements IChatService {
 
-    private final ISessionService ISessionService;
+    private final ISessionService sessionService;
 
     private final ChatRepository chatRepository;
     private final ChatMessageRepository chatMessageRepository;
@@ -30,7 +30,7 @@ public class ChatService implements IChatService {
 
     @Override
     public List<Chat> getAllChatsForProfile(HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if(profile==null) return null;
 
         List<Chat> allChats = new ArrayList<>();
@@ -87,7 +87,7 @@ public class ChatService implements IChatService {
 
     @Override
     public void setMessagesReadTrue(Chat chat, HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if(profile==null) return;
 
         List<ChatMessage> unreadMessages = chatMessageRepository.findByChatAndReceiverAndIsReadFalse(chat, profile);
@@ -103,7 +103,7 @@ public class ChatService implements IChatService {
 
     @Override
     public long getUnreadMessageCountForProfile(HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if(profile==null) return 0;
         return chatMessageRepository.countByReceiverAndIsReadFalse(profile);
     }

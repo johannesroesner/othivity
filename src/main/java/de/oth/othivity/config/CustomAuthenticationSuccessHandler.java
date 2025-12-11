@@ -20,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final ISessionService ISessionService;
+    private final ISessionService sessionService;
     private final ProfileRepository profileRepository;
 
     @Override
@@ -44,7 +44,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             HttpSession session = request.getSession();
             session.setAttribute("profileId", profile.getId());
             session.setAttribute("role", profile.getRole());
-            ISessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
+            sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
         } 
         response.sendRedirect("/dashboard");
     }

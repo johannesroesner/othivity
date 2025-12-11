@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ExplorerController {
     private final IExplorerService explorerService;
-    private final IPagingService IPagingService;
-    private final ISessionService ISessionService;
+    private final IPagingService pagingService;
 
     @GetMapping("/explorer")
     public String explorer(HttpSession session, Model model, 
@@ -44,9 +43,9 @@ public class ExplorerController {
         Tag selectedTag = null;
         if(tag != null && !tag.isBlank() && !tag.equalsIgnoreCase("all")) selectedTag = Tag.valueOf(tag.toUpperCase());
 
-        Pageable bestMixPageable = IPagingService.createPageable(bestMixPage, size, sortBy, direction);
-        Pageable soonestPageable = IPagingService.createPageable(soonestPage, size, sortBy, direction);
-        Pageable closestPageable = IPagingService.createPageable(closestPage, size, sortBy, direction);
+        Pageable bestMixPageable = pagingService.createPageable(bestMixPage, size, sortBy, direction);
+        Pageable soonestPageable = pagingService.createPageable(soonestPage, size, sortBy, direction);
+        Pageable closestPageable = pagingService.createPageable(closestPage, size, sortBy, direction);
 
         Page<Activity> bestMixActivities = explorerService.getBestMixActivities(lat, lon, bestMixPageable, search, selectedTag);
         model.addAttribute("bestMixActivities", bestMixActivities);

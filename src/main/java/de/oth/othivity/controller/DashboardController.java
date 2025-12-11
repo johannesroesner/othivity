@@ -18,24 +18,24 @@ import org.springframework.ui.Model;
 @Controller
 public class DashboardController {
 
-    private final IChatService IChatService;
+    private final IChatService chatService;
     private final IExplorerService explorerService;
-    private final ISessionService ISessionService;
-    private final IActivityService IActivityService;
+    private final ISessionService sessionService;
+    private final IActivityService activityService;
 
     private final ObjectMapper objectMapper;
 
     @GetMapping("/dashboard")
     public String index(Model model, HttpSession session) {
-        model.addAttribute("allActivities", IActivityService.getAllActivitiesWithGeoCoordinates());
-        Activity soonestActivity = IActivityService.getSoonestActivityForProfile(ISessionService.getProfileFromSession(session));
+        model.addAttribute("allActivities", activityService.getAllActivitiesWithGeoCoordinates());
+        Activity soonestActivity = activityService.getSoonestActivityForProfile(sessionService.getProfileFromSession(session));
         model.addAttribute("soonestActivityForProfile", soonestActivity);
-        model.addAttribute("soonestActivityTimeUntil", IActivityService.getActivityTimeUntil(soonestActivity));
-        model.addAttribute("daysToMark", IActivityService.getActivityDatesForProfile(session));
+        model.addAttribute("soonestActivityTimeUntil", activityService.getActivityTimeUntil(soonestActivity));
+        model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("activeTab", "dashboard");
         model.addAttribute("soonestActivities", explorerService.getSoonestActivities(PageRequest.of(0, 3), null, null).getContent());
-        model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
-        model.addAttribute("clubs", ISessionService.getProfileFromSession(session).getClubs());
+        model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
+        model.addAttribute("clubs", sessionService.getProfileFromSession(session).getClubs());
         return "dashboard";
     }
 }

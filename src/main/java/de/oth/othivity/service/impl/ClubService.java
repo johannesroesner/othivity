@@ -26,12 +26,11 @@ import java.util.UUID;
 @AllArgsConstructor 
 @Service
 public class ClubService implements IClubService {
-    private final ISessionService ISessionService;
     private final ClubRepository clubRepository;
-    private final IImageService IImageService;
+    private final IImageService imageService;
     private final ActivityRepository activityRepository;
     private final INotificationService notificationService;
-    private final IGeocodingService IGeocodingService;
+    private final IGeocodingService geocodingService;
 
     @Override
     public List<Club> getAllClubs() {
@@ -104,13 +103,13 @@ public class ClubService implements IClubService {
         club.setName(clubDto.getName());
         club.setDescription(clubDto.getDescription());
         club.setAccessLevel(clubDto.getAccessLevel());
-        club.setAddress(IGeocodingService.geocode(clubDto.getAddress()));
+        club.setAddress(geocodingService.geocode(clubDto.getAddress()));
     
         club.getMembers().add(profile);
         club.getAdmins().add(profile);
         
-        if(uploadedImage != null && uploadedImage.getSize() != 0) club.setImage(IImageService.saveImage(club, uploadedImage));
-        else if(clubDto.getImage() != null) club.setImage(IImageService.saveImage(club, clubDto.getImage()));
+        if(uploadedImage != null && uploadedImage.getSize() != 0) club.setImage(imageService.saveImage(club, uploadedImage));
+        else if(clubDto.getImage() != null) club.setImage(imageService.saveImage(club, clubDto.getImage()));
         else return null;
         
         Club savedClub = clubRepository.save(club);
@@ -127,9 +126,9 @@ public class ClubService implements IClubService {
         club.setAccessLevel(clubDto.getAccessLevel());
         club.setAddress(clubDto.getAddress());
         if(uploadedImage != null && uploadedImage.getSize()>0){
-            club.setImage(IImageService.saveImage(club, uploadedImage));
+            club.setImage(imageService.saveImage(club, uploadedImage));
         } else if(clubDto.getImage() != null) {
-            club.setImage(IImageService.saveImage(club, clubDto.getImage()));
+            club.setImage(imageService.saveImage(club, clubDto.getImage()));
         }
         
         Club updatedClub = clubRepository.save(club);

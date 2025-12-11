@@ -32,12 +32,12 @@ import java.util.UUID;
 @Service
 public class ProfileService implements IProfileService {
 
-    private final ISessionService ISessionService;
+    private final ISessionService sessionService;
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
-    private final IImageService IImageService;
-    private final IClubService IClubService;
-    private final IActivityService IActivityService;
+    private final IImageService imageService;
+    private final IClubService clubService;
+    private final IActivityService activityService;
     private final INotificationService notificationService;
 
     @Override
@@ -47,7 +47,7 @@ public class ProfileService implements IProfileService {
 
     @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
         return profile.getClubs();
     }
@@ -60,7 +60,7 @@ public class ProfileService implements IProfileService {
         profile.setLastName(registerDto.getLastName());
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(new Email(registerDto.getEmail().toLowerCase()));
-        if(registerDto.getImage() != null) profile.setImage(IImageService.saveImage(profile,registerDto.getImage()));
+        if(registerDto.getImage() != null) profile.setImage(imageService.saveImage(profile,registerDto.getImage()));
         if (!needSetup) {
             profile.setSetupComplete(true);
         }
@@ -76,8 +76,8 @@ public class ProfileService implements IProfileService {
 
     @Override
     public Profile updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage) {
-        if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(IImageService.saveImage(profile,uploadedImage));
-        else if(profileDto.getImage() != null) profile.setImage(IImageService.saveImage(profile,profileDto.getImage()));
+        if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile,uploadedImage));
+        else if(profileDto.getImage() != null) profile.setImage(imageService.saveImage(profile,profileDto.getImage()));
         
         if(profileDto.getPhone() != null && !profileDto.getPhone().getNumber().isEmpty()) profile.setPhone(profileDto.getPhone());
         
@@ -134,7 +134,7 @@ public class ProfileService implements IProfileService {
 
     @Override
     public Profile getCurrentProfile(HttpSession session) {
-        return ISessionService.getProfileFromSession(session);
+        return sessionService.getProfileFromSession(session);
     }
 
     @Override
@@ -156,14 +156,14 @@ public class ProfileService implements IProfileService {
         for(Club club : profile.getClubs()) {
             club.getMembers().remove(profile);
             if(club.getAdmins().contains(profile)){
-                if(club.getAdmins().size() == 1) IClubService.deleteClub(club,profile);
+                if(club.getAdmins().size() == 1) clubService.deleteClub(club,profile);
                 else {
                     club.getAdmins().remove(profile);
                 }
             }
         }
 
-        IActivityService.removeProfileFromActivities(profile);
+        activityService.removeProfileFromActivities(profile);
 
         notificationService.sendNotification(profile,profile,"profile.deleteNotification", NotificationType.EMAIL, NotificationType.SMS);
 

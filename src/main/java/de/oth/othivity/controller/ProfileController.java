@@ -48,18 +48,17 @@ import de.oth.othivity.model.enumeration.Theme;
 @Controller
 public class ProfileController {
 
-    private final IProfileService IProfileService;
-    private final ISessionService ISessionService;
+    private final IProfileService profileService;
+    private final ISessionService sessionService;
     private final INotificationService notificationService;
     private final VerificationTokenRepository tokenRepository;
     private final IApiTokenService apiTokenService; 
     private final IReportService reportService;
-    private final IPagingService IPagingService;
+    private final IPagingService pagingService;
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
-    private final IChatService IChatService;
-    private final EmailVerificationDtoValidator emailVerificationDtoValidator;
+    private final IChatService chatService;
     private final UsernameDtoValidator usernameDtoValidator; 
 
     @InitBinder("profileDto")
@@ -80,13 +79,13 @@ public class ProfileController {
                                  @RequestParam(defaultValue = "asc") String direction,
                                  @RequestParam(required = false) String search) {
 
-        Pageable pageable = IPagingService.createPageable(page, size, sortBy, direction);
+        Pageable pageable = pagingService.createPageable(page, size, sortBy, direction);
         
         Page<Profile> profiles;
         if (search == null || search.isBlank()) {
             profiles = Page.empty(pageable);
         } else {
-            profiles = IProfileService.searchProfiles(search, pageable);
+            profiles = profileService.searchProfiles(search, pageable);
         }
 
         model.addAttribute("profiles", profiles);
@@ -96,7 +95,7 @@ public class ProfileController {
         model.addAttribute("direction", direction);
         model.addAttribute("activeTab", "profiles"); 
 
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         model.addAttribute("currentThemeName", (profile != null && profile.getTheme().isDark()) ? "dark" : "light");
 
         return "profile-overview";
@@ -104,8 +103,8 @@ public class ProfileController {
 
     @GetMapping("/profile/{username}")
     public String getProfileDetail(@PathVariable("username") String username, Model model, HttpSession session, HttpServletRequest request) {
-        Profile profile = IProfileService.getProfileByUsername(username);
-        Profile currentProfile = ISessionService.getProfileFromSession(session);
+        Profile profile = profileService.getProfileByUsername(username);
+        Profile currentProfile = sessionService.getProfileFromSession(session);
         
         if (profile == null) {
             String referer = request.getHeader("Referer");
@@ -115,11 +114,11 @@ public class ProfileController {
         model.addAttribute("profile", profile);
         model.addAttribute("isOwnProfile", currentProfile.getId().equals(profile.getId()));
 
-        model.addAttribute("chatId", IChatService.buildChatId(profile, currentProfile));
+        model.addAttribute("chatId", chatService.buildChatId(profile, currentProfile));
 
-        model.addAttribute("canMessage", ISessionService.canMessage(session,profile));
-        model.addAttribute("canDelete", ISessionService.canDelete(session, profile));
-        model.addAttribute("canUpdate", ISessionService.canUpdate(session, profile));
+        model.addAttribute("canMessage", sessionService.canMessage(session,profile));
+        model.addAttribute("canDelete", sessionService.canDelete(session, profile));
+        model.addAttribute("canUpdate", sessionService.canUpdate(session, profile));
         model.addAttribute("isReportable", reportService.isReportableProfile(currentProfile, profile));
 
         return "profile";
@@ -127,7 +126,7 @@ public class ProfileController {
 
     @GetMapping("/settings")
     public String getProfileSettings(Model model, HttpSession session, HttpServletRequest request) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
@@ -142,20 +141,20 @@ public class ProfileController {
 
     @GetMapping("/profile/edit/{username}")
     public String editProfile(@PathVariable("username") String username, Model model, HttpSession session) {
-        Profile profileToEdit = IProfileService.getProfileByUsername(username);
+        Profile profileToEdit = profileService.getProfileByUsername(username);
         if (profileToEdit == null) return "redirect:/dashboard";
-        if (!ISessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
         model.addAttribute("profile", profileToEdit);
-        model.addAttribute("profileDto", IProfileService.profileToDto(profileToEdit));
+        model.addAttribute("profileDto", profileService.profileToDto(profileToEdit));
         return "profile-edit";
     }
 
     @PostMapping("/profile/edit/{username}")
     public String updateProfile(@PathVariable("username") String username, @Valid @ModelAttribute("profileDto") ProfileDto profileDto, BindingResult bindingResult, @RequestParam(value = "uploadedImage", required = false) MultipartFile uploadedImage, HttpSession session, Model model) {
-        Profile profileToEdit = IProfileService.getProfileByUsername(username);
+        Profile profileToEdit = profileService.getProfileByUsername(username);
 
         if (profileToEdit == null) return "redirect:/dashboard";
-        if (!ISessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
 
         if (bindingResult.hasErrors() || (uploadedImage != null && imageUploadValidator.validateNotRequired(uploadedImage) != null)) {
             model.addAttribute("imageFileError", uploadedImage != null ? imageUploadValidator.validateNotRequired(uploadedImage) : null);
@@ -163,39 +162,39 @@ public class ProfileController {
             return "profile-edit";
         }
 
-        IProfileService.updateProfile(profileToEdit, profileDto, uploadedImage);
+        profileService.updateProfile(profileToEdit, profileDto, uploadedImage);
         return "redirect:/profile/" + profileToEdit.getUsername();
     }
 
     @PostMapping("/profile/deleteImage/{username}")
     public String deleteProfileImage(@PathVariable String username, HttpSession session) {
-        Profile profileToEdit = IProfileService.getProfileByUsername(username);
+        Profile profileToEdit = profileService.getProfileByUsername(username);
 
         if (profileToEdit == null) return "redirect:/dashboard";
-        if (!ISessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
 
-        IProfileService.deleteProfileImage(profileToEdit);
+        profileService.deleteProfileImage(profileToEdit);
 
         return "redirect:/profile/edit/" + username;
     }
 
     @PostMapping("/profile/delete/{username}")
     public String deleteProfile(@PathVariable("username") String username, HttpSession session, HttpServletRequest request) {
-        Profile profileToDelete = IProfileService.getProfileByUsername(username);
-        Profile currentProfile = ISessionService.getProfileFromSession(session);
+        Profile profileToDelete = profileService.getProfileByUsername(username);
+        Profile currentProfile = sessionService.getProfileFromSession(session);
 
-        if (!ISessionService.canDelete(session, profileToDelete)) {
+        if (!sessionService.canDelete(session, profileToDelete)) {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
 
         if (profileToDelete != null) {
             if (!profileToDelete.getId().equals(currentProfile.getId())) {
-                String returnUrl = ISessionService.getReturnUrlFromSession(session, request);
-                IProfileService.deleteProfile(profileToDelete);
+                String returnUrl = sessionService.getReturnUrlFromSession(session, request);
+                profileService.deleteProfile(profileToDelete);
                 return "redirect:" + (returnUrl != null ? returnUrl : "/dashboard");
             }
-            IProfileService.deleteProfile(profileToDelete);
+            profileService.deleteProfile(profileToDelete);
             session.invalidate();
         }
         return "redirect:/login";
@@ -203,12 +202,12 @@ public class ProfileController {
 
     @PostMapping("/change-language")
     public String changeLanguage(@RequestParam("language") Language language, HttpSession session, HttpServletRequest request, HttpServletResponse response) { 
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         
         if (profile != null) {
-            IProfileService.updateProfileLanguage(profile, language);
+            profileService.updateProfileLanguage(profile, language);
             profile.setLanguage(language); 
-            ISessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
+            sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
         }
         
         return "redirect:/settings";
@@ -216,9 +215,9 @@ public class ProfileController {
 
     @PostMapping("/change-theme")
     public String changeTheme(@RequestParam("theme") Theme theme, HttpSession session, HttpServletRequest request) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile != null) {
-            IProfileService.updateProfileTheme(profile, theme);
+            profileService.updateProfileTheme(profile, theme);
         }
 
         String referer = request.getHeader("Referer");
@@ -238,14 +237,14 @@ public class ProfileController {
             return "setup";
         }
 
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
 
         if (profile == null) {
             return "redirect:/login";
         }
-        IProfileService.updateProfileLanguage(profile, request.getLocale());
-        IProfileService.setUsername(profile, usernameDto.getUsername());
-        ISessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
+        profileService.updateProfileLanguage(profile, request.getLocale());
+        profileService.setUsername(profile, usernameDto.getUsername());
+        sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
 
         return "redirect:/dashboard";
     }
@@ -255,7 +254,7 @@ public class ProfileController {
 
         model.addAttribute("emailVerificationDto", new EmailVerificationDto());
 
-        notificationService.sendVerificationEmail(ISessionService.getProfileFromSession(session));
+        notificationService.sendVerificationEmail(sessionService.getProfileFromSession(session));
 
         return "verify-email";
     }
@@ -265,7 +264,7 @@ public class ProfileController {
     public String verifyUser(@ModelAttribute EmailVerificationDto emailVerificationDto, Model model, HttpSession session) {
 
         VerificationToken verificationToken = tokenRepository.findByToken(emailVerificationDto.getToken());
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
 
         if (verificationToken == null) {
             model.addAttribute("message", "Ungültiger Token.");
@@ -286,7 +285,7 @@ public class ProfileController {
             return "verify-email";
         }
 
-        IProfileService.setVerificationForEmail(profile);
+        profileService.setVerificationForEmail(profile);
         
         profile.getEmail().setVerified(true);
         session.setAttribute("profile", profile);
@@ -299,7 +298,7 @@ public class ProfileController {
 
     @PostMapping("/tokens")
     public String createToken(@RequestParam("name") String name, @RequestParam("duration") int duration, Principal principal, RedirectAttributes redirectAttributes, HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
 
         if (profile == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Kein Profil gefunden.");
@@ -316,7 +315,7 @@ public class ProfileController {
 
     @PostMapping("/tokens/delete")
     public String deleteToken(@RequestParam("id") UUID id, Principal principal, HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         
         if (profile != null) {
             apiTokenService.revokeToken(id, profile);

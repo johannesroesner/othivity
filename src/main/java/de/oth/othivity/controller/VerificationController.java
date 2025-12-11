@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class VerificationController {
 
-    private ISessionService ISessionService;
-    private IVerificationService IVerificationService;
-    private ISmsService ISmsService;
+    private ISessionService sessionService;
+    private IVerificationService verificationService;
+    private ISmsService smsService;
 
     private PhoneVerificationDtoValidator phoneVerificationDtoValidator;
 
@@ -35,19 +35,19 @@ public class VerificationController {
 
     @GetMapping("/profile/phone/verify")
     public String startPhoneVerify(Model model, HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null || profile.getPhone() == null || profile.getPhone().getNumber() == null || profile.getPhone().getVerified() == true) return "redirect:/dashboard";
-        ISmsService.startVerification(profile.getPhone().getNumber());
-        model.addAttribute("phoneVerificationDto", IVerificationService.buildPhoneVerificationDto(profile));
+        smsService.startVerification(profile.getPhone().getNumber());
+        model.addAttribute("phoneVerificationDto", verificationService.buildPhoneVerificationDto(profile));
         return "verify-code";
     }
 
     @PostMapping("/profile/phone/verify")
     public String phoneVerify(@Valid @ModelAttribute("phoneVerificationDto") PhoneVerificationDto phoneVerificationDto, BindingResult bindingResult, Model model, HttpSession session) {
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) return  "redirect:/dashboard";
         if (bindingResult.hasErrors()) return "verify-code";
-        IVerificationService.setVerificationForPhone(profile);
+        verificationService.setVerificationForPhone(profile);
         return "redirect:/settings";
     }
 }

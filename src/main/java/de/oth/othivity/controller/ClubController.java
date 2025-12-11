@@ -35,12 +35,12 @@ import java.util.UUID;
 public class ClubController {
 
     private final ImageUploadValidator imageUploadValidator;
-    private final IClubService IClubService;
-    private final ISessionService ISessionService;
+    private final IClubService clubService;
+    private final ISessionService sessionService;
     private final ClubDtoValidator clubDtoValidator;
-    private final IProfileService IProfileService;
+    private final IProfileService profileService;
     private final IReportService reportService;
-    private final IPagingService IPagingService;
+    private final IPagingService pagingService;
 
     @InitBinder("clubDto")
     protected void initBinder(WebDataBinder binder) {
@@ -67,15 +67,15 @@ public class ClubController {
             }
         }
         
-        Pageable myPageable = IPagingService.createPageable(myPage, size, sortBy, direction);
-        Pageable allPageable = IPagingService.createPageable(allPage, size, sortBy, direction);
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Pageable myPageable = pagingService.createPageable(myPage, size, sortBy, direction);
+        Pageable allPageable = pagingService.createPageable(allPage, size, sortBy, direction);
+        Profile profile = sessionService.getProfileFromSession(session);
         if(profile == null) {
             return "redirect:/login";
         }
-        model.addAttribute("joinedClubs", IClubService.getClubsJoinedByProfile(profile, myPageable, search, accessLevelEnum));
-        model.addAttribute("allClubs", IClubService.getClubsNotJoinedByProfile(profile, allPageable, search, accessLevelEnum));
-        model.addAttribute("managedClubs", IClubService.getClubsManagedByProfile(profile));
+        model.addAttribute("joinedClubs", clubService.getClubsJoinedByProfile(profile, myPageable, search, accessLevelEnum));
+        model.addAttribute("allClubs", clubService.getClubsNotJoinedByProfile(profile, allPageable, search, accessLevelEnum));
+        model.addAttribute("managedClubs", clubService.getClubsManagedByProfile(profile));
         
         model.addAttribute("activeTab", activeTab);
         model.addAttribute("size", size);
@@ -106,41 +106,41 @@ public class ClubController {
             model.addAttribute("pageTitle", "clubCreate.pageTitle");
             return "club-edit";
         }
-        Profile profile = ISessionService.getProfileFromSession(session);
-        IClubService.createClubForUser(clubDto, profile, uploadedImage);
+        Profile profile = sessionService.getProfileFromSession(session);
+        clubService.createClubForUser(clubDto, profile, uploadedImage);
         return "redirect:/clubs";
     }
 
     @GetMapping("/clubs/{id}")
     public String getClubDetails(@PathVariable("id") String clubId, HttpSession session, Model model) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
+        Club club = clubService.getClubById(UUID.fromString(clubId));
         if(club == null) {
             return "redirect:/clubs";
         }
         model.addAttribute("club", club);
-        model.addAttribute("joinAble", ISessionService.canJoin(session, club));
-        model.addAttribute("editMode", ISessionService.canUpdate(session, club));
-        model.addAttribute("leaveAble", ISessionService.canLeave(session, club));
-        model.addAttribute("joinAbleOnInvite", ISessionService.canJoinOnInvite(session, club));
+        model.addAttribute("joinAble", sessionService.canJoin(session, club));
+        model.addAttribute("editMode", sessionService.canUpdate(session, club));
+        model.addAttribute("leaveAble", sessionService.canLeave(session, club));
+        model.addAttribute("joinAbleOnInvite", sessionService.canJoinOnInvite(session, club));
         model.addAttribute("inviteOnly", club.getAccessLevel() == AccessLevel.ON_INVITE);
     
-        model.addAttribute("clubMembers", IClubService.getMembersOfClubWithoutAdmins(club));
+        model.addAttribute("clubMembers", clubService.getMembersOfClubWithoutAdmins(club));
         model.addAttribute("clubAdmins", club.getAdmins());
         model.addAttribute("memberCount", club.getMembers() != null ? club.getMembers().size() : 0); 
-        model.addAttribute("clubActivities", IClubService.getActivitiesByClub(club));
-        model.addAttribute("activitiesCount", IClubService.getActivitiesByClub(club).size());
-        model.addAttribute("isReportable", reportService.isReportableClub(ISessionService.getProfileFromSession(session), club));
+        model.addAttribute("clubActivities", clubService.getActivitiesByClub(club));
+        model.addAttribute("activitiesCount", clubService.getActivitiesByClub(club).size());
+        model.addAttribute("isReportable", reportService.isReportableClub(sessionService.getProfileFromSession(session), club));
 
         return "club-detail";
     }
 
     @GetMapping("/clubs/edit/{id}")
     public String getEditClub(@PathVariable("id") String clubId, Model model, HttpSession session) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
-        if (club == null || !ISessionService.canUpdate(session, club)) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null || !sessionService.canUpdate(session, club)) {
             return "redirect:/clubs/" + clubId;
         }
-        model.addAttribute("clubDto", IClubService.clubToDto(club));
+        model.addAttribute("clubDto", clubService.clubToDto(club));
         model.addAttribute("accessLevels", AccessLevel.values());
         model.addAttribute("returnUrl", "/clubs/" + clubId);
         model.addAttribute("pageTitle", "clubEdit.pageTitle");
@@ -149,8 +149,8 @@ public class ClubController {
 
     @PostMapping("/clubs/edit/{id}")
     public String editClub(@Valid @ModelAttribute("clubDto") ClubDto clubDto, BindingResult bindingResult, @PathVariable("id") String clubId, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
-        if (club == null || !ISessionService.canUpdate(session, club)) {
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        if (club == null || !sessionService.canUpdate(session, club)) {
             return "redirect:/clubs/" + clubId;
         }
         if(bindingResult.hasErrors()|| imageUploadValidator.validateNotRequired(uploadedImage) != null) {
@@ -160,40 +160,40 @@ public class ClubController {
             model.addAttribute("pageTitle", "clubEdit.pageTitle");
             return "club-edit";
         }
-        IClubService.updateClub(club, clubDto, uploadedImage, session);
+        clubService.updateClub(club, clubDto, uploadedImage, session);
         return "redirect:/clubs/" + clubId;
     }
     
     @PostMapping("/clubs/join/{id}")
     public String joinClub(@PathVariable("id") String clubId, HttpSession session) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
+        Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) return "redirect:/clubs";
-        Profile profile = ISessionService.getProfileFromSession(session);
-        IClubService.joinClubForProfile(profile, club);
+        Profile profile = sessionService.getProfileFromSession(session);
+        clubService.joinClubForProfile(profile, club);
 
         return "redirect:/clubs/" + clubId;
     }
     @PostMapping("/clubs/leave/{id}")
     public String leaveClub(@PathVariable("id") String clubId, HttpSession session) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
+        Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) return "redirect:/clubs";
-        Profile profile = ISessionService.getProfileFromSession(session);
-        if (IClubService.wouldLeaveRequireAdminSelection(profile, club)) {
+        Profile profile = sessionService.getProfileFromSession(session);
+        if (clubService.wouldLeaveRequireAdminSelection(profile, club)) {
             return "redirect:/clubs/" + clubId + "/select-admin?leaving=true";
         }
         
-        IClubService.leaveClubForProfile(profile, club);
+        clubService.leaveClubForProfile(profile, club);
         return "redirect:/clubs/" + clubId;
     }
 
     @GetMapping("/clubs/{id}/select-admin")
     public String getSelectAdmin(@PathVariable("id") String clubId, @RequestParam(value = "leaving", defaultValue = "false") boolean isLeaving, HttpSession session, Model model) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
+        Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) {
             return "redirect:/clubs";
         }
         
-        Profile currentProfile = ISessionService.getProfileFromSession(session);
+        Profile currentProfile = sessionService.getProfileFromSession(session);
         if (currentProfile == null) {
             return "redirect:/clubs/" + clubId;
         }
@@ -220,26 +220,26 @@ public class ClubController {
     
     @PostMapping("/clubs/delete/{id}")
     public String deleteClub(@PathVariable("id") String clubId, HttpSession session) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
+        Club club = clubService.getClubById(UUID.fromString(clubId));
         if (club == null) return "redirect:/clubs";
 
-        IClubService.deleteClub(club, ISessionService.getProfileFromSession(session));
+        clubService.deleteClub(club, sessionService.getProfileFromSession(session));
 
         return "redirect:/clubs";
     }
     @PostMapping("/clubs/makeAdmin/{clubId}/{profileId}")
     public String makeAdmin(@PathVariable("clubId") String clubId, @PathVariable("profileId") String profileId, 
                            @RequestParam(value = "leaving", defaultValue = "false") boolean isLeaving, HttpSession session) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
-        Profile profile = IProfileService.getProfileById(UUID.fromString(profileId));
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        Profile profile = profileService.getProfileById(UUID.fromString(profileId));
         if (club == null || profile == null) {
             return "redirect:/clubs/" + clubId;
         }
-        Profile currentProfile = ISessionService.getProfileFromSession(session);
+        Profile currentProfile = sessionService.getProfileFromSession(session);
 
-        IClubService.makeProfileAdminOfClub(profile, club, currentProfile);
+        clubService.makeProfileAdminOfClub(profile, club, currentProfile);
         if (isLeaving) {
-            IClubService.leaveClubForProfile(currentProfile, club);
+            clubService.leaveClubForProfile(currentProfile, club);
             return "redirect:/clubs";
         }
 
@@ -247,14 +247,14 @@ public class ClubController {
     }
     @PostMapping("/clubs/removeMember/{clubId}/{profileId}")
     public String removeMember(@PathVariable("clubId") String clubId, @PathVariable("profileId") String profileId, HttpSession session) {
-        Club club = IClubService.getClubById(UUID.fromString(clubId));
-        Profile profile = IProfileService.getProfileById(UUID.fromString(profileId));
-        Profile currentProfile = ISessionService.getProfileFromSession(session);
+        Club club = clubService.getClubById(UUID.fromString(clubId));
+        Profile profile = profileService.getProfileById(UUID.fromString(profileId));
+        Profile currentProfile = sessionService.getProfileFromSession(session);
         if (club == null || profile == null) {
             return "redirect:/clubs/" + clubId;
         }
 
-        IClubService.removeProfileFromClub(profile, club, currentProfile);
+        clubService.removeProfileFromClub(profile, club, currentProfile);
 
         return "redirect:/clubs/" + clubId;
     }

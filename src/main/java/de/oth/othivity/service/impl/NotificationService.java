@@ -37,7 +37,7 @@ public class NotificationService implements INotificationService {
     private final MessageSource messageSource;
     private final NotificationRepository notificationRepository;
     private final EmailService emailService;
-    private final ISmsService ISmsService;
+    private final ISmsService smsService;
     private final IPushNotificationService pushNotificationService;
 
     @Override
@@ -90,7 +90,7 @@ public class NotificationService implements INotificationService {
 
             for (NotificationType type : uniqueTypes) {
                 switch (type) {
-                    case SMS -> ISmsService.sendSms(recipient,subject);
+                    case SMS -> smsService.sendSms(recipient,subject);
                     case PUSH_NOTIFICATION -> {
                         if (recipient.getEmail() != null && recipient.getEmail().isVerified()) {
                             pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class ChatController {
 
-    private final IChatService IChatService;
-    private final ISessionService ISessionService;
+    private final IChatService chatService;
+    private final ISessionService sessionService;
 
     private final ChatMessageDtoValidator chatMessageDtoValidator;
 
@@ -34,10 +34,10 @@ public class ChatController {
     @GetMapping("/chats")
     public String getChatOverview(HttpSession session, Model model) {
 
-        Profile currentProfile = ISessionService.getProfileFromSession(session);
+        Profile currentProfile = sessionService.getProfileFromSession(session);
         if (currentProfile == null) return "redirect:/login";
 
-        model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
+        model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
         model.addAttribute("chat", null);
         model.addAttribute("chatMessageDto", new ChatMessageDto());
         model.addAttribute("returnUrl", "/dashboard");
@@ -49,13 +49,13 @@ public class ChatController {
     public String getChat(HttpSession session, Model model, @PathVariable("id") String id) {
         ChatId chatId = ChatId.fromUrlString(id);
         if(chatId == null) return "redirect:/dashbaord";
-        Chat chat = IChatService.getOrCreateChatById(chatId);
+        Chat chat = chatService.getOrCreateChatById(chatId);
 
-        model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
+        model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
         model.addAttribute("chatMessageDto", new ChatMessageDto());
         model.addAttribute("chat", chat);
 
-        IChatService.setMessagesReadTrue(chat, session);
+        chatService.setMessagesReadTrue(chat, session);
         return "chat";
     }
 
@@ -64,15 +64,15 @@ public class ChatController {
         ChatId chatId = ChatId.fromUrlString(id);
         if(chatId == null) return "redirect:/dashboard";
 
-        Chat chat = IChatService.getOrCreateChatById(chatId);
+        Chat chat = chatService.getOrCreateChatById(chatId);
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
+            model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
             model.addAttribute("chatMessageDto", new ChatMessageDto());
             model.addAttribute("chat", chat);
             return "chat";
         }
-        IChatService.addMessageToChat(chatMessageDto, chat, ISessionService.getProfileFromSession(session));
+        chatService.addMessageToChat(chatMessageDto, chat, sessionService.getProfileFromSession(session));
         return  "redirect:/chat/" + id;
     }
 

@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class EntityConverter {
 
-    private final IClubService IClubService;
-    private final IActivityService IActivityService;
+    private final IClubService clubService;
 
 
     private String safe(Object value) {
@@ -129,9 +128,9 @@ public class EntityConverter {
             throw new IllegalArgumentException("tags are invalid");
         }
 
-        if(request.getOrganizerId() != null && IClubService.getClubById(UUID.fromString(request.getOrganizerId())) == null) throw  new IllegalArgumentException("organizer id is invalid");
+        if(request.getOrganizerId() != null && clubService.getClubById(UUID.fromString(request.getOrganizerId())) == null) throw  new IllegalArgumentException("organizer id is invalid");
         else {
-            if(request.getOrganizerId() != null) activity.setOrganizer(IClubService.getClubById(UUID.fromString(request.getOrganizerId())));
+            if(request.getOrganizerId() != null) activity.setOrganizer(clubService.getClubById(UUID.fromString(request.getOrganizerId())));
             else activity.setOrganizer(null);
         }
 

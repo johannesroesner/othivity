@@ -32,11 +32,11 @@ import java.util.UUID;
 @Controller
 public class ActivityController {
 
-    private final IActivityService IActivityService;
-    private final IProfileService IProfileService;
-    private final ISessionService ISessionService;
+    private final IActivityService activityService;
+    private final IProfileService profileService;
+    private final ISessionService sessionService;
     private final IWeatherService weatherService;
-    private final IPagingService IPagingService;
+    private final IPagingService pagingService;
     private final IReportService reportService;
 
     private final ActivityDtoValidator activityDtoValidator;
@@ -62,14 +62,14 @@ public class ActivityController {
         Tag selectedTag = null;
         if(tag != null && !tag.isBlank() && !tag.equalsIgnoreCase("all")) selectedTag = Tag.valueOf(tag.toUpperCase());
 
-        Pageable myPageable = IPagingService.createPageable(myPage, size, sortBy, direction);
-        Pageable createdPageable = IPagingService.createPageable(createdPage, size, sortBy, direction);
-        Pageable allPageable = IPagingService.createPageable(allPage, size, sortBy, direction);
+        Pageable myPageable = pagingService.createPageable(myPage, size, sortBy, direction);
+        Pageable createdPageable = pagingService.createPageable(createdPage, size, sortBy, direction);
+        Pageable allPageable = pagingService.createPageable(allPage, size, sortBy, direction);
 
-        model.addAttribute("daysToMark", IActivityService.getActivityDatesForProfile(session));
-        model.addAttribute("profileActivities", IActivityService.getActivitiesCreatedOrJoinedByProfileWithFilter(session, myPageable, selectedTag, search));
-        model.addAttribute("createdActivities", IActivityService.getActivitiesCreatedByProfileWithFilter(session, createdPageable, selectedTag, search));
-        model.addAttribute("allActivities", IActivityService.getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(session, allPageable, selectedTag, search));
+        model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
+        model.addAttribute("profileActivities", activityService.getActivitiesCreatedOrJoinedByProfileWithFilter(session, myPageable, selectedTag, search));
+        model.addAttribute("createdActivities", activityService.getActivitiesCreatedByProfileWithFilter(session, createdPageable, selectedTag, search));
+        model.addAttribute("allActivities", activityService.getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(session, allPageable, selectedTag, search));
 
         model.addAttribute("activeTab", activeTab);
         model.addAttribute("size", size);
@@ -79,7 +79,7 @@ public class ActivityController {
         model.addAttribute("tag", selectedTag);
         model.addAttribute("allTags", Tag.values());
 
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         model.addAttribute("calendarTheme", (profile != null && profile.getTheme().isDark()) ? "dark" : "light");
 
         return "activity-overview";
@@ -90,7 +90,7 @@ public class ActivityController {
         model.addAttribute("activityDto", new ActivityDto());
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("allTags", Tag.values());
-        model.addAttribute("tagAbleClubs", IProfileService.allJoinedClubsByProfile(session));
+        model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
         return "activity-edit";
     }
 
@@ -100,87 +100,87 @@ public class ActivityController {
             model.addAttribute("imageFileError", imageUploadValidator.validateRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
-            model.addAttribute("tagAbleClubs", IProfileService.allJoinedClubsByProfile(session));
+            model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
             response.setStatus(400);
             return "activity-edit";
         }
 
-        IActivityService.createActivity(activityDto, uploadedImage, ISessionService.getProfileFromSession(session));
+        activityService.createActivity(activityDto, uploadedImage, sessionService.getProfileFromSession(session));
 
         return "redirect:/activities";
     }
 
     @GetMapping("/activities/{id}")
     public String getActivityDetail(@PathVariable("id") String activityId, Model model, HttpSession session) {
-        Activity activity = IActivityService.getActivityById(UUID.fromString(activityId));
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
         if (activity == null) return "redirect:/activities";
         model.addAttribute("activity", activity);
-        model.addAttribute("joinAble", ISessionService.canJoin(session, activity));
-        model.addAttribute("leaveAble", ISessionService.canLeave(session, activity));
-        model.addAttribute("updateAble", ISessionService.canUpdate(session, activity));
-        model.addAttribute("deleteAble", ISessionService.canDelete(session, activity));
+        model.addAttribute("joinAble", sessionService.canJoin(session, activity));
+        model.addAttribute("leaveAble", sessionService.canLeave(session, activity));
+        model.addAttribute("updateAble", sessionService.canUpdate(session, activity));
+        model.addAttribute("deleteAble", sessionService.canDelete(session, activity));
         model.addAttribute("weather", weatherService.getForecastForTime(activity.getAddress(),activity.getDate()));
-        model.addAttribute("isReportable", reportService.isReportableActivity(ISessionService.getProfileFromSession(session), activity));
+        model.addAttribute("isReportable", reportService.isReportableActivity(sessionService.getProfileFromSession(session), activity));
         model.addAttribute("activity", activity);
         return "activity-detail";
     }
 
     @PostMapping("/activities/join/{id}")
     public String joinActivity(@PathVariable("id") String activityId, HttpSession session) {
-        Activity activity = IActivityService.getActivityById(UUID.fromString(activityId));
-        if (activity != null && ISessionService.canJoin(session, activity)) IActivityService.joinActivity(activity, ISessionService.getProfileFromSession(session));
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canJoin(session, activity)) activityService.joinActivity(activity, sessionService.getProfileFromSession(session));
         return "redirect:/activities/" + activityId;
     }
 
     @PostMapping("/activities/leave/{id}")
     public String leaveActivity(@PathVariable("id") String activityId, HttpSession session) {
-        Activity activity = IActivityService.getActivityById(UUID.fromString(activityId));
-        if (activity != null && ISessionService.canLeave(session, activity)) IActivityService.leaveActivity(activity, session);
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canLeave(session, activity)) activityService.leaveActivity(activity, session);
         return "redirect:/activities/" + activityId;
     }
 
     @PostMapping("/activities/delete/{id}")
     public String deleteActivity(@PathVariable("id") String activityId, HttpSession session) {
-        Activity activity = IActivityService.getActivityById(UUID.fromString(activityId));
-        if (activity != null && ISessionService.canDelete(session, activity)) IActivityService.deleteActivity(activity);
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity != null && sessionService.canDelete(session, activity)) activityService.deleteActivity(activity);
 
         return "redirect:/activities";
     }
 
     @PostMapping("/activities/kick/{activityId}/{personId}")
     public String kickParticipant(@PathVariable("activityId") String activityId, @PathVariable("personId") String personId, HttpSession session) {
-        Activity activity = IActivityService.getActivityById(UUID.fromString(activityId));
-        Profile profile = IProfileService.getProfileById(UUID.fromString(personId));
-        if (activity != null && profile != null && ISessionService.canDelete(session, activity)) IActivityService.kickParticipant(activity, profile);
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        Profile profile = profileService.getProfileById(UUID.fromString(personId));
+        if (activity != null && profile != null && sessionService.canDelete(session, activity)) activityService.kickParticipant(activity, profile);
 
         return "redirect:/activities/" + activityId;
     }
 
     @GetMapping("/activities/update/{activityId}")
     public String showUpdateForm(@PathVariable("activityId") String activityId, Model model, HttpServletRequest request, HttpSession session) {
-        Activity activity = IActivityService.getActivityById(UUID.fromString(activityId));
-        if (activity == null || !ISessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
-        model.addAttribute( "activityDto", IActivityService.activityToDto(activity));
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
+        model.addAttribute( "activityDto", activityService.activityToDto(activity));
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("allTags", Tag.values());
-        model.addAttribute("tagAbleClubs", IProfileService.allJoinedClubsByProfile(session));
+        model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
         return "activity-edit";
     }
 
     @PostMapping("/activities/update/{activityId}")
     public String updateActivity(@Valid @ModelAttribute("activityDto") ActivityDto activityDto, BindingResult bindingResult, @PathVariable("activityId") String activityId, HttpServletRequest request, @RequestParam MultipartFile uploadedImage, HttpSession session, Model model, HttpServletResponse response) {
-        Activity activity = IActivityService.getActivityById(UUID.fromString(activityId));
-        if (activity == null || !ISessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
+        Activity activity = activityService.getActivityById(UUID.fromString(activityId));
+        if (activity == null || !sessionService.canUpdate(session, activity)) return "redirect:/activities/" + activityId;
         if (bindingResult.hasErrors() || imageUploadValidator.validateNotRequired(uploadedImage) != null ) {
             model.addAttribute("imageFileError", imageUploadValidator.validateNotRequired(uploadedImage));
             model.addAttribute("languages", Language.getFlags());
             model.addAttribute("allTags", Tag.values());
-            model.addAttribute("tagAbleClubs", IProfileService.allJoinedClubsByProfile(session));
+            model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
             response.setStatus(400);
             return "activity-edit";
         }
 
-        IActivityService.updateActivity(activity, activityDto, uploadedImage, ISessionService.getProfileFromSession(session));
+        activityService.updateActivity(activity, activityDto, uploadedImage, sessionService.getProfileFromSession(session));
 
         return "redirect:/activities/" + activityId;
     }

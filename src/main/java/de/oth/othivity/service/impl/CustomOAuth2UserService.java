@@ -22,7 +22,7 @@ import java.util.UUID;
 public class CustomOAuth2UserService extends OidcUserService implements ICustomOAuth2UserService {
     
     private final IUserService userService;
-    private final IProfileService IProfileService;
+    private final IProfileService profileService;
 
     @Override
     @Transactional
@@ -45,7 +45,7 @@ public class CustomOAuth2UserService extends OidcUserService implements ICustomO
 
             User newUser = userService.registerNewUserAccount(registerDto, Locale.ENGLISH, true, false);
 
-            IProfileService.setVerificationForEmail(newUser.getProfile());
+            profileService.setVerificationForEmail(newUser.getProfile());
         }
 
         return oidcUser;

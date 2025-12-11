@@ -32,9 +32,9 @@ import java.util.UUID;
 @SecurityRequirement(name = "Bearer Authentication")
 public class ClubRestController {
 
-    private final IClubService IClubService;
+    private final IClubService clubService;
     private final EntityConverter entityConverter;
-    private final IProfileService IProfileService;
+    private final IProfileService profileService;
 
     @Operation(summary = "Get all clubs", description = "Returns a list of all clubs in the system")
     @ApiResponses(value = {
@@ -43,7 +43,7 @@ public class ClubRestController {
     })
     @GetMapping
     public List<ClubApiDto> getAllClubs() {
-        return IClubService.getAllClubs().stream().map(entityConverter::ClubToApiDto).toList();
+        return clubService.getAllClubs().stream().map(entityConverter::ClubToApiDto).toList();
     }
 
     @Operation(summary = "Create a new club", description = "Creates a new club with the provided details. Requires authentication.")
@@ -55,7 +55,7 @@ public class ClubRestController {
     @PostMapping
     public ResponseEntity<Object> createClub(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ClubApiDto apiDto) {
         String email = userDetails.getUsername();
-        Profile profile = IProfileService.getProfileByEmail(email);
+        Profile profile = profileService.getProfileByEmail(email);
         if (profile == null) {
             return ResponseEntity
                     .status(401)
@@ -71,18 +71,18 @@ public class ClubRestController {
                     .body("error: " + error.getMessage());
         }
 
-        Club createdClub = IClubService.createClubForUser(clubDto, profile, null);
+        Club createdClub = clubService.createClubForUser(clubDto, profile, null);
 
-        Club club = IClubService.getClubById(createdClub.getId());
+        Club club = clubService.getClubById(createdClub.getId());
         if (club == null) return ResponseEntity.internalServerError().body("error: internal server error");
 
         if (apiDto.getMembers() != null) {
             for (String s : apiDto.getMembers()) {
                 if (s.equals(profile.getId().toString())) continue;
                 UUID memberId = UUID.fromString(s);
-                Profile member = IProfileService.getProfileById(memberId);
+                Profile member = profileService.getProfileById(memberId);
                 if (member != null) {
-                    IClubService.joinClubForProfile(member, club);
+                    clubService.joinClubForProfile(member, club);
                 }
             }
         }
@@ -91,14 +91,14 @@ public class ClubRestController {
             for (String s : apiDto.getAdmins()) {
                 if (s.equals(profile.getId().toString())) continue;
                 UUID adminId = UUID.fromString(s);
-                Profile admin = IProfileService.getProfileById(adminId);
+                Profile admin = profileService.getProfileById(adminId);
                 if (admin != null && club.getMembers().contains(admin)) {
-                    IClubService.makeProfileAdminOfClub(admin, club, profile);
+                    clubService.makeProfileAdminOfClub(admin, club, profile);
                 }
             }
         }
 
-        return ResponseEntity.status(201).body(entityConverter.ClubToApiDto(IClubService.getClubById(club.getId())));
+        return ResponseEntity.status(201).body(entityConverter.ClubToApiDto(clubService.getClubById(club.getId())));
     }
 
     @Operation(summary = "Update a club", description = "Updates an existing club. Only club admins can update the club.")
@@ -114,14 +114,14 @@ public class ClubRestController {
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Club ID", required = true) @PathVariable UUID id,
             @RequestBody ClubApiDto apiDto) {
-        Club club = IClubService.getClubById(id);
+        Club club = clubService.getClubById(id);
         if(club == null) {
             return ResponseEntity
                     .status(404)
                     .body("error: club not found");
         }
         String email = userDetails.getUsername();
-        Profile profile = IProfileService.getProfileByEmail(email);
+        Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!club.getAdmins().contains(profile) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
                     .status(403)
@@ -137,10 +137,10 @@ public class ClubRestController {
                     .body("error: " + error.getMessage());
         }
 
-        club = IClubService.updateClub(club, clubDto, null, null);
+        club = clubService.updateClub(club, clubDto, null, null);
         if (club == null) return ResponseEntity.internalServerError().body("error: internal server error");
 
-        return ResponseEntity.status(200).body(entityConverter.ClubToApiDto(IClubService.getClubById(club.getId())));
+        return ResponseEntity.status(200).body(entityConverter.ClubToApiDto(clubService.getClubById(club.getId())));
     }
 
     @Operation(summary = "Delete a club", description = "Deletes an existing club. Only club admins can delete the club.")
@@ -153,7 +153,7 @@ public class ClubRestController {
     public ResponseEntity<Object> deleteClub(
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Club ID", required = true) @PathVariable UUID id) {
-        Club club = IClubService.getClubById(id);
+        Club club = clubService.getClubById(id);
         if(club == null) {
             return ResponseEntity
                     .status(404)
@@ -161,14 +161,14 @@ public class ClubRestController {
         }
 
         String email = userDetails.getUsername();
-        Profile profile = IProfileService.getProfileByEmail(email);
+        Profile profile = profileService.getProfileByEmail(email);
         if (profile == null || (!club.getAdmins().contains(profile) && !profile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity
                     .status(403)
                     .body("error: forbidden");
         }
 
-        IClubService.deleteClub(club, profile);
+        clubService.deleteClub(club, profile);
         return ResponseEntity.status(204).body("success");
     }
 
@@ -180,7 +180,7 @@ public class ClubRestController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Object> getClubById(@Parameter(description = "Club ID", required = true) @PathVariable UUID id) {
-        Club club = IClubService.getClubById(id);
+        Club club = clubService.getClubById(id);
         if(club == null) {
             return ResponseEntity
                     .status(404)

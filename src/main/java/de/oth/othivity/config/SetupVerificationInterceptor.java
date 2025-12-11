@@ -14,7 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @org.springframework.context.annotation.Profile("!test")
 public class SetupVerificationInterceptor implements HandlerInterceptor {
 
-    private final ISessionService ISessionService;
+    private final ISessionService sessionService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -32,7 +32,7 @@ public class SetupVerificationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        Profile profile = ISessionService.getProfileFromSession(session);
+        Profile profile = sessionService.getProfileFromSession(session);
         if (profile == null) {
             return true; 
         }
