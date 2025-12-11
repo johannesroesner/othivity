@@ -11,7 +11,7 @@ import de.oth.othivity.model.main.Profile;
 
 @AllArgsConstructor
 @Service
-public class EmailServiceImpl implements IEmailService {
+public class EmailService implements IEmailService {
 
     private final JavaMailSender mailSender;
 

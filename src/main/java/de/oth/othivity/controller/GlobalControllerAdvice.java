@@ -1,13 +1,12 @@
 package de.oth.othivity.controller;
 
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ChatService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IChatService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.service.IReportService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -36,25 +35,25 @@ import de.oth.othivity.model.enumeration.Role;
 })
 public class GlobalControllerAdvice {
 
-    private final SessionService sessionService;
+    private final ISessionService ISessionService;
     private final INotificationService notificationService;
-    private final ChatService chatService;
+    private final IChatService IChatService;
     private final IReportService reportService;
     @ModelAttribute
     public void addCurrentUsername(HttpSession session, Model model) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile != null) model.addAttribute("currentUsername", profile.getUsername());
     }
 
     @ModelAttribute
     public void addCurrentProfileId(HttpSession session, Model model) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile != null) model.addAttribute("currentProfileId", profile.getId().toString());
     }
 
     @ModelAttribute
     public void addCurrentProfileImage(HttpSession session, Model model) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile != null) {
             model.addAttribute("currentProfileImage", profile.getImage() != null ? profile.getImage().getUrl() : null);
             model.addAttribute("currentProfileInitials", profile.getInitials());
@@ -63,7 +62,7 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addCurrentProfileTheme(HttpSession session, Model model) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile != null) {
             model.addAttribute("currentThemeName", profile.getTheme().getDaisyUiName());
         }
@@ -71,14 +70,14 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addReturnUrl(HttpSession session, HttpServletRequest request, Model model) {
-        String returnUrl = sessionService.getReturnUrlFromSession(session, request);
+        String returnUrl = ISessionService.getReturnUrlFromSession(session, request);
         if (returnUrl != null) model.addAttribute("returnUrl", returnUrl);
         else model.addAttribute("returnUrl", "/dashboard");
     }
 
     @ModelAttribute
     public void addUnreadNotificationCount(HttpSession session, HttpServletRequest request, Model model) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         int count = 0;
         if (profile != null) {
             count = notificationService.getCountOfUnreadNotifications(profile);
@@ -88,7 +87,7 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addUnreadChatCount(HttpSession session, HttpServletRequest request, Model model) {
-        model.addAttribute("unreadMessageCount", chatService.getUnreadMessageCountForProfile(session));
+        model.addAttribute("unreadMessageCount", IChatService.getUnreadMessageCountForProfile(session));
     }
 
     @ModelAttribute
@@ -99,7 +98,7 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void isModerator(HttpSession session, Model model) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile != null) {
             model.addAttribute("isModerator", profile.getRole().equals(Role.MODERATOR));
         } else {

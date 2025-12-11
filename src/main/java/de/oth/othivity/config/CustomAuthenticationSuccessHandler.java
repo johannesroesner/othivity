@@ -3,7 +3,7 @@ package de.oth.othivity.config;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.CustomUserDetails;
 import de.oth.othivity.repository.main.ProfileRepository;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.ISessionService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final SessionService sessionService;
+    private final ISessionService ISessionService;
     private final ProfileRepository profileRepository;
 
     @Override
@@ -44,7 +44,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             HttpSession session = request.getSession();
             session.setAttribute("profileId", profile.getId());
             session.setAttribute("role", profile.getRole());
-            sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
+            ISessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
         } 
         response.sendRedirect("/dashboard");
     }

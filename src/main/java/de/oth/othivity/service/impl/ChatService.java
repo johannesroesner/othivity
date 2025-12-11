@@ -8,23 +8,21 @@ import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.chat.ChatMessageRepository;
 import de.oth.othivity.repository.chat.ChatRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
-import de.oth.othivity.repository.security.UserRepository;
-import de.oth.othivity.service.ChatService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IChatService;
+import de.oth.othivity.service.ISessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
 @Service
-public class ChatServiceImpl implements ChatService {
+public class ChatService implements IChatService {
 
-    private final SessionService sessionService;
+    private final ISessionService ISessionService;
 
     private final ChatRepository chatRepository;
     private final ChatMessageRepository chatMessageRepository;
@@ -32,7 +30,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> getAllChatsForProfile(HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if(profile==null) return null;
 
         List<Chat> allChats = new ArrayList<>();
@@ -89,7 +87,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void setMessagesReadTrue(Chat chat, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if(profile==null) return;
 
         List<ChatMessage> unreadMessages = chatMessageRepository.findByChatAndReceiverAndIsReadFalse(chat, profile);
@@ -105,7 +103,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public long getUnreadMessageCountForProfile(HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if(profile==null) return 0;
         return chatMessageRepository.countByReceiverAndIsReadFalse(profile);
     }

@@ -13,36 +13,31 @@ import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
-import de.oth.othivity.repository.main.ActivityRepository;
-import de.oth.othivity.repository.main.ClubRepository;
 
 
 import de.oth.othivity.model.enumeration.Theme;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class ProfileServiceImpl implements ProfileService {
+public class ProfileService implements IProfileService {
 
-    private final SessionService sessionService;
+    private final ISessionService ISessionService;
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
-    private final ImageService imageService;
-    private final ClubService clubService;
-    private final ActivityService activityService;
+    private final IImageService IImageService;
+    private final IClubService IClubService;
+    private final IActivityService IActivityService;
     private final INotificationService notificationService;
 
     @Override
@@ -52,7 +47,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public List<Club> allJoinedClubsByProfile(HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) return List.of();
         return profile.getClubs();
     }
@@ -65,7 +60,7 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setLastName(registerDto.getLastName());
         profile.setUsername(registerDto.getUsername());
         profile.setEmail(new Email(registerDto.getEmail().toLowerCase()));
-        if(registerDto.getImage() != null) profile.setImage(imageService.saveImage(profile,registerDto.getImage()));
+        if(registerDto.getImage() != null) profile.setImage(IImageService.saveImage(profile,registerDto.getImage()));
         if (!needSetup) {
             profile.setSetupComplete(true);
         }
@@ -81,8 +76,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Profile updateProfile(Profile profile, ProfileDto profileDto, MultipartFile uploadedImage) {
-        if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(imageService.saveImage(profile,uploadedImage));
-        else if(profileDto.getImage() != null) profile.setImage(imageService.saveImage(profile,profileDto.getImage()));
+        if(uploadedImage != null && uploadedImage.getSize() != 0) profile.setImage(IImageService.saveImage(profile,uploadedImage));
+        else if(profileDto.getImage() != null) profile.setImage(IImageService.saveImage(profile,profileDto.getImage()));
         
         if(profileDto.getPhone() != null && !profileDto.getPhone().getNumber().isEmpty()) profile.setPhone(profileDto.getPhone());
         
@@ -139,7 +134,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Profile getCurrentProfile(HttpSession session) {
-        return sessionService.getProfileFromSession(session);
+        return ISessionService.getProfileFromSession(session);
     }
 
     @Override
@@ -161,14 +156,14 @@ public class ProfileServiceImpl implements ProfileService {
         for(Club club : profile.getClubs()) {
             club.getMembers().remove(profile);
             if(club.getAdmins().contains(profile)){
-                if(club.getAdmins().size() == 1) clubService.deleteClub(club,profile);
+                if(club.getAdmins().size() == 1) IClubService.deleteClub(club,profile);
                 else {
                     club.getAdmins().remove(profile);
                 }
             }
         }
 
-        activityService.removeProfileFromActivities(profile);
+        IActivityService.removeProfileFromActivities(profile);
 
         notificationService.sendNotification(profile,profile,"profile.deleteNotification", NotificationType.EMAIL, NotificationType.SMS);
 

@@ -2,9 +2,9 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.dto.PhoneVerificationDto;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.SessionService;
-import de.oth.othivity.service.SmsService;
-import de.oth.othivity.service.VerificationService;
+import de.oth.othivity.service.ISessionService;
+import de.oth.othivity.service.ISmsService;
+import de.oth.othivity.service.IVerificationService;
 import de.oth.othivity.validator.PhoneVerificationDtoValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class VerificationController {
 
-    private SessionService sessionService;
-    private VerificationService verificationService;
-    private SmsService smsService;
+    private ISessionService ISessionService;
+    private IVerificationService IVerificationService;
+    private ISmsService ISmsService;
 
     private PhoneVerificationDtoValidator phoneVerificationDtoValidator;
 
@@ -35,19 +35,19 @@ public class VerificationController {
 
     @GetMapping("/profile/phone/verify")
     public String startPhoneVerify(Model model, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null || profile.getPhone() == null || profile.getPhone().getNumber() == null || profile.getPhone().getVerified() == true) return "redirect:/dashboard";
-        smsService.startVerification(profile.getPhone().getNumber());
-        model.addAttribute("phoneVerificationDto", verificationService.buildPhoneVerificationDto(profile));
+        ISmsService.startVerification(profile.getPhone().getNumber());
+        model.addAttribute("phoneVerificationDto", IVerificationService.buildPhoneVerificationDto(profile));
         return "verify-code";
     }
 
     @PostMapping("/profile/phone/verify")
     public String phoneVerify(@Valid @ModelAttribute("phoneVerificationDto") PhoneVerificationDto phoneVerificationDto, BindingResult bindingResult, Model model, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) return  "redirect:/dashboard";
         if (bindingResult.hasErrors()) return "verify-code";
-        verificationService.setVerificationForPhone(profile);
+        IVerificationService.setVerificationForPhone(profile);
         return "redirect:/settings";
     }
 }

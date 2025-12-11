@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Service
-public class ExplorerServiceImpl implements IExplorerService {
+public class ExplorerService implements IExplorerService {
 
     private final ActivityRepository activityRepository;
 

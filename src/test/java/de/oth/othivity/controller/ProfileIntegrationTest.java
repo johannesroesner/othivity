@@ -10,7 +10,7 @@ import de.oth.othivity.repository.helper.VerificationTokenRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.ApiTokenRepository;
 import de.oth.othivity.service.IPushNotificationService;
-import de.oth.othivity.service.VerificationService;
+import de.oth.othivity.service.IVerificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class ProfileIntegrationTest {
     private TestUtil testUtil;
 
     @Autowired
-    private VerificationService verificationService;
+    private IVerificationService IVerificationService;
 
     @MockBean
     private IPushNotificationService pushNotificationService;

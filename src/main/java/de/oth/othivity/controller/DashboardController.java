@@ -2,10 +2,10 @@ package de.oth.othivity.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.oth.othivity.model.main.Activity;
-import de.oth.othivity.service.ActivityService;
-import de.oth.othivity.service.ChatService;
+import de.oth.othivity.service.IActivityService;
+import de.oth.othivity.service.IChatService;
 import de.oth.othivity.service.IExplorerService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.ISessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
@@ -18,24 +18,24 @@ import org.springframework.ui.Model;
 @Controller
 public class DashboardController {
 
-    private final ChatService chatService;
+    private final IChatService IChatService;
     private final IExplorerService explorerService;
-    private final SessionService sessionService;
-    private final ActivityService activityService;
+    private final ISessionService ISessionService;
+    private final IActivityService IActivityService;
 
     private final ObjectMapper objectMapper;
 
     @GetMapping("/dashboard")
     public String index(Model model, HttpSession session) {
-        model.addAttribute("allActivities", activityService.getAllActivitiesWithGeoCoordinates());
-        Activity soonestActivity = activityService.getSoonestActivityForProfile(sessionService.getProfileFromSession(session));
+        model.addAttribute("allActivities", IActivityService.getAllActivitiesWithGeoCoordinates());
+        Activity soonestActivity = IActivityService.getSoonestActivityForProfile(ISessionService.getProfileFromSession(session));
         model.addAttribute("soonestActivityForProfile", soonestActivity);
-        model.addAttribute("soonestActivityTimeUntil", activityService.getActivityTimeUntil(soonestActivity));
-        model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
+        model.addAttribute("soonestActivityTimeUntil", IActivityService.getActivityTimeUntil(soonestActivity));
+        model.addAttribute("daysToMark", IActivityService.getActivityDatesForProfile(session));
         model.addAttribute("activeTab", "dashboard");
         model.addAttribute("soonestActivities", explorerService.getSoonestActivities(PageRequest.of(0, 3), null, null).getContent());
-        model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
-        model.addAttribute("clubs", sessionService.getProfileFromSession(session).getClubs());
+        model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
+        model.addAttribute("clubs", ISessionService.getProfileFromSession(session).getClubs());
         return "dashboard";
     }
 }

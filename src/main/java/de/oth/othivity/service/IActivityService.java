@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;;
 
 @Service
-public interface ActivityService {
+public interface IActivityService {
 
     List<Activity> getAllActivities();
 

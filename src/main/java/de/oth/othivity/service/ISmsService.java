@@ -2,7 +2,7 @@ package de.oth.othivity.service;
 
 import de.oth.othivity.model.main.Profile;
 
-public interface SmsService {
+public interface ISmsService {
     void sendSms(Profile profile, String message);
 
     void startVerification(String phoneNumber);

@@ -1,7 +1,7 @@
 package de.oth.othivity.controller;
 
 
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 import lombok.AllArgsConstructor;
 import java.util.Locale;
 import org.springframework.stereotype.Controller;
@@ -12,13 +12,13 @@ import org.springframework.ui.Model;
 @Controller
 public class LandingController {
 
-    private final ProfileService profileService;
+    private final IProfileService IProfileService;
 
     @GetMapping("/")
     public String index(Locale local, Model model) {
 
         model.addAttribute("activeTab", "");
-        model.addAttribute("profileCounter", profileService.getProfileCounter());
+        model.addAttribute("profileCounter", IProfileService.getProfileCounter());
         model.addAttribute("browserLang", local.getLanguage());
         return "landing";
     }

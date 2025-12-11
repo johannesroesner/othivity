@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class ActivityServiceImpl implements ActivityService {
-    private final SessionService sessionService;
-    private final ImageService imageService;
-    private final GeocodingService geocodingService;
+public class ActivityService implements IActivityService {
+    private final ISessionService ISessionService;
+    private final IImageService IImageService;
+    private final IGeocodingService IGeocodingService;
     private final INotificationService notificationService;
-    private final PagingService pagingService;
+    private final IPagingService IPagingService;
 
     private final MessageSource messageSource;
     private final ObjectMapper objectMapper;
@@ -48,7 +48,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<Activity> getActivitiesCreatedOrJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) return Page.empty();
 
         return activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, pageable, tag, search);
@@ -56,7 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<Activity> getActivitiesNotCreatedOrNotJoinedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) return Page.empty();
 
         return activityRepository.findAllNotCreatedOrNotJoinedByProfileWithFilter(profile, pageable, tag, search);
@@ -64,7 +64,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<Activity> getActivitiesCreatedByProfileWithFilter(HttpSession session, Pageable pageable, Tag tag, String search) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) return Page.empty();
 
         return activityRepository.findAllCreatedByProfileWithFilter(profile, pageable, tag, search);
@@ -73,7 +73,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public List<String> getActivityDatesForProfile(HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, Pageable.unpaged(), null, null).getContent();
 
         final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -93,8 +93,8 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setDescription(activityDto.getDescription());
 
         //image handling
-        if(uploadedImage != null && uploadedImage.getSize() != 0) activity.setImage(imageService.saveImage(activity,uploadedImage));
-        else if(activityDto.getImage() != null) activity.setImage(imageService.saveImage(activity,activityDto.getImage()));
+        if(uploadedImage != null && uploadedImage.getSize() != 0) activity.setImage(IImageService.saveImage(activity,uploadedImage));
+        else if(activityDto.getImage() != null) activity.setImage(IImageService.saveImage(activity,activityDto.getImage()));
         else return null;
 
         activity.setDate(activityDto.getDate());
@@ -104,7 +104,7 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setTags(activityDto.getTags());
 
         // get latitude and longitude from geocoding service
-        activity.setAddress(geocodingService.geocode(activityDto.getAddress()));
+        activity.setAddress(IGeocodingService.geocode(activityDto.getAddress()));
         activity.setStartedBy(profile);
 
         List<Profile> participants = new ArrayList<>();
@@ -129,14 +129,14 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setTags(activityDto.getTags());
 
         // get latitude and longitude from geocoding service
-        activity.setAddress(geocodingService.geocode(activityDto.getAddress()));
+        activity.setAddress(IGeocodingService.geocode(activityDto.getAddress()));
         activity.setStartedBy(profile);
 
         if(uploadedImage != null && uploadedImage.getSize() != 0) {
-            activity.setImage(imageService.saveImage(activity, uploadedImage));
+            activity.setImage(IImageService.saveImage(activity, uploadedImage));
         }
         if(activityDto.getImage()!= null && activityDto.getImage().getUrl() != null && !activity.getImage().getUrl().equals(activityDto.getImage().getUrl())) {
-            activity.setImage(imageService.saveImage(activity, activityDto.getImage()));
+            activity.setImage(IImageService.saveImage(activity, activityDto.getImage()));
         }
 
         for(Profile participant : activity.getTakePart() ) {
@@ -182,7 +182,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Activity leaveActivity(Activity activity, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) return null;
         List<Profile> participants = activity.getTakePart();
         participants.removeIf(p -> p.getId().equals(profile.getId()));
@@ -225,7 +225,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Activity getSoonestActivityForProfile(Profile profile) {
         if (profile == null) return null;
-        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, pagingService.createPageable(1, 1, "date", "asc"), null, null).getContent();
+        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, IPagingService.createPageable(1, 1, "date", "asc"), null, null).getContent();
         return activities.isEmpty() ? null : activities.get(0);
     }
 

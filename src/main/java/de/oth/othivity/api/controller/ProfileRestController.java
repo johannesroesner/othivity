@@ -7,10 +7,9 @@ import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.CustomUserDetails;
-import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Theme;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 import de.oth.othivity.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,16 +20,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
@@ -39,7 +35,7 @@ import java.util.UUID;
 @SecurityRequirement(name = "Bearer Authentication")
 public class ProfileRestController {
 
-    private final ProfileService profileService;
+    private final IProfileService IProfileService;
     private final EntityConverter entityConverter;
     private final IUserService userService; 
 
@@ -50,7 +46,7 @@ public class ProfileRestController {
     })
     @GetMapping ("/all")
     public List<ProfileApiDto> getAllProfiles() {
-        return profileService.getAllProfiles()
+        return IProfileService.getAllProfiles()
                 .stream()
                 .map(entityConverter::ProfileToApiDto)
                 .toList();
@@ -64,7 +60,7 @@ public class ProfileRestController {
     })
     @GetMapping("/me")
     public ResponseEntity<Object> getProfileByPrincipal(@AuthenticationPrincipal UserDetails userDetail) {
-        Profile profile = profileService.getProfileByEmail(userDetail.getUsername());
+        Profile profile = IProfileService.getProfileByEmail(userDetail.getUsername());
         if (profile == null) {
             return ResponseEntity
                     .status(404)
@@ -85,13 +81,13 @@ public class ProfileRestController {
     public ResponseEntity<Object> getProfileByUsername(
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @Parameter(description = "Username of the profile to retrieve", required = true) @PathVariable String username) {
-        Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
+        Profile requesterProfile = IProfileService.getProfileByEmail(userDetail.getUsername());
         
         if(requesterProfile == null || !requesterProfile.getRole().equals(Role.MODERATOR)){
             return ResponseEntity.status(403).body("error: forbidden");
         }
         
-        Profile profile = profileService.getProfileByUsername(username);
+        Profile profile = IProfileService.getProfileByUsername(username);
 
         if (profile == null) {
             return ResponseEntity.status(404).body("error: profile not found");
@@ -110,7 +106,7 @@ public class ProfileRestController {
     })
     @PostMapping
     public ResponseEntity<Object> createProfile(@AuthenticationPrincipal CustomUserDetails userDetail, @RequestBody ProfileApiDto apiDto) {
-        Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
+        Profile requesterProfile = IProfileService.getProfileByEmail(userDetail.getUsername());
         if (requesterProfile == null || !requesterProfile.getRole().equals(Role.MODERATOR)) {
             return ResponseEntity
                     .status(403)
@@ -123,11 +119,11 @@ public class ProfileRestController {
             registerDto = entityConverter.ApiDtoToRegisterDto(apiDto);
             profileDetailsDto = entityConverter.ApiDtoToProfileDto(apiDto);
             
-            if (profileService.isEmailTaken(registerDto.getEmail())) {
+            if (IProfileService.isEmailTaken(registerDto.getEmail())) {
                  return ResponseEntity.status(409).body("error: email already taken");
             }
 
-            if (profileService.isUsernameTaken(registerDto.getUsername())) {
+            if (IProfileService.isUsernameTaken(registerDto.getUsername())) {
                  return ResponseEntity.status(409).body("error: username already taken");
             }
         } catch (Exception error) {
@@ -142,18 +138,18 @@ public class ProfileRestController {
              return ResponseEntity.status(400).body("error creating user: " + e.getMessage());
         }
 
-        Profile createdProfile = profileService.getProfileByEmail(registerDto.getEmail());
+        Profile createdProfile = IProfileService.getProfileByEmail(registerDto.getEmail());
         
         if (createdProfile == null) {
             return ResponseEntity.internalServerError().body("error: profile creation failed internally");
         }
 
-        createdProfile = profileService.updateProfile(createdProfile, profileDetailsDto, null);
+        createdProfile = IProfileService.updateProfile(createdProfile, profileDetailsDto, null);
 
         if (apiDto.getLanguage() != null) {
              try {
                  Language language = Language.valueOf(apiDto.getLanguage());
-                 profileService.updateProfileLanguage(createdProfile, language);
+                 IProfileService.updateProfileLanguage(createdProfile, language);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -162,7 +158,7 @@ public class ProfileRestController {
         if (apiDto.getTheme() != null) {
              try {
                  Theme theme = Theme.valueOf(apiDto.getTheme());
-                 profileService.updateProfileTheme(createdProfile, theme);
+                 IProfileService.updateProfileTheme(createdProfile, theme);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -183,8 +179,8 @@ public class ProfileRestController {
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @Parameter(description = "Username of the profile to update", required = true) @PathVariable String username,
             @RequestBody ProfileApiDto apiDto) {
-        Profile profileToUpdate = profileService.getProfileByUsername(username);
-        Profile requesterProfile = profileService.getProfileByEmail(userDetail.getUsername());
+        Profile profileToUpdate = IProfileService.getProfileByUsername(username);
+        Profile requesterProfile = IProfileService.getProfileByEmail(userDetail.getUsername());
 
         if (profileToUpdate == null || requesterProfile == null || 
             (!profileToUpdate.getId().equals(requesterProfile.getId()) && !requesterProfile.getRole().equals(Role.MODERATOR))) {
@@ -210,12 +206,12 @@ public class ProfileRestController {
                     .body("error: " + error.getMessage());
         }
         
-        Profile updatedProfile = profileService.updateProfile(profileToUpdate, profileDto, null);
+        Profile updatedProfile = IProfileService.updateProfile(profileToUpdate, profileDto, null);
 
         if (apiDto.getLanguage() != null) {
              try {
                  Language language = Language.valueOf(apiDto.getLanguage());
-                 profileService.updateProfileLanguage(updatedProfile, language);
+                 IProfileService.updateProfileLanguage(updatedProfile, language);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -224,7 +220,7 @@ public class ProfileRestController {
         if (apiDto.getTheme() != null) {
              try {
                  Theme theme = Theme.valueOf(apiDto.getTheme());
-                 profileService.updateProfileTheme(updatedProfile, theme);
+                 IProfileService.updateProfileTheme(updatedProfile, theme);
              } catch (IllegalArgumentException e) {
                  // ignore
              }
@@ -242,15 +238,15 @@ public class ProfileRestController {
     public ResponseEntity<Object> deleteProfile(
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Username of the profile to delete", required = true) @PathVariable String username) {
-        Profile profileToDelete = profileService.getProfileByUsername(username);
-        Profile requesterProfile = profileService.getProfileByEmail(userDetails.getUsername());
+        Profile profileToDelete = IProfileService.getProfileByUsername(username);
+        Profile requesterProfile = IProfileService.getProfileByEmail(userDetails.getUsername());
 
         if (profileToDelete == null || requesterProfile == null || 
             (!profileToDelete.getId().equals(requesterProfile.getId()) && !requesterProfile.getRole().equals(Role.MODERATOR))) {
             return ResponseEntity.status(403).body("error: forbidden");
         }
 
-        profileService.deleteProfile(profileToDelete);
+        IProfileService.deleteProfile(profileToDelete);
         return ResponseEntity.status(204).build();
     }
 }

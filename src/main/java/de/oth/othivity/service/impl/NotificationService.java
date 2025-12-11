@@ -1,6 +1,6 @@
 package de.oth.othivity.service.impl;
 
-import de.oth.othivity.service.SmsService;
+import de.oth.othivity.service.ISmsService;
 import lombok.AllArgsConstructor;
 
 import java.text.MessageFormat;
@@ -30,14 +30,14 @@ import java.util.Set;
 
 @AllArgsConstructor
 @Service
-public class NotificationServiceImpl implements INotificationService {
+public class NotificationService implements INotificationService {
 
     private final VerificationTokenRepository verificationTokenRepository;
 
     private final MessageSource messageSource;
     private final NotificationRepository notificationRepository;
-    private final EmailServiceImpl emailService;
-    private final SmsService smsService;
+    private final EmailService emailService;
+    private final ISmsService ISmsService;
     private final IPushNotificationService pushNotificationService;
 
     @Override
@@ -90,7 +90,7 @@ public class NotificationServiceImpl implements INotificationService {
 
             for (NotificationType type : uniqueTypes) {
                 switch (type) {
-                    case SMS -> smsService.sendSms(recipient,subject);
+                    case SMS -> ISmsService.sendSms(recipient,subject);
                     case PUSH_NOTIFICATION -> {
                         if (recipient.getEmail() != null && recipient.getEmail().isVerified()) {
                             pushNotificationService.sendPushToProfile(recipient, subject, formattedMessage);

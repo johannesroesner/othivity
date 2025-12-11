@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.service.IUserService;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 import de.oth.othivity.service.ICustomOAuth2UserService;
 import lombok.AllArgsConstructor;
 
@@ -19,10 +19,10 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Service
-public class CustomOAuth2UserServiceImpl extends OidcUserService implements ICustomOAuth2UserService {
+public class CustomOAuth2UserService extends OidcUserService implements ICustomOAuth2UserService {
     
     private final IUserService userService;
-    private final ProfileService profileService;
+    private final IProfileService IProfileService;
 
     @Override
     @Transactional
@@ -45,7 +45,7 @@ public class CustomOAuth2UserServiceImpl extends OidcUserService implements ICus
 
             User newUser = userService.registerNewUserAccount(registerDto, Locale.ENGLISH, true, false);
 
-            profileService.setVerificationForEmail(newUser.getProfile());
+            IProfileService.setVerificationForEmail(newUser.getProfile());
         }
 
         return oidcUser;

@@ -1,6 +1,6 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.service.ChatService;
+import de.oth.othivity.service.IChatService;
 import de.oth.othivity.validator.ProfileDtoValidator;
 import de.oth.othivity.validator.EmailVerificationDtoValidator;
 import de.oth.othivity.validator.UsernameDtoValidator; 
@@ -28,10 +28,10 @@ import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
 import java.util.UUID;
 
-import de.oth.othivity.service.PagingService;
+import de.oth.othivity.service.IPagingService;
 import de.oth.othivity.validator.ImageUploadValidator;
-import de.oth.othivity.service.ProfileService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IProfileService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.dto.UsernameDto;
 import de.oth.othivity.model.main.Profile;
@@ -48,17 +48,17 @@ import de.oth.othivity.model.enumeration.Theme;
 @Controller
 public class ProfileController {
 
-    private final ProfileService profileService;
-    private final SessionService sessionService;
+    private final IProfileService IProfileService;
+    private final ISessionService ISessionService;
     private final INotificationService notificationService;
     private final VerificationTokenRepository tokenRepository;
     private final IApiTokenService apiTokenService; 
     private final IReportService reportService;
-    private final PagingService pagingService;
+    private final IPagingService IPagingService;
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
-    private final ChatService chatService;
+    private final IChatService IChatService;
     private final EmailVerificationDtoValidator emailVerificationDtoValidator;
     private final UsernameDtoValidator usernameDtoValidator; 
 
@@ -80,13 +80,13 @@ public class ProfileController {
                                  @RequestParam(defaultValue = "asc") String direction,
                                  @RequestParam(required = false) String search) {
 
-        Pageable pageable = pagingService.createPageable(page, size, sortBy, direction);
+        Pageable pageable = IPagingService.createPageable(page, size, sortBy, direction);
         
         Page<Profile> profiles;
         if (search == null || search.isBlank()) {
             profiles = Page.empty(pageable);
         } else {
-            profiles = profileService.searchProfiles(search, pageable);
+            profiles = IProfileService.searchProfiles(search, pageable);
         }
 
         model.addAttribute("profiles", profiles);
@@ -96,7 +96,7 @@ public class ProfileController {
         model.addAttribute("direction", direction);
         model.addAttribute("activeTab", "profiles"); 
 
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         model.addAttribute("currentThemeName", (profile != null && profile.getTheme().isDark()) ? "dark" : "light");
 
         return "profile-overview";
@@ -104,8 +104,8 @@ public class ProfileController {
 
     @GetMapping("/profile/{username}")
     public String getProfileDetail(@PathVariable("username") String username, Model model, HttpSession session, HttpServletRequest request) {
-        Profile profile = profileService.getProfileByUsername(username);
-        Profile currentProfile = sessionService.getProfileFromSession(session);
+        Profile profile = IProfileService.getProfileByUsername(username);
+        Profile currentProfile = ISessionService.getProfileFromSession(session);
         
         if (profile == null) {
             String referer = request.getHeader("Referer");
@@ -115,11 +115,11 @@ public class ProfileController {
         model.addAttribute("profile", profile);
         model.addAttribute("isOwnProfile", currentProfile.getId().equals(profile.getId()));
 
-        model.addAttribute("chatId", chatService.buildChatId(profile, currentProfile));
+        model.addAttribute("chatId", IChatService.buildChatId(profile, currentProfile));
 
-        model.addAttribute("canMessage", sessionService.canMessage(session,profile));
-        model.addAttribute("canDelete", sessionService.canDelete(session, profile));
-        model.addAttribute("canUpdate", sessionService.canUpdate(session, profile));
+        model.addAttribute("canMessage", ISessionService.canMessage(session,profile));
+        model.addAttribute("canDelete", ISessionService.canDelete(session, profile));
+        model.addAttribute("canUpdate", ISessionService.canUpdate(session, profile));
         model.addAttribute("isReportable", reportService.isReportableProfile(currentProfile, profile));
 
         return "profile";
@@ -127,7 +127,7 @@ public class ProfileController {
 
     @GetMapping("/settings")
     public String getProfileSettings(Model model, HttpSession session, HttpServletRequest request) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
@@ -142,20 +142,20 @@ public class ProfileController {
 
     @GetMapping("/profile/edit/{username}")
     public String editProfile(@PathVariable("username") String username, Model model, HttpSession session) {
-        Profile profileToEdit = profileService.getProfileByUsername(username);
+        Profile profileToEdit = IProfileService.getProfileByUsername(username);
         if (profileToEdit == null) return "redirect:/dashboard";
-        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+        if (!ISessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
         model.addAttribute("profile", profileToEdit);
-        model.addAttribute("profileDto", profileService.profileToDto(profileToEdit));
+        model.addAttribute("profileDto", IProfileService.profileToDto(profileToEdit));
         return "profile-edit";
     }
 
     @PostMapping("/profile/edit/{username}")
     public String updateProfile(@PathVariable("username") String username, @Valid @ModelAttribute("profileDto") ProfileDto profileDto, BindingResult bindingResult, @RequestParam(value = "uploadedImage", required = false) MultipartFile uploadedImage, HttpSession session, Model model) {
-        Profile profileToEdit = profileService.getProfileByUsername(username);
+        Profile profileToEdit = IProfileService.getProfileByUsername(username);
 
         if (profileToEdit == null) return "redirect:/dashboard";
-        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+        if (!ISessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
 
         if (bindingResult.hasErrors() || (uploadedImage != null && imageUploadValidator.validateNotRequired(uploadedImage) != null)) {
             model.addAttribute("imageFileError", uploadedImage != null ? imageUploadValidator.validateNotRequired(uploadedImage) : null);
@@ -163,39 +163,39 @@ public class ProfileController {
             return "profile-edit";
         }
 
-        profileService.updateProfile(profileToEdit, profileDto, uploadedImage);
+        IProfileService.updateProfile(profileToEdit, profileDto, uploadedImage);
         return "redirect:/profile/" + profileToEdit.getUsername();
     }
 
     @PostMapping("/profile/deleteImage/{username}")
     public String deleteProfileImage(@PathVariable String username, HttpSession session) {
-        Profile profileToEdit = profileService.getProfileByUsername(username);
+        Profile profileToEdit = IProfileService.getProfileByUsername(username);
 
         if (profileToEdit == null) return "redirect:/dashboard";
-        if (!sessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
+        if (!ISessionService.canUpdate(session, profileToEdit)) return "redirect:/profile/" + username;
 
-        profileService.deleteProfileImage(profileToEdit);
+        IProfileService.deleteProfileImage(profileToEdit);
 
         return "redirect:/profile/edit/" + username;
     }
 
     @PostMapping("/profile/delete/{username}")
     public String deleteProfile(@PathVariable("username") String username, HttpSession session, HttpServletRequest request) {
-        Profile profileToDelete = profileService.getProfileByUsername(username); 
-        Profile currentProfile = sessionService.getProfileFromSession(session);
+        Profile profileToDelete = IProfileService.getProfileByUsername(username);
+        Profile currentProfile = ISessionService.getProfileFromSession(session);
 
-        if (!sessionService.canDelete(session, profileToDelete)) {
+        if (!ISessionService.canDelete(session, profileToDelete)) {
             String referer = request.getHeader("Referer");
             return "redirect:" + (referer != null ? referer : "/dashboard");
         }
 
         if (profileToDelete != null) {
             if (!profileToDelete.getId().equals(currentProfile.getId())) {
-                String returnUrl = sessionService.getReturnUrlFromSession(session, request);
-                profileService.deleteProfile(profileToDelete);    
+                String returnUrl = ISessionService.getReturnUrlFromSession(session, request);
+                IProfileService.deleteProfile(profileToDelete);
                 return "redirect:" + (returnUrl != null ? returnUrl : "/dashboard");
             }
-            profileService.deleteProfile(profileToDelete);
+            IProfileService.deleteProfile(profileToDelete);
             session.invalidate();
         }
         return "redirect:/login";
@@ -203,12 +203,12 @@ public class ProfileController {
 
     @PostMapping("/change-language")
     public String changeLanguage(@RequestParam("language") Language language, HttpSession session, HttpServletRequest request, HttpServletResponse response) { 
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         
         if (profile != null) {
-            profileService.updateProfileLanguage(profile, language);
+            IProfileService.updateProfileLanguage(profile, language);
             profile.setLanguage(language); 
-            sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
+            ISessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
         }
         
         return "redirect:/settings";
@@ -216,9 +216,9 @@ public class ProfileController {
 
     @PostMapping("/change-theme")
     public String changeTheme(@RequestParam("theme") Theme theme, HttpSession session, HttpServletRequest request) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile != null) {
-            profileService.updateProfileTheme(profile, theme);
+            IProfileService.updateProfileTheme(profile, theme);
         }
 
         String referer = request.getHeader("Referer");
@@ -238,14 +238,14 @@ public class ProfileController {
             return "setup";
         }
 
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
 
         if (profile == null) {
             return "redirect:/login";
         }
-        profileService.updateProfileLanguage(profile, request.getLocale());
-        profileService.setUsername(profile, usernameDto.getUsername());
-        sessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
+        IProfileService.updateProfileLanguage(profile, request.getLocale());
+        IProfileService.setUsername(profile, usernameDto.getUsername());
+        ISessionService.updateLocaleResolverWithProfileLanguage(request, response, profile);
 
         return "redirect:/dashboard";
     }
@@ -255,7 +255,7 @@ public class ProfileController {
 
         model.addAttribute("emailVerificationDto", new EmailVerificationDto());
 
-        notificationService.sendVerificationEmail(sessionService.getProfileFromSession(session));
+        notificationService.sendVerificationEmail(ISessionService.getProfileFromSession(session));
 
         return "verify-email";
     }
@@ -265,7 +265,7 @@ public class ProfileController {
     public String verifyUser(@ModelAttribute EmailVerificationDto emailVerificationDto, Model model, HttpSession session) {
 
         VerificationToken verificationToken = tokenRepository.findByToken(emailVerificationDto.getToken());
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
 
         if (verificationToken == null) {
             model.addAttribute("message", "Ungültiger Token.");
@@ -286,7 +286,7 @@ public class ProfileController {
             return "verify-email";
         }
 
-        profileService.setVerificationForEmail(profile);
+        IProfileService.setVerificationForEmail(profile);
         
         profile.getEmail().setVerified(true);
         session.setAttribute("profile", profile);
@@ -299,7 +299,7 @@ public class ProfileController {
 
     @PostMapping("/tokens")
     public String createToken(@RequestParam("name") String name, @RequestParam("duration") int duration, Principal principal, RedirectAttributes redirectAttributes, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
 
         if (profile == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Kein Profil gefunden.");
@@ -316,7 +316,7 @@ public class ProfileController {
 
     @PostMapping("/tokens/delete")
     public String deleteToken(@RequestParam("id") UUID id, Principal principal, HttpSession session) {
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         
         if (profile != null) {
             apiTokenService.revokeToken(id, profile);

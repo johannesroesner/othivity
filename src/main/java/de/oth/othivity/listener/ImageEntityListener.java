@@ -1,7 +1,7 @@
 package de.oth.othivity.listener;
 
 import de.oth.othivity.model.helper.Image;
-import de.oth.othivity.service.ImageService;
+import de.oth.othivity.service.IImageService;
 import jakarta.persistence.PreRemove;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ImageEntityListener {
 
-    private static ImageService imageService;
+    private static IImageService IImageService;
 
     @Autowired
-    public void init(ImageService imageService) {
-        ImageEntityListener.imageService = imageService;
+    public void init(IImageService IImageService) {
+        ImageEntityListener.IImageService = IImageService;
     }
 
     @PreRemove
     public void preRemove(Image image) {
-        imageService.deleteImage(image);
+        IImageService.deleteImage(image);
     }
 }

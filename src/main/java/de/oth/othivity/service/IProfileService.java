@@ -19,7 +19,7 @@ import java.util.Locale;
 
 
 @Service
-public interface ProfileService {
+public interface IProfileService {
 
     List<Profile> getAllProfiles();
 

@@ -3,13 +3,13 @@ package de.oth.othivity.service.impl;
 import de.oth.othivity.dto.PhoneVerificationDto;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ProfileRepository;
-import de.oth.othivity.service.VerificationService;
+import de.oth.othivity.service.IVerificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
-public class VerificationServiceImpl implements VerificationService {
+public class VerificationService implements IVerificationService {
 
     ProfileRepository profileRepository;
 

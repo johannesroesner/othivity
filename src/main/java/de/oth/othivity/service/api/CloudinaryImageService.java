@@ -5,7 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import de.oth.othivity.model.helper.Image;
 import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.repository.helper.ImageRepository;
-import de.oth.othivity.service.ImageService;
+import de.oth.othivity.service.IImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 @AllArgsConstructor
 @Service
-public class CloudinaryImageService implements ImageService {
+public class CloudinaryImageService implements IImageService {
 
     private final Cloudinary cloudinary;
     private final ImageRepository imageRepository;

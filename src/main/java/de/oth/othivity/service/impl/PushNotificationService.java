@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class PushNotificationServiceImpl implements IPushNotificationService {
+public class PushNotificationService implements IPushNotificationService {
 
     private final PushSubscriptionRepository subscriptionRepository;
     private final ObjectMapper objectMapper;
@@ -27,7 +27,7 @@ public class PushNotificationServiceImpl implements IPushNotificationService {
     @Value("${vapid.private.key}") private String privateKey;
     @Value("${vapid.subject}") private String subject;
 
-    public PushNotificationServiceImpl(PushSubscriptionRepository subscriptionRepository, ObjectMapper objectMapper) {
+    public PushNotificationService(PushSubscriptionRepository subscriptionRepository, ObjectMapper objectMapper) {
         this.subscriptionRepository = subscriptionRepository;
         this.objectMapper = objectMapper;
     }

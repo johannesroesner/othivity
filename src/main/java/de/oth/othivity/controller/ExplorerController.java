@@ -3,9 +3,8 @@ package de.oth.othivity.controller;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.service.IExplorerService;
-import de.oth.othivity.service.PagingService;
-import de.oth.othivity.service.SessionService;
-import de.oth.othivity.model.main.Profile;
+import de.oth.othivity.service.IPagingService;
+import de.oth.othivity.service.ISessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ExplorerController {
     private final IExplorerService explorerService;
-    private final PagingService pagingService;
-    private final SessionService sessionService;
+    private final IPagingService IPagingService;
+    private final ISessionService ISessionService;
 
     @GetMapping("/explorer")
     public String explorer(HttpSession session, Model model, 
@@ -45,9 +44,9 @@ public class ExplorerController {
         Tag selectedTag = null;
         if(tag != null && !tag.isBlank() && !tag.equalsIgnoreCase("all")) selectedTag = Tag.valueOf(tag.toUpperCase());
 
-        Pageable bestMixPageable = pagingService.createPageable(bestMixPage, size, sortBy, direction);
-        Pageable soonestPageable = pagingService.createPageable(soonestPage, size, sortBy, direction);
-        Pageable closestPageable = pagingService.createPageable(closestPage, size, sortBy, direction);
+        Pageable bestMixPageable = IPagingService.createPageable(bestMixPage, size, sortBy, direction);
+        Pageable soonestPageable = IPagingService.createPageable(soonestPage, size, sortBy, direction);
+        Pageable closestPageable = IPagingService.createPageable(closestPage, size, sortBy, direction);
 
         Page<Activity> bestMixActivities = explorerService.getBestMixActivities(lat, lon, bestMixPageable, search, selectedTag);
         model.addAttribute("bestMixActivities", bestMixActivities);

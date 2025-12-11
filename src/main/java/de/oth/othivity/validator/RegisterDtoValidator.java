@@ -1,7 +1,7 @@
 package de.oth.othivity.validator;
 
 import de.oth.othivity.dto.RegisterDto;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class RegisterDtoValidator implements Validator {
 
-    private final ProfileService profileService;
+    private final IProfileService IProfileService;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9]+$");
@@ -40,12 +40,12 @@ public class RegisterDtoValidator implements Validator {
             errors.rejectValue("username", "register.error.usernameInvalid");
         }
 
-        if (request.getUsername() != null && profileService.isUsernameTaken(request.getUsername())) {
+        if (request.getUsername() != null && IProfileService.isUsernameTaken(request.getUsername())) {
             errors.rejectValue("username", "register.error.usernameExists");
         }
 
 
-        if (request.getEmail() != null && profileService.isEmailTaken(request.getEmail())) {
+        if (request.getEmail() != null && IProfileService.isEmailTaken(request.getEmail())) {
             errors.rejectValue("email", "register.error.emailExists");
         }
         

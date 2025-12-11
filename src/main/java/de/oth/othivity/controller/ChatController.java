@@ -1,15 +1,11 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.dto.ChatMessageDto;
 import de.oth.othivity.model.chat.Chat;
 import de.oth.othivity.model.chat.ChatId;
-import de.oth.othivity.model.chat.ChatMessage;
-import de.oth.othivity.model.enumeration.Language;
-import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ChatService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IChatService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.validator.ChatMessageDtoValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -25,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class ChatController {
 
-    private final ChatService chatService;
-    private final SessionService sessionService;
+    private final IChatService IChatService;
+    private final ISessionService ISessionService;
 
     private final ChatMessageDtoValidator chatMessageDtoValidator;
 
@@ -38,10 +34,10 @@ public class ChatController {
     @GetMapping("/chats")
     public String getChatOverview(HttpSession session, Model model) {
 
-        Profile currentProfile = sessionService.getProfileFromSession(session);
+        Profile currentProfile = ISessionService.getProfileFromSession(session);
         if (currentProfile == null) return "redirect:/login";
 
-        model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
+        model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
         model.addAttribute("chat", null);
         model.addAttribute("chatMessageDto", new ChatMessageDto());
         model.addAttribute("returnUrl", "/dashboard");
@@ -53,13 +49,13 @@ public class ChatController {
     public String getChat(HttpSession session, Model model, @PathVariable("id") String id) {
         ChatId chatId = ChatId.fromUrlString(id);
         if(chatId == null) return "redirect:/dashbaord";
-        Chat chat = chatService.getOrCreateChatById(chatId);
+        Chat chat = IChatService.getOrCreateChatById(chatId);
 
-        model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
+        model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
         model.addAttribute("chatMessageDto", new ChatMessageDto());
         model.addAttribute("chat", chat);
 
-        chatService.setMessagesReadTrue(chat, session);
+        IChatService.setMessagesReadTrue(chat, session);
         return "chat";
     }
 
@@ -68,15 +64,15 @@ public class ChatController {
         ChatId chatId = ChatId.fromUrlString(id);
         if(chatId == null) return "redirect:/dashboard";
 
-        Chat chat = chatService.getOrCreateChatById(chatId);
+        Chat chat = IChatService.getOrCreateChatById(chatId);
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
+            model.addAttribute("allChats", IChatService.getAllChatsForProfile(session));
             model.addAttribute("chatMessageDto", new ChatMessageDto());
             model.addAttribute("chat", chat);
             return "chat";
         }
-        chatService.addMessageToChat(chatMessageDto, chat, sessionService.getProfileFromSession(session));
+        IChatService.addMessageToChat(chatMessageDto, chat, ISessionService.getProfileFromSession(session));
         return  "redirect:/chat/" + id;
     }
 

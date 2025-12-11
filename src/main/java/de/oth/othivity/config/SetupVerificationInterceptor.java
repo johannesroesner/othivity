@@ -1,7 +1,7 @@
 package de.oth.othivity.config;
 
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.ISessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @org.springframework.context.annotation.Profile("!test")
 public class SetupVerificationInterceptor implements HandlerInterceptor {
 
-    private final SessionService sessionService;
+    private final ISessionService ISessionService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -32,7 +32,7 @@ public class SetupVerificationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        Profile profile = sessionService.getProfileFromSession(session);
+        Profile profile = ISessionService.getProfileFromSession(session);
         if (profile == null) {
             return true; 
         }
