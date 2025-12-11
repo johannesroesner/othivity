@@ -1,6 +1,5 @@
 package de.oth.othivity.model.helper;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 

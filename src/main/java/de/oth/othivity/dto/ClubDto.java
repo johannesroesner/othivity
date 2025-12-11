@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import org.springframework.web.multipart.MultipartFile;
 import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.helper.Image;

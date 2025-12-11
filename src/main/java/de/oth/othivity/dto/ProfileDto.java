@@ -1,20 +1,11 @@
 package de.oth.othivity.dto;
 
-import de.oth.othivity.model.enumeration.Language;
-import de.oth.othivity.model.enumeration.Tag;
-import de.oth.othivity.model.helper.Address;
 import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.helper.Email;
-import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.helper.Image;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

@@ -1,8 +1,6 @@
 package de.oth.othivity.validator;
 
 import de.oth.othivity.dto.ChatMessageDto;
-import de.oth.othivity.dto.ClubDto;
-import de.oth.othivity.model.chat.Chat;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

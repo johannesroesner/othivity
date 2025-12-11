@@ -3,10 +3,8 @@ package de.oth.othivity.validator;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.repository.helper.PhoneRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import java.util.regex.Pattern;
