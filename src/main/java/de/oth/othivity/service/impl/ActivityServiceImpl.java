@@ -34,6 +34,7 @@ public class ActivityServiceImpl implements ActivityService {
     private final ImageService imageService;
     private final GeocodingService geocodingService;
     private final INotificationService notificationService;
+    private final PagingService pagingService;
 
     private final MessageSource messageSource;
     private final ObjectMapper objectMapper;
@@ -224,7 +225,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Activity getSoonestActivityForProfile(Profile profile) {
         if (profile == null) return null;
-        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, Pageable.unpaged(), null, null).getContent();
+        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, pagingService.createPageable(1, 1, "date", "asc"), null, null).getContent();
         return activities.isEmpty() ? null : activities.get(0);
     }
 

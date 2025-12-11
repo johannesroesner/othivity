@@ -26,6 +26,7 @@ jobs:
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "MODERATOR_PASSWORD=${{ secrets.MODERATOR_PASSWORD }}" >> .env
         shell: bash
 
       - name: set up jdk
