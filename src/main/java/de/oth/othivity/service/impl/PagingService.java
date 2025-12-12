@@ -1,13 +1,13 @@
 package de.oth.othivity.service.impl;
 
-import de.oth.othivity.service.PagingService;
+import de.oth.othivity.service.IPagingService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PagingServiceImpl implements PagingService {
+public class PagingService implements IPagingService {
 
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final int MAX_PAGE_SIZE = 25;

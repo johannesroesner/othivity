@@ -6,8 +6,8 @@ import de.oth.othivity.dto.ClubDto;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ClubService;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IClubService;
+import de.oth.othivity.service.IProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,9 +32,9 @@ import java.util.UUID;
 @SecurityRequirement(name = "Bearer Authentication")
 public class ClubRestController {
 
-    private final ClubService clubService;
+    private final IClubService clubService;
     private final EntityConverter entityConverter;
-    private final ProfileService profileService;
+    private final IProfileService profileService;
 
     @Operation(summary = "Get all clubs", description = "Returns a list of all clubs in the system")
     @ApiResponses(value = {

@@ -8,9 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 
-import de.oth.othivity.service.ClubService;
-import de.oth.othivity.service.ProfileService;
-import de.oth.othivity.service.ActivityService;
+import de.oth.othivity.service.IClubService;
+import de.oth.othivity.service.IProfileService;
+import de.oth.othivity.service.IActivityService;
 import de.oth.othivity.service.IReportService;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.validation.BindingResult;
 import de.oth.othivity.dto.ReportDto;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.model.enumeration.Role;
 
 @AllArgsConstructor
@@ -31,10 +31,10 @@ import de.oth.othivity.model.enumeration.Role;
 
 public class ReportController {
     private final IReportService reportService;
-    private final ClubService clubService;
-    private final ProfileService profileService;
-    private final ActivityService activityService;
-    private final SessionService sessionService;
+    private final IClubService clubService;
+    private final IProfileService profileService;
+    private final IActivityService activityService;
+    private final ISessionService sessionService;
 
     @GetMapping("/reports")
     public String getMethodName(Model model, HttpSession session) {

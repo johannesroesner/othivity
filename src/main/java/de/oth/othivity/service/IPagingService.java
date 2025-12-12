@@ -4,6 +4,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface PagingService {
+public interface IPagingService {
     Pageable createPageable(int page, int size, String sortBy, String direction);
 }

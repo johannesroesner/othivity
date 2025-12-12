@@ -1,15 +1,11 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.dto.ChatMessageDto;
 import de.oth.othivity.model.chat.Chat;
 import de.oth.othivity.model.chat.ChatId;
-import de.oth.othivity.model.chat.ChatMessage;
-import de.oth.othivity.model.enumeration.Language;
-import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ChatService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IChatService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.validator.ChatMessageDtoValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -25,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class ChatController {
 
-    private final ChatService chatService;
-    private final SessionService sessionService;
+    private final IChatService chatService;
+    private final ISessionService sessionService;
 
     private final ChatMessageDtoValidator chatMessageDtoValidator;
 

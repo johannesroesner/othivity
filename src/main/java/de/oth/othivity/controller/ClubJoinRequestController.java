@@ -8,8 +8,8 @@ import org.springframework.ui.Model;
 import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
-import de.oth.othivity.service.ClubJoinRequestService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IClubJoinRequestService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.dto.ClubJoinRequestDto;
 import de.oth.othivity.validator.ClubJoinRequestDtoValidator;
@@ -26,8 +26,8 @@ import jakarta.validation.Valid;
 @AllArgsConstructor
 @Controller
 public class ClubJoinRequestController {
-    private final ClubJoinRequestService clubJoinRequestService;
-    private final SessionService sessionService;
+    private final IClubJoinRequestService clubJoinRequestService;
+    private final ISessionService sessionService;
     private final ClubJoinRequestDtoValidator clubJoinRequestDtoValidator;
 
     @InitBinder("clubJoinRequestDto")

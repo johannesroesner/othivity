@@ -6,8 +6,8 @@ import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ActivityService;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IActivityService;
+import de.oth.othivity.service.IProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,10 +33,10 @@ import java.util.UUID;
 @SecurityRequirement(name = "Bearer Authentication")
 public class ActivityRestController {
 
-    private final ActivityService activityService;
+    private final IActivityService activityService;
 
     private final EntityConverter entityConverter;
-    private final ProfileService profileService;
+    private final IProfileService profileService;
 
     @Operation(summary = "Get all activities", description = "Returns a list of all activities in the system")
     @ApiResponses(value = {

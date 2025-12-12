@@ -3,9 +3,8 @@ package de.oth.othivity.controller;
 import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.INotificationService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.ISessionService;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.UUID;
 
@@ -25,7 +22,7 @@ import java.util.UUID;
 public class NotificationController {
 
     private final INotificationService notificationService;
-    private final SessionService sessionService;
+    private final ISessionService sessionService;
 
     @GetMapping("/notifications")
     public String clubs(HttpSession session, Model model, @RequestParam(required = false) UUID selectId) {

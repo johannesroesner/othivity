@@ -3,10 +3,8 @@ package de.oth.othivity.service.impl;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.repository.security.UserRepository;
 import de.oth.othivity.service.IUserService;
-import de.oth.othivity.service.ProfileService;
-import de.oth.othivity.model.helper.Email;
+import de.oth.othivity.service.IProfileService;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.config.AppConfig;
 
 import java.util.Locale;
 
@@ -20,10 +18,10 @@ import de.oth.othivity.dto.RegisterDto;
 
 @AllArgsConstructor
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserService implements IUserService {
 
     private final UserRepository userRepository;
-    private final ProfileService profileService;
+    private final IProfileService profileService;
     private final PasswordEncoder passwordEncoder;
 
     @Override

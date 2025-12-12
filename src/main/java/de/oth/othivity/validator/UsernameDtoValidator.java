@@ -2,8 +2,7 @@ package de.oth.othivity.validator;
 
 import de.oth.othivity.dto.UsernameDto;
 
-import de.oth.othivity.dto.PhoneVerificationDto;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 import lombok.AllArgsConstructor;
 
 import java.util.regex.Pattern;
@@ -17,7 +16,7 @@ import org.springframework.validation.Validator;
 @Component
 public class UsernameDtoValidator implements Validator {
 
-    private final ProfileService profileService;
+    private final IProfileService IProfileService;
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9]+$");
 
     @Override
@@ -35,7 +34,7 @@ public class UsernameDtoValidator implements Validator {
             errors.rejectValue("username", "register.error.usernameInvalid");
         }
 
-        if (request.getUsername() != null && profileService.isUsernameTaken(request.getUsername())) {
+        if (request.getUsername() != null && IProfileService.isUsernameTaken(request.getUsername())) {
             errors.rejectValue("username", "register.error.usernameExists");
         }
     }

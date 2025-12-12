@@ -1,9 +1,7 @@
 package de.oth.othivity.validator;
 
-import de.oth.othivity.dto.LoginDto;
-
 import de.oth.othivity.dto.PhoneVerificationDto;
-import de.oth.othivity.service.SmsService;
+import de.oth.othivity.service.ISmsService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -14,7 +12,7 @@ import org.springframework.validation.Validator;
 @Component
 public class PhoneVerificationDtoValidator implements Validator {
 
-    private SmsService smsService;
+    private ISmsService ISmsService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -26,7 +24,7 @@ public class PhoneVerificationDtoValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "code", "field.required", "Code");
 
         PhoneVerificationDto request = (PhoneVerificationDto) target;
-        if (!smsService.checkVerification(request.getNumber(), request.getCode())) {
+        if (!ISmsService.checkVerification(request.getNumber(), request.getCode())) {
             errors.rejectValue("code", "verification.code.notValid", "Invalid verification code");
         }
     }

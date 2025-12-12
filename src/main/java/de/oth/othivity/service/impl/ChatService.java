@@ -8,23 +8,21 @@ import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.chat.ChatMessageRepository;
 import de.oth.othivity.repository.chat.ChatRepository;
 import de.oth.othivity.repository.main.ProfileRepository;
-import de.oth.othivity.repository.security.UserRepository;
-import de.oth.othivity.service.ChatService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IChatService;
+import de.oth.othivity.service.ISessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
 @Service
-public class ChatServiceImpl implements ChatService {
+public class ChatService implements IChatService {
 
-    private final SessionService sessionService;
+    private final ISessionService sessionService;
 
     private final ChatRepository chatRepository;
     private final ChatMessageRepository chatMessageRepository;

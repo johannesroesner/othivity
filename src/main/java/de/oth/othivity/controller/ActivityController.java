@@ -5,10 +5,10 @@ import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ActivityService;
-import de.oth.othivity.service.PagingService;
-import de.oth.othivity.service.ProfileService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IActivityService;
+import de.oth.othivity.service.IPagingService;
+import de.oth.othivity.service.IProfileService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.service.IReportService;
 import de.oth.othivity.service.IWeatherService;
 import de.oth.othivity.validator.ActivityDtoValidator;
@@ -32,11 +32,11 @@ import java.util.UUID;
 @Controller
 public class ActivityController {
 
-    private final ActivityService activityService;
-    private final ProfileService profileService;
-    private final SessionService sessionService;
+    private final IActivityService activityService;
+    private final IProfileService profileService;
+    private final ISessionService sessionService;
     private final IWeatherService weatherService;
-    private final PagingService pagingService;
+    private final IPagingService pagingService;
     private final IReportService reportService;
 
     private final ActivityDtoValidator activityDtoValidator;
@@ -105,7 +105,7 @@ public class ActivityController {
             return "activity-edit";
         }
 
-        activityService.createActivity(activityDto, uploadedImage,sessionService.getProfileFromSession(session));
+        activityService.createActivity(activityDto, uploadedImage, sessionService.getProfileFromSession(session));
 
         return "redirect:/activities";
     }

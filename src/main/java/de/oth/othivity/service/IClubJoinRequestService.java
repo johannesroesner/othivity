@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public interface ClubJoinRequestService {
+public interface IClubJoinRequestService {
 
     List<ClubJoinRequest> getJoinRequestsForClub(UUID clubId);
     

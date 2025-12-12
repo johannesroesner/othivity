@@ -2,7 +2,7 @@ package de.oth.othivity.validator;
 
 import de.oth.othivity.dto.ActivityDto;
 import de.oth.othivity.model.main.Activity;
-import de.oth.othivity.service.ActivityService;
+import de.oth.othivity.service.IActivityService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
 @AllArgsConstructor
 @Component
 public class ActivityDtoValidator implements Validator {
-    private ActivityService activityService;
+    private IActivityService IActivityService;
 
     private static final long MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 megabytes
 
@@ -44,7 +44,7 @@ public class ActivityDtoValidator implements Validator {
         }
 
         if (request.getId() != null) {
-            Activity activity = activityService.getActivityById(request.getId());
+            Activity activity = IActivityService.getActivityById(request.getId());
             if (request.getGroupSize() < activity.getTakePart().size()) {
                 errors.rejectValue("groupSize", "groupSize.currentExceeds", "Group size cannot be smaller than current number of participants");
             }

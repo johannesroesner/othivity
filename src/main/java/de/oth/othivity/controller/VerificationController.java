@@ -2,9 +2,9 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.dto.PhoneVerificationDto;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.SessionService;
-import de.oth.othivity.service.SmsService;
-import de.oth.othivity.service.VerificationService;
+import de.oth.othivity.service.ISessionService;
+import de.oth.othivity.service.ISmsService;
+import de.oth.othivity.service.IVerificationService;
 import de.oth.othivity.validator.PhoneVerificationDtoValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class VerificationController {
 
-    private SessionService sessionService;
-    private VerificationService verificationService;
-    private SmsService smsService;
+    private ISessionService sessionService;
+    private IVerificationService verificationService;
+    private ISmsService smsService;
 
     private PhoneVerificationDtoValidator phoneVerificationDtoValidator;
 

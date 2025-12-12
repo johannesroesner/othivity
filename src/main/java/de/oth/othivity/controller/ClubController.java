@@ -2,11 +2,11 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.model.enumeration.AccessLevel;
 import de.oth.othivity.model.main.Club;
-import de.oth.othivity.service.ClubService;
+import de.oth.othivity.service.IClubService;
 import de.oth.othivity.service.IReportService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.validator.ImageUploadValidator;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 import de.oth.othivity.model.main.Profile;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import de.oth.othivity.validator.ClubDtoValidator;
 import org.springframework.data.domain.Pageable;
-import de.oth.othivity.service.PagingService;
+import de.oth.othivity.service.IPagingService;
 import java.util.UUID;
 
 
@@ -35,12 +35,12 @@ import java.util.UUID;
 public class ClubController {
 
     private final ImageUploadValidator imageUploadValidator;
-    private final ClubService clubService;
-    private final SessionService sessionService;
+    private final IClubService clubService;
+    private final ISessionService sessionService;
     private final ClubDtoValidator clubDtoValidator;
-    private final ProfileService profileService;
+    private final IProfileService profileService;
     private final IReportService reportService;
-    private final PagingService pagingService;
+    private final IPagingService pagingService;
 
     @InitBinder("clubDto")
     protected void initBinder(WebDataBinder binder) {

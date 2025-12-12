@@ -25,13 +25,12 @@ import java.util.UUID;
 
 @AllArgsConstructor 
 @Service
-public class ClubServiceImpl implements ClubService {
-    private final SessionService sessionService;
+public class ClubService implements IClubService {
     private final ClubRepository clubRepository;
-    private final ImageService imageService;
+    private final IImageService imageService;
     private final ActivityRepository activityRepository;
     private final INotificationService notificationService;
-    private final GeocodingService geocodingService;
+    private final IGeocodingService geocodingService;
 
     @Override
     public List<Club> getAllClubs() {

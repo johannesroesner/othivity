@@ -1,6 +1,6 @@
 package de.oth.othivity.controller;
 
-import de.oth.othivity.service.ChatService;
+import de.oth.othivity.service.IChatService;
 import de.oth.othivity.validator.ProfileDtoValidator;
 import de.oth.othivity.validator.EmailVerificationDtoValidator;
 import de.oth.othivity.validator.UsernameDtoValidator; 
@@ -28,10 +28,10 @@ import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
 import java.util.UUID;
 
-import de.oth.othivity.service.PagingService;
+import de.oth.othivity.service.IPagingService;
 import de.oth.othivity.validator.ImageUploadValidator;
-import de.oth.othivity.service.ProfileService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IProfileService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.dto.UsernameDto;
 import de.oth.othivity.model.main.Profile;
@@ -48,18 +48,17 @@ import de.oth.othivity.model.enumeration.Theme;
 @Controller
 public class ProfileController {
 
-    private final ProfileService profileService;
-    private final SessionService sessionService;
+    private final IProfileService profileService;
+    private final ISessionService sessionService;
     private final INotificationService notificationService;
     private final VerificationTokenRepository tokenRepository;
     private final IApiTokenService apiTokenService; 
     private final IReportService reportService;
-    private final PagingService pagingService;
+    private final IPagingService pagingService;
 
     private final ImageUploadValidator imageUploadValidator;
     private final ProfileDtoValidator profileDtoValidator;
-    private final ChatService chatService;
-    private final EmailVerificationDtoValidator emailVerificationDtoValidator;
+    private final IChatService chatService;
     private final UsernameDtoValidator usernameDtoValidator; 
 
     @InitBinder("profileDto")
@@ -181,7 +180,7 @@ public class ProfileController {
 
     @PostMapping("/profile/delete/{username}")
     public String deleteProfile(@PathVariable("username") String username, HttpSession session, HttpServletRequest request) {
-        Profile profileToDelete = profileService.getProfileByUsername(username); 
+        Profile profileToDelete = profileService.getProfileByUsername(username);
         Profile currentProfile = sessionService.getProfileFromSession(session);
 
         if (!sessionService.canDelete(session, profileToDelete)) {
@@ -192,7 +191,7 @@ public class ProfileController {
         if (profileToDelete != null) {
             if (!profileToDelete.getId().equals(currentProfile.getId())) {
                 String returnUrl = sessionService.getReturnUrlFromSession(session, request);
-                profileService.deleteProfile(profileToDelete);    
+                profileService.deleteProfile(profileToDelete);
                 return "redirect:" + (returnUrl != null ? returnUrl : "/dashboard");
             }
             profileService.deleteProfile(profileToDelete);

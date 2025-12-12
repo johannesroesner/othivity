@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public interface ClubService {
+public interface IClubService {
 
     List<Club> getAllClubs();
 

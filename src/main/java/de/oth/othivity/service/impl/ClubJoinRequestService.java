@@ -5,9 +5,9 @@ import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.helper.ClubJoinRequestRepository;
 import de.oth.othivity.repository.main.ClubRepository;
-import de.oth.othivity.service.ClubJoinRequestService;
+import de.oth.othivity.service.IClubJoinRequestService;
 import de.oth.othivity.service.INotificationService;
-import de.oth.othivity.service.ClubService;
+import de.oth.othivity.service.IClubService;
 import de.oth.othivity.dto.ClubJoinRequestDto;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
@@ -16,11 +16,11 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Service
-public class ClubJoinRequestServiceImpl implements ClubJoinRequestService {
+public class ClubJoinRequestService implements IClubJoinRequestService {
 
     private final ClubRepository clubRepository;
     private final ClubJoinRequestRepository clubJoinRequestRepository;
-    private final ClubService clubService;
+    private final IClubService clubService;
     private final INotificationService notificationService;
 
     @Override

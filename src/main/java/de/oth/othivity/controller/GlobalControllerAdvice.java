@@ -1,13 +1,12 @@
 package de.oth.othivity.controller;
 
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.ChatService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.IChatService;
+import de.oth.othivity.service.ISessionService;
 import de.oth.othivity.service.INotificationService;
 import de.oth.othivity.service.IReportService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -36,9 +35,9 @@ import de.oth.othivity.model.enumeration.Role;
 })
 public class GlobalControllerAdvice {
 
-    private final SessionService sessionService;
+    private final ISessionService sessionService;
     private final INotificationService notificationService;
-    private final ChatService chatService;
+    private final IChatService chatService;
     private final IReportService reportService;
     @ModelAttribute
     public void addCurrentUsername(HttpSession session, Model model) {

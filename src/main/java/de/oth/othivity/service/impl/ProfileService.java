@@ -13,36 +13,31 @@ import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.dto.ProfileDto;
 import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.security.UserRepository;
-import de.oth.othivity.repository.main.ActivityRepository;
-import de.oth.othivity.repository.main.ClubRepository;
 
 
 import de.oth.othivity.model.enumeration.Theme;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class ProfileServiceImpl implements ProfileService {
+public class ProfileService implements IProfileService {
 
-    private final SessionService sessionService;
+    private final ISessionService sessionService;
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
-    private final ImageService imageService;
-    private final ClubService clubService;
-    private final ActivityService activityService;
+    private final IImageService imageService;
+    private final IClubService clubService;
+    private final IActivityService activityService;
     private final INotificationService notificationService;
 
     @Override

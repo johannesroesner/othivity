@@ -1,9 +1,6 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.repository.report.ClubReportRepository;
-import de.oth.othivity.repository.main.ClubRepository;
-import de.oth.othivity.repository.main.ActivityRepository;
-import de.oth.othivity.repository.main.ProfileRepository;
 import de.oth.othivity.repository.report.ActivityReportRepository;
 import de.oth.othivity.repository.report.ProfileReportRepository;
 import de.oth.othivity.service.INotificationService;
@@ -26,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
-public class ReportServiceImpl implements IReportService {
+public class ReportService implements IReportService {
 
     private final ClubReportRepository clubReportRepository;
     private final ActivityReportRepository activityReportRepository;

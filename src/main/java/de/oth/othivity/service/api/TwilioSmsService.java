@@ -6,13 +6,13 @@ import com.twilio.type.PhoneNumber;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import de.oth.othivity.model.main.Profile;
-import de.oth.othivity.service.SmsService;
+import de.oth.othivity.service.ISmsService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TwilioSmsService implements SmsService {
+public class TwilioSmsService implements ISmsService {
 
     private PhoneNumber twilioPhoneNumber;
     private String verifyServiceSid;

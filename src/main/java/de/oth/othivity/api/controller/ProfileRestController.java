@@ -7,10 +7,9 @@ import de.oth.othivity.dto.RegisterDto;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.model.security.CustomUserDetails;
-import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Theme;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 import de.oth.othivity.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,16 +20,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
@@ -39,7 +35,7 @@ import java.util.UUID;
 @SecurityRequirement(name = "Bearer Authentication")
 public class ProfileRestController {
 
-    private final ProfileService profileService;
+    private final IProfileService profileService;
     private final EntityConverter entityConverter;
     private final IUserService userService; 
 

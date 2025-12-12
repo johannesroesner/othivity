@@ -3,7 +3,7 @@ package de.oth.othivity.service.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.oth.othivity.model.helper.Address;
-import de.oth.othivity.service.GeocodingService;
+import de.oth.othivity.service.IGeocodingService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @Service
-public class NominatimGeocodingService implements GeocodingService {
+public class NominatimGeocodingService implements IGeocodingService {
 
     private static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
     private final RestTemplate restTemplate = new RestTemplate();

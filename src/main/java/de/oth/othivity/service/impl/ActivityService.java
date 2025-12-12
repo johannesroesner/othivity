@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class ActivityServiceImpl implements ActivityService {
-    private final SessionService sessionService;
-    private final ImageService imageService;
-    private final GeocodingService geocodingService;
+public class ActivityService implements IActivityService {
+    private final ISessionService sessionService;
+    private final IImageService imageService;
+    private final IGeocodingService geocodingService;
     private final INotificationService notificationService;
-    private final PagingService pagingService;
+    private final IPagingService pagingService;
 
     private final MessageSource messageSource;
     private final ObjectMapper objectMapper;

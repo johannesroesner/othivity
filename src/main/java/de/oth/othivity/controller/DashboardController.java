@@ -2,10 +2,10 @@ package de.oth.othivity.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.oth.othivity.model.main.Activity;
-import de.oth.othivity.service.ActivityService;
-import de.oth.othivity.service.ChatService;
+import de.oth.othivity.service.IActivityService;
+import de.oth.othivity.service.IChatService;
 import de.oth.othivity.service.IExplorerService;
-import de.oth.othivity.service.SessionService;
+import de.oth.othivity.service.ISessionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
@@ -18,10 +18,10 @@ import org.springframework.ui.Model;
 @Controller
 public class DashboardController {
 
-    private final ChatService chatService;
+    private final IChatService chatService;
     private final IExplorerService explorerService;
-    private final SessionService sessionService;
-    private final ActivityService activityService;
+    private final ISessionService sessionService;
+    private final IActivityService activityService;
 
     private final ObjectMapper objectMapper;
 

@@ -7,7 +7,7 @@ import de.oth.othivity.api.dto.ClubApiDto;
 import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ProfileRepository;
-import de.oth.othivity.service.ProfileService;
+import de.oth.othivity.service.IProfileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class TestUtil {
 
-    private final ProfileService profileService;
+    private final IProfileService IProfileService;
 
     private final ProfileRepository profileRepository;
 
@@ -98,7 +98,7 @@ public class TestUtil {
                         .param("lastName", "test")
                         .param("username", "test"))
                 .andExpect(status().is3xxRedirection());
-        return profileService.getProfileByEmail("test@example.com");
+        return IProfileService.getProfileByEmail("test@example.com");
     }
 
     // register a user with given credentials
@@ -113,7 +113,7 @@ public class TestUtil {
                         .param("lastName", "User")
                         .param("username", username))
                 .andExpect(status().is3xxRedirection());
-        return profileService.getProfileByEmail(email);
+        return IProfileService.getProfileByEmail(email);
     }
 
     // login a user and return the session
