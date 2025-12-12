@@ -3,7 +3,7 @@
 Our idea is to build a platform for our university, OTH Regensburg, where students can post activities,
 connect with others and find new people to engage with.
 
-![Landingpage of OTHivity](docs/images/landingpage.png)
+![Landingpage of OTHivity](documentation/png/landing-page.png)
 
 ## Table of Contents
 - [Features](#features)
