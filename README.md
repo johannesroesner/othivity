@@ -3,11 +3,13 @@
 Our idea is to build a platform for our university, OTH Regensburg, where students can post activities,
 connect with others and find new people to engage with.
 
+## Table of Contents
+- [Features](#features)
+- [How to Run](#how-to-run)
+- [API Documentation](#api-documentation)
+- [Database](#database)
 
 ## API Documentation
-## Swagger API Documentation URL: ** `swagger-ui/index.html`
-
-
 This API uses **JWT (JSON Web Token)** for authentication:
 
 1.  **Get your Token:** You can generate your personal JWT in the application GUI under **Settings**.
@@ -19,6 +21,8 @@ Authorization: Bearer <YOUR_JWT_TOKEN>
 ```
 
 `401 UNAUTHORIZED` → Invalid or missing JWT token
+
+Additional Swagger-Documentation: `swagger-ui/index.html`
 
 ### Data Model: `ActivityApiDto`
 
@@ -467,13 +471,7 @@ Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 `404 NOT FOUND` → Profile not found
 
 ---
-
-## Architecture Concepts
-
-Before starting to code, we entered the concept phase to carefully plan every aspect according to our needs.
-The following examples, diagrams, and notes reflect our thought process during this stage.
-
-### Database
+## Database
 
 The following diagram provides an overview of the database structure used in OTHivity.
 It visualizes all core entities and the relationships between them.
@@ -481,167 +479,169 @@ It visualizes all core entities and the relationships between them.
 ```mermaid
 ---
 config:
-theme: default
-look: classic
+  theme: default
+  look: classic
 ---
 erDiagram
-direction TB
-User {
-string id PK ""  
-string password  ""  
-}
+    direction TB
+    User {
+        string id PK ""
+        string password  ""
+    }
 
-	Profile {
-		string id PK ""  
-		Role role  ""  
-		string firstName  ""  
-		string lastName  ""  
-		string aboutMe  ""  
-		Theme theme  ""  
-	}
+    Profile {
+        string id PK ""
+        Role role  ""
+        string firstName  ""
+        string lastName  ""
+        string aboutMe  ""
+        Theme theme  ""
+    }
 
-	Phone {
-		string id PK ""  
-		string number  ""  
-		boolean verified  ""  
-	}
+    Phone {
+        string id PK ""
+        string number  ""
+        boolean verified  ""
+    }
 
-	Email {
-		string id PK ""  
-		string aaddress  ""  
-		boolean verified  ""  
-	}
+    Email {
+        string id PK ""
+        string address  ""
+        boolean verified  ""
+    }
 
-	Activity {
-		string id PK ""  
-		string title  ""  
-		string description  ""  
-		Date date  ""  
-		Language langugage  ""  
-		int groupSize  ""  
-	}
+    Activity {
+        string id PK ""
+        string title  ""
+        string description  ""
+        Date date  ""
+        Language language  ""
+        int groupSize  ""
+    }
 
-	Tag {
-		string id PK ""  
-		string name  ""  
-	}
+    Tag {
+        string id PK ""
+        string name  ""
+    }
 
-	Club {
-		string id PK ""  
-		string name  ""  
-		string description  ""  
-		AccessLevel accessLevel  ""  
-	}
+    Club {
+        string id PK ""
+        string name  ""
+        string description  ""
+        AccessLevel accessLevel  ""
+    }
 
-	ClubJoinRequest {
-		string id PK ""  
-		string text  ""  
-	}
+    ClubJoinRequest {
+        string id PK ""
+        string text  ""
+    }
 
-	Address {
-		string id PK ""  
-		string addtion  ""  
-		string street  ""  
-		string houseNumber  ""  
-		string City  ""  
-		string postalCode  ""  
-		string Country  ""  
-		double latitude  ""  
-		double longitude  ""  
-	}
+    Address {
+        string id PK ""
+        string addition  ""
+        string street  ""
+        string houseNumber  ""
+        string city  ""
+        string postalCode  ""
+        string country  ""
+        double latitude  ""
+        double longitude  ""
+    }
 
-	Image {
-		string id PK ""  
-		string url  ""  
-		string publicId  ""  
-		Profile_Activity_Club entity  "Exclusiv-OR"  
-	}
+    Image {
+        string id PK ""
+        string url  ""
+        string publicId  ""
+        Profile_Activity_Club entity  "Exclusiv-OR"
+    }
 
-	ApiToken {
-		string id PK ""  
-		string name  ""  
-		string tokenIdentifier  ""  
-		Date expiresAt  ""  
-		Date lastUsedAt  ""  
-	}
+    ApiToken {
+        string id PK ""
+        string name  ""
+        string tokenIdentifier  ""
+        Date expiresAt  ""
+        Date lastUsedAt  ""
+    }
 
-	BaseReport {
-		string id PK ""  
-		string comment  ""  
-	}
+    BaseReport {
+        string id PK ""
+        string comment  ""
+    }
 
-	ActivityReport {
+    ActivityReport {
 
-	}
+    }
 
-	ClubReport {
+    ClubReport {
 
-	}
+    }
 
-	ProfileReport {
+    ProfileReport {
 
-	}
+    }
 
-	Chat {
-		string id PK "combined profileA.id_profileB.id"  
-	}
+    Chat {
+        string id PK "combined profileA.id_profileB.id"
+    }
 
-	ChatMessage {
-		string id PK ""  
-		boolean isRead  ""  
-		string content  ""  
-		Date timestamp  ""  
-	}
+    ChatMessage {
+        string id PK ""
+        boolean isRead  ""
+        string content  ""
+        Date timestamp  ""
+    }
 
-	Notification {
-		string id PK ""  
-		string subject  ""  
-		string message  ""  
-		boolean isRead  ""  
-		Date timestamp  ""  
-	}
+    Notification {
+        string id PK ""
+        string subject  ""
+        string message  ""
+        boolean isRead  ""
+        Date timestamp  ""
+    }
 
-	VerificationToken {
-		string id PK ""  
-		string token  ""  
-		Date expiryDate  ""  
-	}
+    VerificationToken {
+        string id PK ""
+        string token  ""
+        Date expiryDate  ""
+    }
 
-	VerificationToken||--o|Profile:"belongs-to"
-	Profile||--o|Phone:"has"
-	Profile||--o{Notification:"receives"
-	User||--||Email:"has"
-	Profile||--||Email:"has"
-	Profile||--o{ClubJoinRequest:"sends"
-	Club||--o{ClubJoinRequest:"receives"
-	Chat||--o{ChatMessage:"inside"
-	Profile||--o{ChatMessage:"sends"
-	Profile||--o{ChatMessage:"receives"
-	BaseReport||--||ActivityReport:"is-a"
-	BaseReport||--||ClubReport:"is-a"
-	BaseReport||--||ProfileReport:"is-a"
-	BaseReport}o--||Profile:"reported"
-	ActivityReport}o--||Activity:"is-reported"
-	ClubReport}o--||Club:"is-reported"
-	ProfileReport}o--||Profile:"is-reported"
-	User||--||Profile:"has"
-	Profile}|--o{Activity:"participates"
-	Profile||--|{Activity:"started"
-	Activity}o--o{Tag:"has"
-	Profile}|--o{Club:"participates"
-	Profile}|--o{Club:"adminestrates"
-	Club|o--o{Activity:"organizes"
-	Address||--||Activity:"has"
-	Address||--||Club:"has"
-	Image|o--o|Profile:"has"
-	Image||--o|Activity:"has"
-	Image||--o|Club:"has"
-	Profile||--o{ApiToken:"has"
+    PushSubscription {
+        string id PK ""
+        string endpoint  ""
+        string p256dh  ""
+        string auth ""
+    }
+
+
+    PushSubscription ||--|{ Profile:"subscribes"
+    VerificationToken||--o|Profile:"belongs-to"
+    Profile||--o|Phone:"has"
+    Profile||--o{Notification:"receives"
+    User||--||Email:"has"
+    Profile||--||Email:"has"
+    Profile||--o{ClubJoinRequest:"sends"
+    Club||--o{ClubJoinRequest:"receives"
+    Chat||--o{ChatMessage:"inside"
+    Profile||--o{ChatMessage:"sends"
+    Profile||--o{ChatMessage:"receives"
+    BaseReport||--||ActivityReport:"is-a"
+    BaseReport||--||ClubReport:"is-a"
+    BaseReport||--||ProfileReport:"is-a"
+    BaseReport}o--||Profile:"reported"
+    ActivityReport}o--||Activity:"is-reported"
+    ClubReport}o--||Club:"is-reported"
+    ProfileReport}o--||Profile:"is-reported"
+    User||--||Profile:"has"
+    Profile}|--o{Activity:"participates"
+    Profile||--|{Activity:"started"
+    Activity}o--o{Tag:"has"
+    Profile}|--o{Club:"participates"
+    Profile}|--o{Club:"administrates"
+    Club|o--o{Activity:"organizes"
+    Address||--||Activity:"has"
+    Address||--||Club:"has"
+    Image|o--o|Profile:"has"
+    Image||--o|Activity:"has"
+    Image||--o|Club:"has"
+    Profile||--o{ApiToken:"has"
 ```
-
-### GET Request Example on `/dashboard`
-
-The following diagram illustrates an HTTP GET request to `/dashboard`.  
-The focus here is on the structure of the different services and how they interact with each other.
-
-![GET request architecture](./documentation/svg/getRequestExample.svg)
