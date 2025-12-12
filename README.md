@@ -3,11 +3,212 @@
 Our idea is to build a platform for our university, OTH Regensburg, where students can post activities,
 connect with others and find new people to engage with.
 
+![Landingpage of OTHivity](docs/images/landingpage.png)
+
 ## Table of Contents
 - [Features](#features)
-- [How to Run](#how-to-run)
-- [API Documentation](#api-documentation)
 - [Database](#database)
+- [API Documentation](#api-documentation)
+
+## Features
+
+### User Management & Security
+* **Registration & Login:** Secure sign-up via email/password or Google-OAuth2.
+* **Verification:** Two-Factor Verification (2FA) using email confirmation and SMS (Twilio).
+* **Profile Management:** User profiles with image upload (Cloudinary) and about me.
+* **Settings:** Customizable user interface (Themes) and language selection (Internationalization).
+
+### Activities & Events
+* **Event Management:** Creation, editing, and deletion of  activities.
+* **Attendee Management:** Easy joining of events and overview of participants.
+* **Smart Features:** Automatic address resolution (Geocoding) and integrated weather forecast for the event location.
+
+### Clubs & Communities
+* **Club Creation:** Club management with description and image upload.
+* **Access Control:** Support for public and private (closed) clubs.
+* **Member Management:** Role-based administration (Admins/Members) and approval process for join requests.
+
+### Social & Communication
+* **Messenger:** Integrated chat for communication between users.
+* **Notifications:** In-app notifications and push notifications for important updates.
+* **Reporting System:** Tools for reporting inappropriate content for moderation.
+* **Dashboard:** Central overview of upcoming appointments and news.
+
+## Database
+
+The following diagram provides an overview of the database structure used in OTHivity.
+It visualizes all core entities and the relationships between them.
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+---
+erDiagram
+    direction TB
+    User {
+        string id PK ""
+        string password  ""
+    }
+
+    Profile {
+        string id PK ""
+        Role role  ""
+        string firstName  ""
+        string lastName  ""
+        string aboutMe  ""
+        Theme theme  ""
+    }
+
+    Phone {
+        string id PK ""
+        string number  ""
+        boolean verified  ""
+    }
+
+    Email {
+        string id PK ""
+        string address  ""
+        boolean verified  ""
+    }
+
+    Activity {
+        string id PK ""
+        string title  ""
+        string description  ""
+        Date date  ""
+        Language language  ""
+        int groupSize  ""
+    }
+
+    Tag {
+        string id PK ""
+        string name  ""
+    }
+
+    Club {
+        string id PK ""
+        string name  ""
+        string description  ""
+        AccessLevel accessLevel  ""
+    }
+
+    ClubJoinRequest {
+        string id PK ""
+        string text  ""
+    }
+
+    Address {
+        string id PK ""
+        string addition  ""
+        string street  ""
+        string houseNumber  ""
+        string city  ""
+        string postalCode  ""
+        string country  ""
+        double latitude  ""
+        double longitude  ""
+    }
+
+    Image {
+        string id PK ""
+        string url  ""
+        string publicId  ""
+        Profile_Activity_Club entity  "Exclusiv-OR"
+    }
+
+    ApiToken {
+        string id PK ""
+        string name  ""
+        string tokenIdentifier  ""
+        Date expiresAt  ""
+        Date lastUsedAt  ""
+    }
+
+    BaseReport {
+        string id PK ""
+        string comment  ""
+    }
+
+    ActivityReport {
+
+    }
+
+    ClubReport {
+
+    }
+
+    ProfileReport {
+
+    }
+
+    Chat {
+        string id PK "combined profileA.id_profileB.id"
+    }
+
+    ChatMessage {
+        string id PK ""
+        boolean isRead  ""
+        string content  ""
+        Date timestamp  ""
+    }
+
+    Notification {
+        string id PK ""
+        string subject  ""
+        string message  ""
+        boolean isRead  ""
+        Date timestamp  ""
+    }
+
+    VerificationToken {
+        string id PK ""
+        string token  ""
+        Date expiryDate  ""
+    }
+
+    PushSubscription {
+        string id PK ""
+        string endpoint  ""
+        string p256dh  ""
+        string auth ""
+    }
+
+
+    PushSubscription ||--|{ Profile:"subscribes"
+    VerificationToken||--o|Profile:"belongs-to"
+    Profile||--o|Phone:"has"
+    Profile||--o{Notification:"receives"
+    User||--||Email:"has"
+    Profile||--||Email:"has"
+    Profile||--o{ClubJoinRequest:"sends"
+    Club||--o{ClubJoinRequest:"receives"
+    Chat||--o{ChatMessage:"inside"
+    Profile||--o{ChatMessage:"sends"
+    Profile||--o{ChatMessage:"receives"
+    BaseReport||--||ActivityReport:"is-a"
+    BaseReport||--||ClubReport:"is-a"
+    BaseReport||--||ProfileReport:"is-a"
+    BaseReport}o--||Profile:"reported"
+    ActivityReport}o--||Activity:"is-reported"
+    ClubReport}o--||Club:"is-reported"
+    ProfileReport}o--||Profile:"is-reported"
+    User||--||Profile:"has"
+    Profile}|--o{Activity:"participates"
+    Profile||--|{Activity:"started"
+    Activity}o--o{Tag:"has"
+    Profile}|--o{Club:"participates"
+    Profile}|--o{Club:"administrates"
+    Club|o--o{Activity:"organizes"
+    Address||--||Activity:"has"
+    Address||--||Club:"has"
+    Image|o--o|Profile:"has"
+    Image||--o|Activity:"has"
+    Image||--o|Club:"has"
+    Profile||--o{ApiToken:"has"
+```
+---
 
 ## API Documentation
 This API uses **JWT (JSON Web Token)** for authentication:
@@ -471,177 +672,3 @@ Allowed for the profile owner, `MODERATOR`, or `ADMIN`.
 `404 NOT FOUND` → Profile not found
 
 ---
-## Database
-
-The following diagram provides an overview of the database structure used in OTHivity.
-It visualizes all core entities and the relationships between them.
-
-```mermaid
----
-config:
-  theme: default
-  look: classic
----
-erDiagram
-    direction TB
-    User {
-        string id PK ""
-        string password  ""
-    }
-
-    Profile {
-        string id PK ""
-        Role role  ""
-        string firstName  ""
-        string lastName  ""
-        string aboutMe  ""
-        Theme theme  ""
-    }
-
-    Phone {
-        string id PK ""
-        string number  ""
-        boolean verified  ""
-    }
-
-    Email {
-        string id PK ""
-        string address  ""
-        boolean verified  ""
-    }
-
-    Activity {
-        string id PK ""
-        string title  ""
-        string description  ""
-        Date date  ""
-        Language language  ""
-        int groupSize  ""
-    }
-
-    Tag {
-        string id PK ""
-        string name  ""
-    }
-
-    Club {
-        string id PK ""
-        string name  ""
-        string description  ""
-        AccessLevel accessLevel  ""
-    }
-
-    ClubJoinRequest {
-        string id PK ""
-        string text  ""
-    }
-
-    Address {
-        string id PK ""
-        string addition  ""
-        string street  ""
-        string houseNumber  ""
-        string city  ""
-        string postalCode  ""
-        string country  ""
-        double latitude  ""
-        double longitude  ""
-    }
-
-    Image {
-        string id PK ""
-        string url  ""
-        string publicId  ""
-        Profile_Activity_Club entity  "Exclusiv-OR"
-    }
-
-    ApiToken {
-        string id PK ""
-        string name  ""
-        string tokenIdentifier  ""
-        Date expiresAt  ""
-        Date lastUsedAt  ""
-    }
-
-    BaseReport {
-        string id PK ""
-        string comment  ""
-    }
-
-    ActivityReport {
-
-    }
-
-    ClubReport {
-
-    }
-
-    ProfileReport {
-
-    }
-
-    Chat {
-        string id PK "combined profileA.id_profileB.id"
-    }
-
-    ChatMessage {
-        string id PK ""
-        boolean isRead  ""
-        string content  ""
-        Date timestamp  ""
-    }
-
-    Notification {
-        string id PK ""
-        string subject  ""
-        string message  ""
-        boolean isRead  ""
-        Date timestamp  ""
-    }
-
-    VerificationToken {
-        string id PK ""
-        string token  ""
-        Date expiryDate  ""
-    }
-
-    PushSubscription {
-        string id PK ""
-        string endpoint  ""
-        string p256dh  ""
-        string auth ""
-    }
-
-
-    PushSubscription ||--|{ Profile:"subscribes"
-    VerificationToken||--o|Profile:"belongs-to"
-    Profile||--o|Phone:"has"
-    Profile||--o{Notification:"receives"
-    User||--||Email:"has"
-    Profile||--||Email:"has"
-    Profile||--o{ClubJoinRequest:"sends"
-    Club||--o{ClubJoinRequest:"receives"
-    Chat||--o{ChatMessage:"inside"
-    Profile||--o{ChatMessage:"sends"
-    Profile||--o{ChatMessage:"receives"
-    BaseReport||--||ActivityReport:"is-a"
-    BaseReport||--||ClubReport:"is-a"
-    BaseReport||--||ProfileReport:"is-a"
-    BaseReport}o--||Profile:"reported"
-    ActivityReport}o--||Activity:"is-reported"
-    ClubReport}o--||Club:"is-reported"
-    ProfileReport}o--||Profile:"is-reported"
-    User||--||Profile:"has"
-    Profile}|--o{Activity:"participates"
-    Profile||--|{Activity:"started"
-    Activity}o--o{Tag:"has"
-    Profile}|--o{Club:"participates"
-    Profile}|--o{Club:"administrates"
-    Club|o--o{Activity:"organizes"
-    Address||--||Activity:"has"
-    Address||--||Club:"has"
-    Image|o--o|Profile:"has"
-    Image||--o|Activity:"has"
-    Image||--o|Club:"has"
-    Profile||--o{ApiToken:"has"
-```
