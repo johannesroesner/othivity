@@ -210,7 +210,7 @@ public class ClubService implements IClubService {
 
         if (club.getAdmins().contains(profile)) {
             for(Profile member : club.getMembers()) {
-                notificationService.sendNotification(club, member, "notification.club.deleted", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+                notificationService.sendNotification(club, member, "notification.club.deleted", NotificationType.PUSH_NOTIFICATION);
             }
             clubRepository.delete(club);
         }
@@ -225,7 +225,7 @@ public class ClubService implements IClubService {
             if (!club.getAdmins().contains(profile)) {
                 club.getAdmins().add(profile);
                 clubRepository.save(club);
-                notificationService.sendNotification(club, profile, "notification.club.admin.added", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+                notificationService.sendNotification(club, profile, "notification.club.admin.added", NotificationType.PUSH_NOTIFICATION);
             }
         }
     }
@@ -238,7 +238,7 @@ public class ClubService implements IClubService {
         if (club.getAdmins().contains(currentProfile) && !club.getAdmins().contains(profile)) {
             club.getMembers().remove(profile);
             clubRepository.save(club);
-            notificationService.sendNotification(club, profile, "notification.club.member.removed", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+            notificationService.sendNotification(club, profile, "notification.club.member.removed", NotificationType.PUSH_NOTIFICATION);
         }
 
     }

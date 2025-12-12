@@ -140,7 +140,7 @@ public class ActivityService implements IActivityService {
         }
 
         for(Profile participant : activity.getTakePart() ) {
-            notificationService.sendNotification(activity, participant, "notification.activity.updated", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+            notificationService.sendNotification(activity, participant, "notification.activity.updated", NotificationType.PUSH_NOTIFICATION);
         }
 
         return activityRepository.save(activity);
@@ -175,7 +175,7 @@ public class ActivityService implements IActivityService {
         participants.add(profile);
         activity.setTakePart(participants);
 
-        notificationService.sendNotification(activity, activity.getStartedBy(), "notification.activity.joined", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(activity, activity.getStartedBy(), "notification.activity.joined", NotificationType.PUSH_NOTIFICATION);
 
         return activityRepository.save(activity);
     }
@@ -188,7 +188,7 @@ public class ActivityService implements IActivityService {
         participants.removeIf(p -> p.getId().equals(profile.getId()));
         activity.setTakePart(participants);
 
-        notificationService.sendNotification(activity, activity.getStartedBy(), "notification.activity.left", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(activity, activity.getStartedBy(), "notification.activity.left", NotificationType.PUSH_NOTIFICATION);
 
         return activityRepository.save(activity);
     }
@@ -197,14 +197,14 @@ public class ActivityService implements IActivityService {
     public Activity kickParticipant(Activity activity, Profile profile) {
         activity.getTakePart().removeIf(p -> p.getId().equals(profile.getId()));
 
-        notificationService.sendNotification(activity, profile, "notification.activity.kicked", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(activity, profile, "notification.activity.kicked", NotificationType.PUSH_NOTIFICATION);
         return activityRepository.save(activity);
     }
 
     @Override
     public void deleteActivity(Activity activity) {
         for (Profile profile : activity.getTakePart()) {
-            notificationService.sendNotification(activity, profile, "notification.activity.deleted", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+            notificationService.sendNotification(activity, profile, "notification.activity.deleted", NotificationType.PUSH_NOTIFICATION);
         }
 
         activityRepository.delete(activity);
