@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Chat {
 
-    // a.uuid_b.uuid : a.uuid < b.uuid (128 bit value)
+    // chatId = a.uuid_b.uuid : a.uuid < b.uuid (128 bit value)
     @EmbeddedId
     private ChatId id;
 
