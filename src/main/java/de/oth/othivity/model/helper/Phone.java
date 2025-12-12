@@ -29,5 +29,5 @@ public class Phone {
     private String number;
 
     @Column(nullable = false)
-    private Boolean verified; //TODO johannes - insted of phone(){ this.verified = false;} use verified = false; here?
+    private Boolean verified;
 }

@@ -1,4 +1,4 @@
-package de.oth.othivity.model.weather;
+package de.oth.othivity.model.helper;
 
 import java.time.LocalDateTime;
 

@@ -4,7 +4,7 @@ import de.oth.othivity.model.helper.Address;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import de.oth.othivity.model.weather.WeatherSnapshot;
+import de.oth.othivity.model.helper.WeatherSnapshot;
 import de.oth.othivity.service.IWeatherService;
 import de.oth.othivity.dto.OpenMeteoWeatherDto;
 import de.oth.othivity.dto.OpenMeteoWeatherDto.Hourly;
