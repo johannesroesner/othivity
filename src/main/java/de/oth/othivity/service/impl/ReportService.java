@@ -74,42 +74,42 @@ public class ReportService implements IReportService {
 
         Club club = clubReportRepository.findById(reportId).orElseThrow().getClub();
         Profile profile = clubReportRepository.findById(reportId).orElseThrow().getIssuer();
-        notificationService.sendNotification(club, profile,"notification.report.club.accepted", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(club, profile,"notification.report.club.accepted", NotificationType.PUSH_NOTIFICATION);
         clubReportRepository.deleteById(reportId);
     }
     @Override
     public void acceptActivityReport(UUID reportId) {
         Activity activity = activityReportRepository.findById(reportId).orElseThrow().getActivity();
         Profile profile = activityReportRepository.findById(reportId).orElseThrow().getIssuer();
-        notificationService.sendNotification(activity, profile,"notification.report.activity.accepted", NotificationType.PUSH_NOTIFICATION , NotificationType.EMAIL);
+        notificationService.sendNotification(activity, profile,"notification.report.activity.accepted", NotificationType.PUSH_NOTIFICATION);
         activityReportRepository.deleteById(reportId);
     }
     @Override
     public void acceptProfileReport(UUID reportId) {
         Profile reportedProfile = profileReportRepository.findById(reportId).orElseThrow().getProfile();
         Profile issuerProfile = profileReportRepository.findById(reportId).orElseThrow().getIssuer();
-        notificationService.sendNotification(reportedProfile, issuerProfile,"notification.report.profile.accepted", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(reportedProfile, issuerProfile,"notification.report.profile.accepted", NotificationType.PUSH_NOTIFICATION);
         profileReportRepository.deleteById(reportId);
     }
     @Override
     public void rejectClubReport(UUID reportId) {
         Club club = clubReportRepository.findById(reportId).orElseThrow().getClub();
         Profile profile = clubReportRepository.findById(reportId).orElseThrow().getIssuer();
-        notificationService.sendNotification(club, profile,"notification.report.club.rejected", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(club, profile,"notification.report.club.rejected", NotificationType.PUSH_NOTIFICATION);
         clubReportRepository.deleteById(reportId);
     }
     @Override
     public void rejectActivityReport(UUID reportId) {
         Activity activity = activityReportRepository.findById(reportId).orElseThrow().getActivity();
         Profile profile = activityReportRepository.findById(reportId).orElseThrow().getIssuer();
-        notificationService.sendNotification(activity, profile,"notification.report.activity.rejected", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(activity, profile,"notification.report.activity.rejected", NotificationType.PUSH_NOTIFICATION);
         activityReportRepository.deleteById(reportId);
     }
     @Override
     public void rejectProfileReport(UUID reportId) {
         Profile reportedProfile = profileReportRepository.findById(reportId).orElseThrow().getProfile();
         Profile issuerProfile = profileReportRepository.findById(reportId).orElseThrow().getIssuer();
-        notificationService.sendNotification(reportedProfile, issuerProfile,"notification.report.profile.rejected", NotificationType.PUSH_NOTIFICATION, NotificationType.EMAIL);
+        notificationService.sendNotification(reportedProfile, issuerProfile,"notification.report.profile.rejected", NotificationType.PUSH_NOTIFICATION);
         profileReportRepository.deleteById(reportId);
     }
     @Override
