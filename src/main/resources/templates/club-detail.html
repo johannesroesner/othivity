@@ -63,11 +63,11 @@
 
         <div class="flex flex-col items-center lg:col-span-1 w-full">
             <!-- Club Image -->
-            <div class="w-full h-64 shadow-2xl bg relative overflow-hidden">
+            <div class="w-full h-64 shadow-2xl rounded-2xl bg-base-200 relative overflow-hidden">
                <img th:if="${club.image != null}" 
                     th:src="@{${club.image.url}}" 
                     th:alt="${club.name}"
-                    class="w-full h-full object-cover rounded-2xl">
+                    class="w-full h-full object-scale-down rounded-2xl">
                <div th:if="${club.image == null}" 
                     class="w-full h-full bg-base-200 flex items-center justify-center rounded-2xl">
                     <i class="fas fa-users fa-3x text-gray-400"></i>
@@ -89,7 +89,7 @@
                 </div>
 
                 <!-- Members -->
-                <div class="flex-1 overflow-y-auto space-y-2" style="max-height: 300px;">
+                <div class="flex-1 overflow-y-auto space-y-2 max-h-8/10">
                     <div th:each="member : ${clubMembers}" class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3">
                         <span th:if="${member.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${member.initials}"></span>
                         <img th:if="${member.image != null}" th:src="${member.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
@@ -199,7 +199,7 @@
             </div>
         </div>
 
-        <div id="map-container" class="lg:col-span-2 relative min-h-[300px]">
+        <div id="map-container" class="lg:col-span-2 relative min-h-[300px] rounded-2xl shadow-2xl bg-base-200">
             <div th:replace="~{fragments/map :: mapDiv}"></div>
             <script th:replace="~{fragments/map :: mapScript(${club.address.latitude}, ${club.address.longitude}, ${club.name})}"></script>
         </div>
