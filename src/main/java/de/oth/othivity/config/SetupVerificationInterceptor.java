@@ -25,8 +25,12 @@ public class SetupVerificationInterceptor implements HandlerInterceptor {
 
         String uri = request.getRequestURI();
         
-        if (uri.equals("/setup") || 
+        if (uri.equals("/") ||
+            uri.equals("/error") ||
+            uri.equals("/setup") || 
             uri.equals("/verify-email") || 
+            uri.equals("/profile/email/verify") ||
+            uri.equals("/profile/email/resend-verification") ||
             uri.equals("/logout") ||
             uri.startsWith("/api")) {
             return true;

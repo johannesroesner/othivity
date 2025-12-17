@@ -1,7 +1,10 @@
 <nav th:fragment="nav(activeTab)" class="navbar bg-base-200 shadow-2xl h-18 px-4">
     <div class="navbar-start">
+        <a class="btn btn-ghost text-2xl font-bold" href="/">OTHivity</a>
+    </div>
+    <div class="navbar-end">
         <form th:action="@{/logout}" method="post">
-            <a class="btn btn-ghost text-2xl font-bold" href="/">OTHivity</a>
+            <button class="btn btn-ghost" type="submit" th:text="#{nav.logout}">Logout</button>
         </form>
     </div>
 </nav>
