@@ -83,7 +83,7 @@
                     <span th:if="${admin.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${admin.initials}"></span>
                     <img th:if="${admin.image != null}" th:src="${admin.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
                     <div class="flex flex-col">
-                        <span class="text-xs text-gray-500">Admin</span>
+                        <span class="text-xs text-gray-500" th:text="#{clubDetail.admin}">Admin</span>
                         <a th:href="@{'/profile/' + ${admin.username}}" class="text-sm font-medium hover:underline" th:text="${admin.username}"></a>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                         <span th:if="${member.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${member.initials}"></span>
                         <img th:if="${member.image != null}" th:src="${member.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
                         <div class="flex flex-col flex-1">
-                            <span class="text-xs text-gray-500">Mitglied</span>
+                            <span class="text-xs text-gray-500" th:text="#{clubDetail.member}">Mitglied</span>
                             <a th:href="@{'/profile/' + ${member.username}}" class="text-sm font-medium hover:underline" th:text="${member.username}"></a>
                         </div>
                         

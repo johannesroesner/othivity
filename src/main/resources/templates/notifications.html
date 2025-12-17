@@ -62,7 +62,7 @@
                     <div>
                         <h2 class="text-2xl font-bold" th:text="${selectedNotification.subject}"></h2>
                         <p class="text-sm text-base-content/60 mt-1">
-                            Empfangen am <span class="font-medium" th:text="${#temporals.format(selectedNotification.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+                            <span th:text="#{notifications.receivedAt}">Empfangen am</span> <span class="font-medium" th:text="${#temporals.format(selectedNotification.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
                         </p>
                     </div>
                 </div>
