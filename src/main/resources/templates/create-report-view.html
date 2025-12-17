@@ -10,9 +10,9 @@
         <h1 class="text-3xl font-bold ml-4" th:text="#{createReportView.pageTitle}"></h1>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 gap-6 mb-8">
         <div class="lg:col-span-2 space-y-6">
-            <div class="card bg-base-200 shadow-md p-6 space-y-4">
+            <div class="card bg-base-200 shadow-2xl p-6 space-y-4">
                 <div role="tablist" class="tabs tabs-border flex space-x-2 mb-4">
                     <a role="tab" class="tab" th:if="${club != null}" th:classappend="${reportType} == 'CLUB' ? 'tab-active' : ''" th:href="@{'/reports/create/club/' + ${club.id}}" th:text="#{createReportView.clubTab}"></a>
                     <a role="tab" class="tab" th:if="${activity != null}" th:classappend="${reportType} == 'ACTIVITY' ? 'tab-active' : ''" th:href="@{'/reports/create/activity/' + ${activity.id}}" th:text="#{createReportView.activityTab}"></a>
@@ -22,7 +22,6 @@
                 <div th:if="${club != null}" class="flex items-center gap-4 mb-4">
                     <div class="w-16 h-16 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
                         <img th:if="${club.image != null}" th:src="@{${club.image.url}}" class="w-full h-full object-cover"/>
-                        <span th:if="${club.image == null}" class="text-2xl font-bold">🏛️</span>
                     </div>
                     <div>
                         <div class="text-lg font-bold" th:text="${club.name}"></div>
@@ -33,7 +32,6 @@
                 <div th:if="${activity != null}" class="flex items-center gap-4 mb-4">
                     <div class="w-16 h-16 rounded-full overflow-hidden bg-base-300 flex items-center justify-center">
                         <img th:if="${activity.image != null}" th:src="@{${activity.image.url}}" class="w-full h-full object-cover"/>
-                        <span th:if="${activity.image == null}" class="text-2xl font-bold">🎯</span>
                     </div>
                     <div>
                         <div class="text-lg font-bold" th:text="${activity.title}"></div>
