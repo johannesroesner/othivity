@@ -37,7 +37,7 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(clubReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(clubReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${clubReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
@@ -69,12 +69,12 @@
                         <!-- Accept/Decline buttons far right -->
                         <div class="flex flex-row items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/club/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" onclick="return confirm('Do you really want to accept this report?');">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.acceptConfirm} + '\');'">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
                             <form th:action="@{'/reports/reject/club/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" onclick="return confirm('Do you really want to reject this report?');">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.rejectConfirm} + '\');'">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>
@@ -102,7 +102,7 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(activityReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(activityReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${activityReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
@@ -134,12 +134,12 @@
                         <!-- Accept/Decline buttons far right -->
                         <div class="flex flex-row items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/activity/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-success btn-sm" title="Accept report" onclick="return confirm('Do you really want to accept this report?');">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept report" th:attr="onclick='return confirm(\'' + #{reportsOverview.acceptConfirm} + '\');'">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
                             <form th:action="@{'/reports/reject/activity/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-error btn-sm" title="Reject report" onclick="return confirm('Do you really want to reject this report?');">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject report" th:attr="onclick='return confirm(\'' + #{reportsOverview.rejectConfirm} + '\');'">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>
@@ -167,7 +167,7 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(profileReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(profileReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${profileReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
@@ -199,12 +199,12 @@
                         <!-- Accept/Decline buttons far right -->
                         <div class="flex flex-row items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/profile/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" onclick="return confirm('Do you really want to accept this report?');">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.acceptConfirm} + '\');'">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
                             <form th:action="@{'/reports/reject/profile/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" onclick="return confirm('Do you really want to reject this report?');">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.rejectConfirm} + '\');'">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>

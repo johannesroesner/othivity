@@ -25,7 +25,7 @@
                         <span th:if="${request.profile.image == null}" class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg font-medium" th:text="${request.profile.initials}"></span>
                         <img th:if="${request.profile.image != null}" th:src="${request.profile.image.url}" alt="Avatar" class="w-12 h-12 rounded-full object-cover"/>
                         <div class="flex flex-col flex-1">
-                            <span class="text-sm text-gray-500">Beitrittsanfrage von</span>
+                            <span class="text-sm text-gray-500" th:text="#{clubJoinRequests.requestFrom}">Beitrittsanfrage von</span>
                             <a th:href="@{'/profile/' + ${request.profile.username}}" class="text-lg font-medium hover:underline" th:text="${request.profile.username}"></a>
                         </div>
                     </div>
