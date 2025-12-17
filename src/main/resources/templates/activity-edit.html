@@ -58,7 +58,9 @@
                     <div>
                         <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.language}"></span></label>
                         <select th:field="*{language}" class="select select-bordered w-full" required th:classappend="${#fields.hasErrors('language')} ? 'input-error'">
-                            <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}" th:selected="${entry.key == activityDto.language}"></option>
+                            <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}"
+                                    th:selected="${entry.key == (activityDto.language != null ? activityDto.language :  currentUserLanguage)}">
+                            </option>
                         </select>
                         <p th:if="${#fields.hasErrors('language')}" th:errors="*{language}" class="text-error text-xs mt-1"></p>
                     </div>
@@ -88,6 +90,7 @@
                             <span class="label-text text-sm" th:text="#{activityCreate.organizer}"></span>
                         </label>
                         <select th:field="*{organizer}" class="select select-bordered w-full">
+                            <option th:value="${null}" th:selected="${activityDto.organizer == null}"></option>
                             <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}" th:selected="${club.id == activityDto.organizer}"></option> <!-- CHANGE: Selected für Update -->
                         </select>
                     </div>
