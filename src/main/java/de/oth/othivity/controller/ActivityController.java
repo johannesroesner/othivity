@@ -89,8 +89,9 @@ public class ActivityController {
     public String showCreateForm(HttpSession session, Model model) {
         model.addAttribute("activityDto", new ActivityDto());
         model.addAttribute("languages", Language.getFlags());
+        model.addAttribute("currentUserLanguage", sessionService.getProfileFromSession(session).getLanguage());
         model.addAttribute("allTags", Tag.values());
-        model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+        model.addAttribute("tagableClubs", profileService.allJoinedClubsByProfile(session));
         return "activity-edit";
     }
 

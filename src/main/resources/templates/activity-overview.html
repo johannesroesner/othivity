@@ -8,7 +8,6 @@
 <body class="flex flex-col min-h-screen">
 <nav th:insert="~{layout/nav :: nav(activeTab='activities')}"></nav>
 <div class="container mx-auto px-6 py-8 grow">
-    <!-- content start -->
     <h1 class="text-3xl font-bold mb-6" th:text="#{activityOverview.pageTitle}"></h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
@@ -16,14 +15,22 @@
         <div class="lg:col-span-2 mb-8 lg:mb-0">
             <div class="flex justify-between items-center mb-6">
                 <div role="tablist" class="tabs tabs-border flex space-x-2">
-                    <a role="tab" class="tab tab-active" id="myTab" th:text="#{activityOverview.myTab}"></a>
-                    <a role="tab" class="tab" id="createdTab" th:text="#{activityOverview.createdTab}"></a>
-                    <a role="tab" class="tab" id="allTab" th:text="#{activityOverview.allTab}"></a>
+                    <a role="tab" class="tab" id="myTab"
+                       th:classappend="${activeTab == 'my' || activeTab == null} ? 'tab-active'"
+                       th:text="#{activityOverview.myTab}"></a>
+                    <a role="tab" class="tab" id="createdTab"
+                       th:classappend="${activeTab == 'created'} ? 'tab-active'"
+                       th:text="#{activityOverview.createdTab}"></a>
+                    <a role="tab" class="tab" id="allTab"
+                       th:classappend="${activeTab == 'all'} ? 'tab-active'"
+                       th:text="#{activityOverview.allTab}"></a>
                 </div>
                 <button class="btn btn-primary shadow-2xl" onclick="window.location.href='/activities/create'" th:text="#{activityOverview.createButton}"></button>
             </div>
-            
-            <div id="myTable" th:insert="~{fragments/activity-table :: activityTable(
+
+            <div id="myTable"
+                 th:classappend="${activeTab != 'my' and activeTab != null} ? 'hidden'"
+                 th:insert="~{fragments/activity-table :: activityTable(
                  title=#{activityOverview.myTab},
                  activities=${profileActivities},
                  pageParam='myPage',
@@ -38,7 +45,8 @@
                  hideSort=false)}">
             </div>
 
-            <div id="createdTable" class="hidden"
+            <div id="createdTable"
+                 th:classappend="${activeTab != 'created'} ? 'hidden'"
                  th:insert="~{fragments/activity-table :: activityTable(
                  title=#{activityOverview.createdTab},
                  activities=${createdActivities},
@@ -54,7 +62,8 @@
                  hideSort=false)}">
             </div>
 
-            <div id="allTable" class="hidden"
+            <div id="allTable"
+                 th:classappend="${activeTab != 'all'} ? 'hidden'"
                  th:insert="~{fragments/activity-table :: activityTable(
                  title=#{activityOverview.allTab},
                  activities=${allActivities},
@@ -82,57 +91,42 @@
         </div>
     </div>
 
-    <!-- content end -->
 </div>
 
 <script th:inline="javascript">
     const myTab = document.getElementById("myTab");
-    const allTab = document.getElementById("allTab");
     const createdTab = document.getElementById("createdTab");
-    const createdTable = document.getElementById("createdTable");
-    const myTable = document.getElementById("myTable");
-    const allTable = document.getElementById("allTable");
+    const allTab = document.getElementById("allTab");
 
-    const activeTab = /*[[${activeTab}]]*/ 'my';
+    /*<![CDATA[*/
+    const currentSize = /*[[${size}]]*/ 10;
+    const currentSortBy = /*[[${sortBy}]]*/ 'name';
+    const currentDirection = /*[[${direction}]]*/ 'asc';
+    const currentSearch = /*[[${search}]]*/ '';
+    const currentTag = /*[[${tag}]]*/ '';
+    /*]]>*/
 
-    function showMy() {
-        myTab.classList.add("tab-active");
-        createdTab.classList.remove("tab-active");
-        allTab.classList.remove("tab-active");
-
-        myTable.classList.remove("hidden");
-        createdTable.classList.add("hidden");
-        allTable.classList.add("hidden");
+    function buildUrl(tabName) {
+        let url = '/activities?activeTab=' + tabName;
+        url += '&size=' + currentSize;
+        url += '&sortBy=' + currentSortBy;
+        url += '&direction=' + currentDirection;
+        if (currentSearch) url += '&search=' + encodeURIComponent(currentSearch);
+        if (currentTag) url += '&tag=' + encodeURIComponent(currentTag);
+        return url;
     }
 
-    function showCreated() {
-        createdTab.classList.add("tab-active");
-        myTab.classList.remove("tab-active");
-        allTab.classList.remove("tab-active");
+    myTab.onclick = () => {
+        window.location.href = buildUrl('my');
+    };
 
-        createdTable.classList.remove("hidden");
-        myTable.classList.add("hidden");
-        allTable.classList.add("hidden");
-    }
+    createdTab.onclick = () => {
+        window.location.href = buildUrl('created');
+    };
 
-    function showAll() {
-        allTab.classList.add("tab-active");
-        myTab.classList.remove("tab-active");
-        createdTab.classList.remove("tab-active");
-
-        allTable.classList.remove("hidden");
-        myTable.classList.add("hidden");
-        createdTable.classList.add("hidden");
-    }
-
-    myTab.onclick = showMy;
-    createdTab.onclick = showCreated;
-    allTab.onclick = showAll;
-
-    if (activeTab === 'my') showMy();
-    else if (activeTab === 'created') showCreated();
-    else if (activeTab === 'all') showAll();
-    else showMy();
+    allTab.onclick = () => {
+        window.location.href = buildUrl('all');
+    };
 
     const daysToMark = /*[[${daysToMark}]]*/ [];
     const calendarTheme = /*[[${calendarTheme}]]*/ 'light';

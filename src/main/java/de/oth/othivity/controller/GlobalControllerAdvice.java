@@ -31,7 +31,8 @@ import de.oth.othivity.model.enumeration.Role;
     ExplorerController.class,
     NotificationController.class,
     ReportController.class,
-    VerificationController.class
+    VerificationController.class,
+    ClubJoinRequestController.class
 })
 public class GlobalControllerAdvice {
 
