@@ -11,9 +11,8 @@
         <h1 class="text-3xl font-bold ml-4" th:text="#{clubJoinRequests.pageTitle}"></h1>
     </div>
 
-    <div class="card bg-base-200 shadow-md p-6">
+    <div class="card bg-base-200 shadow-2xl p-6">
         <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-            <span>📝</span>
             <span th:text="#{clubJoinRequests.pendingRequests}"></span>
         </h2>
         
@@ -25,7 +24,7 @@
                         <span th:if="${request.profile.image == null}" class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-white text-lg font-medium" th:text="${request.profile.initials}"></span>
                         <img th:if="${request.profile.image != null}" th:src="${request.profile.image.url}" alt="Avatar" class="w-12 h-12 rounded-full object-cover"/>
                         <div class="flex flex-col flex-1">
-                            <span class="text-sm text-gray-500">Beitrittsanfrage von</span>
+                            <span class="text-sm text-gray-500" th:text="#{clubJoinRequests.requestFrom}">Beitrittsanfrage von</span>
                             <a th:href="@{'/profile/' + ${request.profile.username}}" class="text-lg font-medium hover:underline" th:text="${request.profile.username}"></a>
                         </div>
                     </div>
@@ -40,13 +39,11 @@
                     <div class="flex gap-3 justify-end">
                         <form th:action="@{'/clubs/join-requests/' + ${clubId} + '/decline/' + ${request.id}}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-error">
-                                <span>❌</span>
                                 <span th:text="#{clubJoinRequests.decline}"></span>
                             </button>
                         </form>
                         <form th:action="@{'/clubs/join-requests/' + ${clubId} + '/accept/' + ${request.id}}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-success">
-                                <span>✅</span>
                                 <span th:text="#{clubJoinRequests.accept}"></span>
                             </button>
                         </form>
@@ -56,7 +53,7 @@
             
             <div th:if="${requests == null or #lists.isEmpty(requests)}" class="text-center py-12 text-gray-500">
                 <div class="mb-4">
-                    <span class="text-4xl">📭</span>
+                    <span class="text-4xl">📨</span>
                 </div>
                 <h3 class="text-lg font-medium mb-2" th:text="#{clubJoinRequests.noRequests}"></h3>
                 <p class="text-sm" th:text="#{clubJoinRequests.noRequestsDescription}"></p>

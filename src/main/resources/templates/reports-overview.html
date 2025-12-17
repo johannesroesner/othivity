@@ -37,21 +37,21 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(clubReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(clubReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${clubReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
                             <a th:href="@{'/profile/' + ${report.issuer.username}}" class="flex flex-col items-center group">
-                                <span th:if="${report.issuer.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                <span th:if="${report.issuer.image != null}" class="w-12 h-12 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span th:if="${report.issuer.image == null}" class="w-12 h-12 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
                                 <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
                             </a>
                         </div>
                         <!-- Info center -->
                         <div class="flex-1 px-2 text-base-content/80 text-sm">
-                            <div class="mb-2 border border-base-300 rounded-md p-2" style="height: 80px; max-width: 700px; overflow-y: auto;">
+                            <div class="mb-2 border border-base-300 rounded-md p-2">
                                     <span class="font-semibold block mb-1" th:text="#{reportsOverview.comment}"></span>
                                 <span th:text="${report.comment}"></span>
                             </div>
@@ -59,22 +59,21 @@
                         <!-- Reported club right -->
                         <div class="flex flex-col items-center min-w-[120px]">
                             <a th:href="@{'/clubs/' + ${report.club.id}}" class="flex flex-col items-center group">
-                                <span th:if="${report.club.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                <span th:if="${report.club.image != null}" class="w-12 h-12 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.club.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.club.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1">🏛️</span>
                                 <span class="font-bold text-sm group-hover:underline" th:text="${report.club.name}"></span>
                             </a>
                         </div>
                         <!-- Accept/Decline buttons far right -->
-                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                        <div class="flex justify-center  items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/club/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" onclick="return confirm('Do you really want to accept this report?');">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.acceptConfirm} + '\');'">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
                             <form th:action="@{'/reports/reject/club/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" onclick="return confirm('Do you really want to reject this report?');">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.rejectConfirm} + '\');'">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>
@@ -102,21 +101,21 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(activityReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(activityReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${activityReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
                             <a th:href="@{'/profile/' + ${report.issuer.username}}" class="flex flex-col items-center group">
-                                <span th:if="${report.issuer.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                <span th:if="${report.issuer.image != null}" class="w-12 h-12 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span th:if="${report.issuer.image == null}" class="w-12 h-12 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
                                 <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
                             </a>
                         </div>
                         <!-- Info center -->
                         <div class="flex-1 px-2 text-base-content/80 text-sm">
-                            <div class="mb-2 border border-base-300 rounded-md p-2" style="height: 80px; max-width: 700px; overflow-y: auto;">
+                            <div class="mb-2 border border-base-300 rounded-md p-2">
                                     <span class="font-semibold block mb-1" th:text="#{reportsOverview.comment}"></span>
                                 <span th:text="${report.comment}"></span>
                             </div>
@@ -124,22 +123,21 @@
                         <!-- Reported activity right -->
                         <div class="flex flex-col items-center min-w-[120px]">
                             <a th:href="@{'/activities/' + ${report.activity.id}}" class="flex flex-col items-center group">
-                                <span th:if="${report.activity.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
+                                <span th:if="${report.activity.image != null}" class="w-12 h-12 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.activity.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.activity.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1">🎯</span>
                                 <span class="font-bold text-sm group-hover:underline" th:text="${report.activity.title}"></span>
                             </a>
                         </div>
                         <!-- Accept/Decline buttons far right -->
-                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                        <div class="flex justify-center  items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/activity/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-success btn-sm" title="Accept report" onclick="return confirm('Do you really want to accept this report?');">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept report" th:attr="onclick='return confirm(\'' + #{reportsOverview.acceptConfirm} + '\');'">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
                             <form th:action="@{'/reports/reject/activity/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-error btn-sm" title="Reject report" onclick="return confirm('Do you really want to reject this report?');">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject report" th:attr="onclick='return confirm(\'' + #{reportsOverview.rejectConfirm} + '\');'">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>
@@ -167,7 +165,7 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(profileReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(profileReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${profileReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
@@ -175,13 +173,13 @@
                                 <span th:if="${report.issuer.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
                                 <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
                             </a>
                         </div>
                         <!-- Info center -->
                         <div class="flex-1 px-2 text-base-content/80 text-sm">
-                            <div class="mb-2 border border-base-300 rounded-md p-2" style="height: 80px; max-width: 700px; overflow-y: auto;">
+                            <div class="mb-2 border border-base-300 rounded-md p-2">
                                     <span class="font-semibold block mb-1" th:text="#{reportsOverview.comment}"></span>
                                 <span th:text="${report.comment}"></span>
                             </div>
@@ -192,19 +190,19 @@
                                 <span th:if="${report.profile.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.profile.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.profile.image == null}" class="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl mb-1" th:text="${report.profile.initials}"></span>
+                                <span th:if="${report.profile.image == null}" class="w-10 h-10 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.profile.initials}"></span>
                                 <span class="font-bold text-sm group-hover:underline" th:text="${report.profile.username}"></span>
                             </a>
                         </div>
                         <!-- Accept/Decline buttons far right -->
-                        <div class="flex flex-row items-center min-w-[120px] gap-2">
+                        <div class="flex justify-center  items-center min-w-[120px] gap-2">
                             <form th:action="@{'/reports/accept/profile/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" onclick="return confirm('Do you really want to accept this report?');">
+                                    <button type="submit" class="btn btn-success btn-sm" title="Accept Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.acceptConfirm} + '\');'">
                                     <span class="text-lg">&#10003;</span>
                                 </button>
                             </form>
                             <form th:action="@{'/reports/reject/profile/' + ${report.id}}" method="post">
-                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" onclick="return confirm('Do you really want to reject this report?');">
+                                    <button type="submit" class="btn btn-error btn-sm" title="Reject Report" th:attr="onclick='return confirm(\'' + #{reportsOverview.rejectConfirm} + '\');'">
                                     <span class="text-lg">&#10007;</span>
                                 </button>
                             </form>
