@@ -2,6 +2,7 @@ package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.repository.main.ActivityRepository;
 import de.oth.othivity.service.IExplorerService;
 import org.springframework.data.domain.Page;
@@ -23,8 +24,8 @@ public class ExplorerService implements IExplorerService {
     private final ActivityRepository activityRepository;
 
     @Override
-    public Page<Activity> getClosestActivities(double lat, double lon, Pageable pageable, String search, Tag tag) {
-        List<Activity> filtered = getBaseStream(search, tag)
+    public Page<Activity> getClosestActivities(double lat, double lon, Pageable pageable, String search, Tag tag, Profile profile) {
+        List<Activity> filtered = getBaseStream(search, tag, profile)
                 .filter(a -> a.getAddress() != null && a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
                 .sorted(Comparator.comparingDouble(a -> calculateDistance(lat, lon, a.getAddress().getLatitude(), a.getAddress().getLongitude())))
                 .toList();
@@ -33,8 +34,8 @@ public class ExplorerService implements IExplorerService {
     }
 
     @Override
-    public Page<Activity> getSoonestActivities(Pageable pageable, String search, Tag tag) {
-        List<Activity> filtered = getBaseStream(search, tag)
+    public Page<Activity> getSoonestActivities(Pageable pageable, String search, Tag tag, Profile profile) {
+        List<Activity> filtered = getBaseStream(search, tag, profile)
                 .sorted(Comparator.comparing(Activity::getDate))
                 .toList();
 
@@ -42,9 +43,9 @@ public class ExplorerService implements IExplorerService {
     }
 
     @Override
-    public Page<Activity> getBestMixActivities(double lat, double lon, Pageable pageable, String search, Tag tag) {
+    public Page<Activity> getBestMixActivities(double lat, double lon, Pageable pageable, String search, Tag tag, Profile profile) {
         LocalDateTime now = LocalDateTime.now();
-        List<Activity> filtered = getBaseStream(search, tag)
+        List<Activity> filtered = getBaseStream(search, tag, profile)
                 .filter(a -> a.getAddress() != null && a.getAddress().getLatitude() != null && a.getAddress().getLongitude() != null)
                 .sorted(Comparator.comparingDouble(a -> {
                     double distance = calculateDistance(lat, lon, a.getAddress().getLatitude(), a.getAddress().getLongitude());
@@ -59,17 +60,22 @@ public class ExplorerService implements IExplorerService {
 
     @Override
     public Page<Activity> getAllFutureActivities(Pageable pageable, String search, Tag tag) {
-        List<Activity> filtered = getBaseStream(search, tag)
+        List<Activity> filtered = getBaseStream(search, tag, null)
                 .sorted(Comparator.comparing(Activity::getDate))
                 .toList();
         
         return createPageFromList(filtered, pageable);
     }
 
-    private Stream<Activity> getBaseStream(String search, Tag tag) {
+    private Stream<Activity> getBaseStream(String search, Tag tag, Profile profile) {
         LocalDateTime now = LocalDateTime.now();
         Stream<Activity> stream = activityRepository.findAll().stream()
                 .filter(a -> a.getDate().isAfter(now));
+
+        if (profile != null) {
+            stream = stream.filter(a -> !a.getStartedBy().getId().equals(profile.getId()));
+            stream = stream.filter(a -> a.getTakePart().stream().noneMatch(p -> p.getId().equals(profile.getId())));
+        }
 
         if (tag != null) {
             stream = stream.filter(a -> a.getTags().contains(tag));

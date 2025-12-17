@@ -161,7 +161,8 @@ public class NotificationService implements INotificationService {
             return existingToken.getToken();
         }
         
-        String token = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString().substring(0, 6);
+        
         VerificationToken verificationToken = new VerificationToken(token, recipient);
         verificationTokenRepository.save(verificationToken);
 
