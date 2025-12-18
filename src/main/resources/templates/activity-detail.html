@@ -60,8 +60,16 @@
             <div class="w-full bg-base-200 shadow-2xl p-6 rounded-2xl mt-4 flex-1 flex flex-col">
                 <p class="text-sm font-semibold text-base-content/70 mb-2" th:text="#{activityDetail.participants}"></p>
 
-                <div class="p-4 rounded-xl shadow-sm flex items-center gap-3 mb-2 border-l-4 border-primary">
-                <span th:if="${activity.startedBy.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${activity.startedBy.initials}"></span>
+                <div th:if="${activity.organizer != null}" class="p-4 rounded-xl shadow-sm flex items-center gap-3 mb-2 border-l-4 border-accent bg-base-100">
+                    <span th:if="${activity.organizer.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${activity.organizer.initials}"></span>
+                    <img th:if="${activity.organizer.image != null}" th:src="${activity.organizer.image.url}" class="w-8 h-8 rounded-full object-cover ring-2 ring-accent"/>
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-500" th:text="#{activityDetail.organizer}"></span> <a th:href="@{'/clubs/' + ${activity.organizer.id}}" class="text-sm font-medium hover:underline" th:text="${activity.organizer.name}"></a>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl shadow-sm flex items-center gap-3 mb-2 border-l-4 border-primary bg-base-100">
+                    <span th:if="${activity.startedBy.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${activity.startedBy.initials}"></span>
                     <img th:if="${activity.startedBy.image != null}" th:src="${activity.startedBy.image.url}" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
                     <div class="flex flex-col">
                         <span class="text-xs text-gray-500" th:text="#{activityDetail.starter}"></span>
@@ -70,10 +78,12 @@
                 </div>
 
                 <div class="flex-1 overflow-y-auto space-y-2" style="max-height: 300px;">
-                    <div th:each="person : ${activity.takePart}" th:if="${person.username != activity.startedBy.username}" class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3 justify-between">
+                    <div th:each="person : ${activity.takePart}"
+                         th:if="${person.username != activity.startedBy.username and (activity.organizer == null or person.username != activity.organizer.username)}"
+                         class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3 justify-between">
 
                         <div class="flex items-center gap-3">
-                        <span th:if="${person.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${person.initials}"></span>
+                            <span th:if="${person.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${person.initials}"></span>
                             <img th:if="${person.image != null}" th:src="${person.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
                             <div class="flex flex-col">
                                 <span class="text-xs text-gray-500" th:text="#{activityDetail.participants}"></span>
@@ -84,7 +94,6 @@
                         <form th:if="${deleteAble}" th:action="@{'/activities/kick/' + ${activity.id} + '/' + ${person.id}}" method="post">
                             <button type="submit" class="btn btn-sm btn-error">Kick</button>
                         </form>
-
                     </div>
                 </div>
             </div>

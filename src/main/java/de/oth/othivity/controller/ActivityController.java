@@ -87,10 +87,10 @@ public class ActivityController {
 
     @GetMapping("/activities/create")
     public String showCreateForm(HttpSession session, Model model) {
-        model.addAttribute("activityDto", new ActivityDto());
+        ActivityDto activityDto = new ActivityDto();
+        activityDto.setLanguage(sessionService.getProfileFromSession(session).getLanguage());
+        model.addAttribute("activityDto", activityDto);
         model.addAttribute("languages", Language.getFlags());
-        model.addAttribute("currentUserLanguage", sessionService.getProfileFromSession(session).getLanguage());
-        model.addAttribute("allTags", Tag.values());
         model.addAttribute("tagableClubs", profileService.allJoinedClubsByProfile(session));
         return "activity-edit";
     }
