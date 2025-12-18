@@ -164,7 +164,7 @@ public class ActivityController {
         model.addAttribute( "activityDto", activityService.activityToDto(activity));
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("allTags", Tag.values());
-        model.addAttribute("tagAbleClubs", profileService.allJoinedClubsByProfile(session));
+        model.addAttribute("tagableClubs", profileService.allJoinedClubsByProfile(session));
         return "activity-edit";
     }
 

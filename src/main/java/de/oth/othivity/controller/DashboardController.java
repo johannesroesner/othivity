@@ -23,8 +23,6 @@ public class DashboardController {
     private final ISessionService sessionService;
     private final IActivityService activityService;
 
-    private final ObjectMapper objectMapper;
-
     @GetMapping("/dashboard")
     public String index(Model model, HttpSession session) {
         model.addAttribute("allActivities", activityService.getAllActivitiesWithGeoCoordinates());

@@ -225,7 +225,7 @@ public class ActivityService implements IActivityService {
     @Override
     public Activity getSoonestActivityForProfile(Profile profile) {
         if (profile == null) return null;
-        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, pagingService.createPageable(1, 1, "date", "asc"), null, null).getContent();
+        List<Activity> activities = activityRepository.findAllCreatedOrJoinedByProfileWithFilter(profile, pagingService.createPageable(0, 1, "date", "asc"), null, null).getContent();
         return activities.isEmpty() ? null : activities.get(0);
     }
 
