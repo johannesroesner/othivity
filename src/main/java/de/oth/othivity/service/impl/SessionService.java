@@ -11,12 +11,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.LocaleResolver;  
+import org.springframework.web.servlet.LocaleResolver; 
 
 import de.oth.othivity.model.main.Club;
 
 import java.util.Locale;
 import java.util.UUID;
+import java.util.Deque;
+import java.util.ArrayDeque;
+import java.net.URI;
 
 @AllArgsConstructor
 @Service
@@ -126,32 +129,71 @@ public class SessionService implements ISessionService {
         String referer = request.getHeader("Referer");
         String currentUri = request.getRequestURI();
 
-        if ("GET".equalsIgnoreCase(request.getMethod())
-            && referer != null 
-            && !referer.contains(currentUri) 
-            && !referer.contains("/profile/") 
-            && !referer.contains("/settings")
-            && !referer.contains("/login") 
-            && !referer.contains("/register") 
-            && !referer.contains("/error")) {
-            
-            session.setAttribute("profileReturnUrl", referer);
+        @SuppressWarnings("unchecked")
+        Deque<String> urlHistory = (Deque<String>) session.getAttribute("urlHistory");
+        if (urlHistory == null) {
+            urlHistory = new ArrayDeque<>(10);
+            session.setAttribute("urlHistory", urlHistory);
         }
-        
-        String returnUrl = (String) session.getAttribute("profileReturnUrl");
-        
-        if (returnUrl != null && returnUrl.contains(currentUri)) {
+
+        if ("GET".equalsIgnoreCase(request.getMethod()) && referer != null) {
+            String refererPath = extractPath(referer);
+            if (isValidHistoryUrl(refererPath, currentUri)) {
+                if (urlHistory.isEmpty() || !urlHistory.peekLast().equals(refererPath)) {
+                    urlHistory.addLast(refererPath);
+                    if (urlHistory.size() > 10) {
+                        urlHistory.removeFirst();
+                    }
+                }
+            }
+        }
+
+        String returnUrl = null;
+        while (!urlHistory.isEmpty()) {
+            String lastUrl = urlHistory.pollLast();
+
+            if (lastUrl != null && !lastUrl.equals(currentUri) && !currentUri.startsWith(lastUrl)) {
+                returnUrl = lastUrl;
+                break;
+            }
+        }
+
+        if (returnUrl == null) {
             if (currentUri.startsWith("/activities")) {
                 returnUrl = "/activities";
             } else if (currentUri.startsWith("/clubs")) {
-                returnUrl = "/clubs"; 
+                returnUrl = "/clubs";
+            } else if (currentUri.startsWith("/profile")) {
+                returnUrl = "/dashboard";
             } else {
                 returnUrl = "/dashboard";
             }
         }
-        
-        if (returnUrl == null) returnUrl = "/dashboard";
+
         return returnUrl;
+    }
+
+    private String extractPath(String url) {
+        if (url == null) return null;
+        try {
+            java.net.URI uri = new java.net.URI(url);
+            String path = uri.getPath();
+            String query = uri.getQuery();
+            return query != null ? path + "?" + query : path;
+        } catch (Exception e) {
+            return url;
+        }
+    }
+
+    private boolean isValidHistoryUrl(String url, String currentUri) {
+        if (url == null || url.equals(currentUri)) return false;
+        
+        return !url.contains("/login") 
+            && !url.contains("/register") 
+            && !url.contains("/error") 
+            && !url.contains("/logout")
+            && !url.contains("/settings")
+            && !url.equals("/");
     }
 
     @Override
