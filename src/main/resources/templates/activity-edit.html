@@ -56,12 +56,11 @@
                     </div>
 
                     <div>
-                        <label class="label"><span class="label-text text-sm" th:text="#{activityCreate.language}"></span></label>
+                        <label class="label">
+                            <span class="label-text text-sm" th:text="#{activityCreate.language}">Sprache</span>
+                        </label>
                         <select th:field="*{language}" class="select select-bordered w-full" required th:classappend="${#fields.hasErrors('language')} ? 'input-error'">
-                            <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}"
-                                    th:selected="${entry.key == (activityDto.language != null ? activityDto.language :  currentUserLanguage)}">
-                            </option>
-                        </select>
+                            <option th:each="entry : ${languages}" th:value="${entry.key}" th:text="${entry.value}"></option></select>
                         <p th:if="${#fields.hasErrors('language')}" th:errors="*{language}" class="text-error text-xs mt-1"></p>
                     </div>
 
