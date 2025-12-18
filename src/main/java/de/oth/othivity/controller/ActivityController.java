@@ -89,6 +89,7 @@ public class ActivityController {
     public String showCreateForm(HttpSession session, Model model) {
         ActivityDto activityDto = new ActivityDto();
         activityDto.setLanguage(sessionService.getProfileFromSession(session).getLanguage());
+        model.addAttribute("allTags", Tag.values());
         model.addAttribute("activityDto", activityDto);
         model.addAttribute("languages", Language.getFlags());
         model.addAttribute("tagableClubs", profileService.allJoinedClubsByProfile(session));

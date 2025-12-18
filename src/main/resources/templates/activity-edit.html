@@ -10,7 +10,7 @@
     <form th:action="|/activities/${activityDto.id != null ? 'update/' + activityDto.id : 'create'}|" th:object="${activityDto}" method="post" enctype="multipart/form-data" class="space-y-6">
         <input type="hidden" th:if="${activityDto.id != null}" th:field="*{id}" />
         <div class="flex items-center mb-6">
-            <a th:href="${returnUrl}" class="btn btn-ghost btn-xl">←</a>
+            <a id="backButton" class="btn btn-ghost btn-xl">←</a>
             <h1 class="text-3xl font-bold ml-4" th:text="${activityDto.id != null} ? #{activityUpdate.pageTitle} : #{activityCreate.pageTitle}"></h1>
             <div class="ml-auto">
                 <button type="submit" class="btn btn-primary" th:text="${activityDto.id != null} ? #{activityUpdate.pageTitle} : #{activityCreate.createActivity}"></button>
@@ -102,7 +102,8 @@
                         <ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-full max-h-60 overflow-y-auto block border border-base-200">
                             <li th:each="t : ${allTags}">
                                 <label class="label cursor-pointer justify-start hover:bg-base-200 rounded-btn p-2">
-                                    <input type="checkbox" class="checkbox checkbox-sm checkbox-primary mr-3 tag-checkbox" th:field="*{tags}" th:value="${t.name()}" th:checked="${activityDto.tags != null} ? ${activityDto.tags.contains(t.name())} : false"/> <!-- CHANGE: Checked für Update -->
+                                    <input type="checkbox" class="checkbox checkbox-sm checkbox-primary mr-3 tag-checkbox" th:field="*{tags}" th:value="${t.name()}" th:checked="${activityDto.tags != null} ? ${activityDto.tags.contains(t.name())} : false"/>
+
                                     <span class="flex-1 font-medium">
                                         <span th:text="${t.emoji}"></span>
                                         <span th:text="#{${t.key}}"></span>
