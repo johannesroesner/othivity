@@ -190,9 +190,8 @@ public class ProfileController {
 
         if (profileToDelete != null) {
             if (!profileToDelete.getId().equals(currentProfile.getId())) {
-                String returnUrl = sessionService.getReturnUrlFromSession(session, request);
                 profileService.deleteProfile(profileToDelete);
-                return "redirect:" + (returnUrl != null ? returnUrl : "/dashboard");
+                return "redirect:/dashboard";
             }
             profileService.deleteProfile(profileToDelete);
             session.invalidate();
