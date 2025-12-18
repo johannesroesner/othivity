@@ -37,7 +37,7 @@
                     
                     <!-- Make Admin Button -->
                     <div class="flex gap-2">
-                        <form th:action="${isLeaving} ? @{'/clubs/makeAdmin/' + ${club.id} + '/' + ${member.id} + '?leaving=true'} : @{'/clubs/makeAdmin/' + ${club.id} + '/' + ${member.id}}" method="post" style="display: inline;">
+                        <form th:action="${isLeaving} ? @{'/clubs/makeAdmin/' + ${club.id} + '/' + ${member.id} + '?leaving=true'} : @{'/clubs/makeAdmin/' + ${club.id} + '/' + ${member.id}}" method="post">
                             <button type="submit" class="btn btn-primary">
                                 <span th:text="#{clubSelectAdmin.makeAdmin}"></span>
                             </button>
