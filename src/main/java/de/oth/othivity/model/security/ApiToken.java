@@ -28,8 +28,6 @@ public class ApiToken {
     @Column(nullable = false)
     private LocalDateTime expiresAt;
 
-    private LocalDateTime lastUsedAt;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;

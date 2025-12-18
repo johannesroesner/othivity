@@ -126,7 +126,6 @@
                             <tr>
                                 <th th:text="#{settings.api.table.name}"></th>
                                 <th th:text="#{settings.api.table.expires}"></th>
-                                <th th:text="#{settings.api.table.lastUsed}"></th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -142,10 +141,6 @@
                                 <td>
                                     <span th:text="${#temporals.format(token.expiresAt, 'dd.MM.yyyy')}"></span>
                                     <span class="badge badge-xs badge-error ml-2" th:if="${token.expiresAt.isBefore(#temporals.createNow())}" th:text="#{settings.api.expired}">Expired</span>
-                                </td>
-                                <td>
-                                    <span th:if="${token.lastUsedAt != null}" th:text="${#temporals.format(token.lastUsedAt, 'dd.MM.yyyy HH:mm')}"></span>
-                                    <span th:if="${token.lastUsedAt == null}" class="opacity-50">-</span>
                                 </td>
                                 <td class="text-right">
                                     <form th:action="@{/tokens/delete}" method="post" 
