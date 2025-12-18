@@ -109,19 +109,20 @@ public class NotificationService implements INotificationService {
         notification.setProfile(profile);
         notification.setSubject(subject);
         notification.setMessage(message);
+        notificationRepository.save(notification);
     }
 
     @Override
     public List<Notification> getNotificaitonsForProfile(Profile profile) {
         if (profile == null) return List.of();
 
-            return notificationRepository.findByProfile(profile)
-                .stream()
-                .sorted(
-                    Comparator.comparing(Notification::getIsRead)
-                    .thenComparing(Notification::getCreatedAt, Comparator.reverseOrder())
-                )
-                .toList();
+        return notificationRepository.findByProfile(profile)
+            .stream()
+            .sorted(
+                Comparator.comparing(Notification::getIsRead)
+                .thenComparing(Notification::getCreatedAt, Comparator.reverseOrder())
+            )
+            .toList();
     }
 
     @Override
@@ -157,11 +158,12 @@ public class NotificationService implements INotificationService {
         
         VerificationToken existingToken = verificationTokenRepository.findByProfile(recipient);
         if (existingToken != null) {
-            emailService.sendEmail(recipient, "Verification Email", "Please verify your email using this token: " + existingToken.getToken());
+            //emailService.sendEmail(recipient, "Verification Email", "Please verify your email using this token: " + existingToken.getToken());
             return existingToken.getToken();
         }
         
-        String token = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString().substring(0, 6);
+
         VerificationToken verificationToken = new VerificationToken(token, recipient);
         verificationTokenRepository.save(verificationToken);
 
@@ -170,12 +172,29 @@ public class NotificationService implements INotificationService {
         return token;
     }
 
-    public String getSubject(String message) {
+    @Override
+    public String resendVerificationEmail(Profile recipient) {
+        VerificationToken existingToken = verificationTokenRepository.findByProfile(recipient);
+        String token;
+        if (existingToken != null) {
+            token = existingToken.getToken();
+        } else {
+            token = UUID.randomUUID().toString().substring(0, 6);
+            VerificationToken verificationToken = new VerificationToken(token, recipient);
+            verificationTokenRepository.save(verificationToken);
+        }
+
+        emailService.sendEmail(recipient, "Verification Email", "Please verify your email using this token: " + token);
+
+        return token;
+    }
+
+    private String getSubject(String message) {
         String[] parts = message.split("\\|", 2);
         return parts.length > 0 ? parts[0] : "";
     }
 
-    public String getMessage(String message) {
+    private String getMessage(String message) {
         String[] parts = message.split("\\|", 2);
         return parts.length > 1 ? parts[1] : "";
     }

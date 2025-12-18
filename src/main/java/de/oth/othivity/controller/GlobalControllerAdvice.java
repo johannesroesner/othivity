@@ -26,7 +26,6 @@ import de.oth.othivity.model.enumeration.Role;
     ClubController.class,
     DashboardController.class,
     ProfileController.class,
-    ExplorerController.class,
     ChatController.class,
     ExplorerController.class,
     NotificationController.class,

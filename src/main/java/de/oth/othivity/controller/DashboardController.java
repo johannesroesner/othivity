@@ -23,8 +23,6 @@ public class DashboardController {
     private final ISessionService sessionService;
     private final IActivityService activityService;
 
-    private final ObjectMapper objectMapper;
-
     @GetMapping("/dashboard")
     public String index(Model model, HttpSession session) {
         model.addAttribute("allActivities", activityService.getAllActivitiesWithGeoCoordinates());
@@ -33,7 +31,7 @@ public class DashboardController {
         model.addAttribute("soonestActivityTimeUntil", activityService.getActivityTimeUntil(soonestActivity));
         model.addAttribute("daysToMark", activityService.getActivityDatesForProfile(session));
         model.addAttribute("activeTab", "dashboard");
-        model.addAttribute("soonestActivities", explorerService.getSoonestActivities(PageRequest.of(0, 3), null, null).getContent());
+        model.addAttribute("soonestActivities", explorerService.getSoonestActivities(PageRequest.of(0, 3), null, null, sessionService.getProfileFromSession(session)).getContent());
         model.addAttribute("allChats", chatService.getAllChatsForProfile(session));
         model.addAttribute("clubs", sessionService.getProfileFromSession(session).getClubs());
         return "dashboard";

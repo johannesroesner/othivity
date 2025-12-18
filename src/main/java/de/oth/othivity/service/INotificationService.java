@@ -30,4 +30,6 @@ public interface INotificationService {
 
     String sendVerificationEmail(Profile recipient);
 
+    String resendVerificationEmail(Profile recipient);
+
 }

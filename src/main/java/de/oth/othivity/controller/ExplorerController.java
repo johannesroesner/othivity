@@ -2,6 +2,7 @@ package de.oth.othivity.controller;
 
 import de.oth.othivity.model.enumeration.Tag;
 import de.oth.othivity.model.main.Activity;
+import de.oth.othivity.model.main.Profile;
 import de.oth.othivity.service.IExplorerService;
 import de.oth.othivity.service.IPagingService;
 import de.oth.othivity.service.ISessionService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ExplorerController {
     private final IExplorerService explorerService;
     private final IPagingService pagingService;
+    private final ISessionService sessionService;
 
     @GetMapping("/explorer")
     public String explorer(HttpSession session, Model model, 
@@ -40,6 +42,8 @@ public class ExplorerController {
             lon = 12.0968;
         }
 
+        Profile profile = sessionService.getProfileFromSession(session);
+
         Tag selectedTag = null;
         if(tag != null && !tag.isBlank() && !tag.equalsIgnoreCase("all")) selectedTag = Tag.valueOf(tag.toUpperCase());
 
@@ -47,24 +51,24 @@ public class ExplorerController {
         Pageable soonestPageable = pagingService.createPageable(soonestPage, size, sortBy, direction);
         Pageable closestPageable = pagingService.createPageable(closestPage, size, sortBy, direction);
 
-        Page<Activity> bestMixActivities = explorerService.getBestMixActivities(lat, lon, bestMixPageable, search, selectedTag);
+        Page<Activity> bestMixActivities = explorerService.getBestMixActivities(lat, lon, bestMixPageable, search, selectedTag, profile);
         model.addAttribute("bestMixActivities", bestMixActivities);
 
-        Page<Activity> soonestActivities = explorerService.getSoonestActivities(soonestPageable, search, selectedTag);
+        Page<Activity> soonestActivities = explorerService.getSoonestActivities(soonestPageable, search, selectedTag, profile);
         model.addAttribute("soonestActivities", soonestActivities);
 
-        Page<Activity> closestActivities = explorerService.getClosestActivities(lat, lon, closestPageable, search, selectedTag);
+        Page<Activity> closestActivities = explorerService.getClosestActivities(lat, lon, closestPageable, search, selectedTag, profile);
         model.addAttribute("closestActivities", closestActivities);
 
-        Pageable cardPageable = PageRequest.of(0, 3);
+        Pageable cardPageable = PageRequest.of(0, 100);
 
-        Page<Activity> bestMixCards = explorerService.getBestMixActivities(lat, lon, cardPageable, null, null);
+        Page<Activity> bestMixCards = explorerService.getBestMixActivities(lat, lon, cardPageable, null, null, profile);
         model.addAttribute("bestMixCards", bestMixCards);
 
-        Page<Activity> soonestCards = explorerService.getSoonestActivities(cardPageable, null, null);
+        Page<Activity> soonestCards = explorerService.getSoonestActivities(cardPageable, null, null, profile);
         model.addAttribute("soonestCards", soonestCards);
 
-        Page<Activity> closestCards = explorerService.getClosestActivities(lat, lon, cardPageable, null, null);
+        Page<Activity> closestCards = explorerService.getClosestActivities(lat, lon, cardPageable, null, null, profile);
         model.addAttribute("closestCards", closestCards);
         
         model.addAttribute("activeTab", activeTab);

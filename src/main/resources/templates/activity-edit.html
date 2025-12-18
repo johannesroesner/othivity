@@ -90,7 +90,7 @@
                         </label>
                         <select th:field="*{organizer}" class="select select-bordered w-full">
                             <option th:value="${null}" th:selected="${activityDto.organizer == null}"></option>
-                            <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}" th:selected="${club.id == activityDto.organizer}"></option> <!-- CHANGE: Selected für Update -->
+                            <option th:each="club : ${tagableClubs}" th:value="${club.id}" th:text="${club.name}" th:selected="${club.id == activityDto.organizer}"></option>
                         </select>
                     </div>
                     <details class="dropdown dropdown-bottom mb-4" id="tagDropdown">

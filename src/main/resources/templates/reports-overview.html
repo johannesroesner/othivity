@@ -37,7 +37,7 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(clubReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(clubReports)}" class="text-center text-sm text-base-content/70 w-full bg-transparent shadow-none p-0" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${clubReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
@@ -101,7 +101,7 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(activityReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(activityReports)}" class="text-center text-sm text-base-content/70 w-full bg-transparent shadow-none p-0" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${activityReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">
@@ -165,7 +165,7 @@
                                 <span class="font-semibold text-sm" th:text="#{reportsOverview.acceptedDeclined}"></span>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(profileReports)}" class="text-center text-sm text-base-content/70 w-full" style="background: transparent; box-shadow: none; padding: 0;" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
+                    <div th:if="${#lists.isEmpty(profileReports)}" class="text-center text-sm text-base-content/70 w-full bg-transparent shadow-none p-0" th:text="#{reportsOverview.noReports}">No reports at the moment</div>
                     <div th:each="report : ${profileReports}" class="card bg-base-100 shadow p-6 rounded-xl flex flex-row items-center gap-8 w-full">
                         <!-- Reporter left -->
                         <div class="flex flex-col items-center min-w-[90px]">

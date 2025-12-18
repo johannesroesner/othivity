@@ -31,7 +31,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/h2-console/**",
                         "/profile/username/update",
                         "/profile/email/verify",
-                        "/api/**"
+                        "/profile/email/resend-verification",
+                        "/api/**",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+                        "/webjars/**",
+                        "/favicon.ico",
+                        "/error"
                     );
         }
     }

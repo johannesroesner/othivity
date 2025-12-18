@@ -10,6 +10,7 @@
             <p class="text-base-content/70" th:text="#{verifyEmail.instruction}"></p>
 
             <form th:action="@{/profile/email/verify}" method="post" th:object="${emailVerificationDto}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <div class="space-y-1 mb-6">
                     <label class="label">
                         <span class="label-text text-sm font-semibold text-base-content/70" th:text="#{verifyEmail.codeLabel}"></span>
@@ -18,17 +19,20 @@
                     <input type="text" 
                            th:field="*{token}" 
                            class="input input-bordered w-full font-mono" 
-                           placeholder="Token hier einfügen"
-                           required />
+                           placeholder="Token hier einfügen"/>
                     
                     <p th:if="${#fields.hasErrors('token')}" th:errors="*{token}" class="text-error text-sm mt-1"></p>
                 </div>
-
-                <div class="flex justify-end pt-4">
-                    <button type="submit" class="btn btn-primary" th:text="#{verifyEmail.submitButton}">Verifizieren</button>
+                
+                <div class="flex justify-between items-center pt-4">
+                    <button type="submit" form="resendForm" class="btn btn-ghost btn-sm" th:text="#{verifyEmail.sendTokenAgain}"></button>
+                    <button type="submit" class="btn btn-primary" th:text="#{verifyEmail.submitButton}"></button>
                 </div>
             </form>
 
+            <form id="resendForm" th:action="@{/profile/email/resend-verification}" method="post" style="display:none;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            </form>
         </div>
     </div>
     </div>

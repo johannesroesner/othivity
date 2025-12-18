@@ -394,7 +394,7 @@ public class ActivityIntegrationTest {
                 .andExpect(model().attributeExists("activityDto"))
                 .andExpect(model().attributeExists("languages"))
                 .andExpect(model().attributeExists("allTags"))
-                .andExpect(model().attributeExists("tagAbleClubs"));
+                .andExpect(model().attributeExists("tagableClubs"));
     }
 
     @Test
@@ -429,7 +429,7 @@ public class ActivityIntegrationTest {
                 .andExpect(model().attributeExists("activityDto"))
                 .andExpect(model().attributeExists("languages"))
                 .andExpect(model().attributeExists("allTags"))
-                .andExpect(model().attributeExists("tagAbleClubs"));
+                .andExpect(model().attributeExists("tagableClubs"));
     }
 
     @Test

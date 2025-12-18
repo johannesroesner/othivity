@@ -47,13 +47,21 @@
     <div class="mt-8">
         <div class="mb-2">
             <div role="tablist" class="tabs tabs-border flex space-x-2">
-                <a role="tab" class="tab tab-active" id="bestMixTab" th:text="#{explorer.bestmix}"></a>
-                <a role="tab" class="tab" id="soonestTab" th:text="#{explorer.soonest}"></a>
-                <a role="tab" class="tab" id="closestTab" th:text="#{explorer.closest}"></a>
+                <a role="tab" class="tab" id="bestMixTab"
+                   th:classappend="${activeTab == 'bestMix' || activeTab == null} ? 'tab-active'"
+                   th:text="#{explorer.bestmix}"></a>
+                <a role="tab" class="tab" id="soonestTab"
+                   th:classappend="${activeTab == 'soonest'} ? 'tab-active'"
+                   th:text="#{explorer.soonest}"></a>
+                <a role="tab" class="tab" id="closestTab"
+                   th:classappend="${activeTab == 'closest'} ? 'tab-active'"
+                   th:text="#{explorer.closest}"></a>
             </div>
         </div>
 
-        <div id="bestMixTable" th:insert="~{fragments/activity-table :: activityTable(
+        <div id="bestMixTable"
+             th:classappend="${activeTab != 'bestMix' and activeTab != null} ? 'hidden'"
+             th:insert="~{fragments/activity-table :: activityTable(
              title=#{explorer.bestmix}, 
              activities=${bestMixActivities},
              pageParam='bestMixPage',
@@ -67,7 +75,9 @@
              baseUrl='/explorer',
              hideSort=true)}"></div>
 
-        <div id="soonestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(
+        <div id="soonestTable"
+             th:classappend="${activeTab != 'soonest'} ? 'hidden'"
+             th:insert="~{fragments/activity-table :: activityTable(
              title=#{explorer.soonest}, 
              activities=${soonestActivities},
              pageParam='soonestPage',
@@ -81,7 +91,9 @@
              baseUrl='/explorer',
              hideSort=true)}"></div>
 
-        <div id="closestTable" class="hidden" th:insert="~{fragments/activity-table :: activityTable(
+        <div id="closestTable"
+             th:classappend="${activeTab != 'closest'} ? 'hidden'"
+             th:insert="~{fragments/activity-table :: activityTable(
              title=#{explorer.closest}, 
              activities=${closestActivities},
              pageParam='closestPage',
@@ -104,37 +116,31 @@
     const soonestTab = document.getElementById("soonestTab");
     const closestTab = document.getElementById("closestTab");
     const bestMixTab = document.getElementById("bestMixTab");
-    
-    const soonestTable = document.getElementById("soonestTable");
-    const closestTable = document.getElementById("closestTable");
-    const bestMixTable = document.getElementById("bestMixTable");
 
-    const activeTabParam = /*[[${activeTab}]]*/ 'bestMix';
+    const currentSize = /*[[${size}]]*/ 10;
+    const currentSortBy = /*[[${sortBy}]]*/ 'name';
+    const currentDirection = /*[[${direction}]]*/ 'asc';
+    const currentSearch = /*[[${search}]]*/ '';
+    const currentTag = /*[[${tag}]]*/ '';
 
-    function showBestMix() { setActiveTab(bestMixTab, bestMixTable); }
-    function showSoonest() { setActiveTab(soonestTab, soonestTable); }
-    function showClosest() { setActiveTab(closestTab, closestTable); }
+    function buildUrl(tabName) {
+        let url = '/explorer?activeTab=' + tabName;
+        url += '&size=' + currentSize;
+        url += '&sortBy=' + currentSortBy;
+        url += '&direction=' + currentDirection;
+        if (currentSearch) url += '&search=' + encodeURIComponent(currentSearch);
+        if (currentTag) url += '&tag=' + encodeURIComponent(currentTag);
 
-    soonestTab.onclick = showSoonest;
-    closestTab.onclick = showClosest;
-    bestMixTab.onclick = showBestMix;
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('lat')) url += '&lat=' + urlParams.get('lat');
+        if (urlParams.has('lon')) url += '&lon=' + urlParams.get('lon');
 
-    function setActiveTab(tab, table) {
-        soonestTab.classList.remove("tab-active");
-        closestTab.classList.remove("tab-active");
-        bestMixTab.classList.remove("tab-active");
-        
-        soonestTable.classList.add("hidden");
-        closestTable.classList.add("hidden");
-        bestMixTable.classList.add("hidden");
-        
-        tab.classList.add("tab-active");
-        table.classList.remove("hidden");
+        return url;
     }
-    
-    if (activeTabParam === 'soonest') showSoonest();
-    else if (activeTabParam === 'closest') showClosest();
-    else showBestMix();
+
+    soonestTab.onclick = () => window.location.href = buildUrl('soonest');
+    closestTab.onclick = () => window.location.href = buildUrl('closest');
+    bestMixTab.onclick = () => window.location.href = buildUrl('bestMix');
 
     let currentIndex = 0;
     function rotateCards() {

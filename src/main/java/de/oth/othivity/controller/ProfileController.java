@@ -258,7 +258,18 @@ public class ProfileController {
 
         return "verify-email";
     }
-    
+
+    @PostMapping("/profile/email/resend-verification")
+    public String resendVerificationEmail(Model model, HttpSession session) {
+
+        Profile profile = sessionService.getProfileFromSession(session);
+
+        notificationService.resendVerificationEmail(profile);
+
+        model.addAttribute("emailVerificationDto", new EmailVerificationDto());
+
+        return "redirect:/verify-email";
+    }
 
     @PostMapping("/profile/email/verify")
     public String verifyUser(@ModelAttribute EmailVerificationDto emailVerificationDto, Model model, HttpSession session) {
