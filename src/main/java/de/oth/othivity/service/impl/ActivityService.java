@@ -140,6 +140,7 @@ public class ActivityService implements IActivityService {
         }
 
         for(Profile participant : activity.getTakePart() ) {
+            if(participant.getId().equals(profile.getId())) continue;
             notificationService.sendNotification(activity, participant, "notification.activity.updated", NotificationType.PUSH_NOTIFICATION);
         }
 

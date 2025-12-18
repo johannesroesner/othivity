@@ -24,8 +24,6 @@ public interface ISessionService {
 
     Boolean canMessage(HttpSession session, Profile profile);
 
-    String getReturnUrlFromSession(HttpSession session, HttpServletRequest request);
-
     void updateLocaleResolverWithProfileLanguage(HttpServletRequest request, HttpServletResponse response, Profile profile);
 
 }

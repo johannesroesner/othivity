@@ -45,12 +45,8 @@
 
             <div class="w-full h-64 shadow-2xl overflow-hidden rounded-2xl bg-base-200">
                 <figure class="w-full h-full rounded-2xl bg-base-200">
-                    <img th:if="${activity.image != null}" 
-                         th:src="@{${activity.image.url}}" 
-                         th:alt="${activity.title}"
-                         class="w-full h-full object-scale-down rounded-2xl"/>
-                    <div th:if="${activity.image == null}" 
-                         class="w-full h-full bg-gray-200 flex items-center justify-center rounded-2xl">
+                    <img th:if="${activity.image != null}" th:src="@{${activity.image.url}}" th:alt="${activity.title}" class="w-full h-full object-scale-down rounded-2xl"/>
+                    <div th:if="${activity.image == null}" class="w-full h-full bg-gray-200 flex items-center justify-center rounded-2xl">
                         <i class="fas fa-calendar-alt fa-3x text-gray-400"></i>
                     </div>
                 </figure>
@@ -69,7 +65,7 @@
                 </div>
 
                 <div class="p-4 rounded-xl shadow-sm flex items-center gap-3 mb-2 border-l-4 border-primary bg-base-100">
-                    <span th:if="${activity.startedBy.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${activity.startedBy.initials}"></span>
+                    <span th:if="${activity.startedBy.image == null}" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium" th:text="${activity.startedBy.initials}"></span>
                     <img th:if="${activity.startedBy.image != null}" th:src="${activity.startedBy.image.url}" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary"/>
                     <div class="flex flex-col">
                         <span class="text-xs text-gray-500" th:text="#{activityDetail.starter}"></span>
@@ -78,12 +74,10 @@
                 </div>
 
                 <div class="flex-1 overflow-y-auto space-y-2" style="max-height: 300px;">
-                    <div th:each="person : ${activity.takePart}"
-                         th:if="${person.username != activity.startedBy.username and (activity.organizer == null or person.username != activity.organizer.username)}"
-                         class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3 justify-between">
+                    <div th:each="person : ${activity.takePart}" th:if="${person.username != activity.startedBy.username and (activity.organizer == null or person.username != activity.organizer.name)}" class="bg-white p-4 rounded-xl shadow-sm flex items-center gap-3 justify-between">
 
                         <div class="flex items-center gap-3">
-                            <span th:if="${person.image == null}" class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white text-sm font-medium" th:text="${person.initials}"></span>
+                            <span th:if="${person.image == null}" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium" th:text="${person.initials}"></span>
                             <img th:if="${person.image != null}" th:src="${person.image.url}" alt="Avatar" class="w-8 h-8 rounded-full object-cover"/>
                             <div class="flex flex-col">
                                 <span class="text-xs text-gray-500" th:text="#{activityDetail.participants}"></span>
@@ -92,7 +86,7 @@
                         </div>
 
                         <form th:if="${deleteAble}" th:action="@{'/activities/kick/' + ${activity.id} + '/' + ${person.id}}" method="post">
-                            <button type="submit" class="btn btn-sm btn-error">Kick</button>
+                            <button type="submit" class="btn btn-sm btn-error"></button>
                         </form>
                     </div>
                 </div>

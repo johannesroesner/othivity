@@ -69,13 +69,6 @@ public class GlobalControllerAdvice {
     }
 
     @ModelAttribute
-    public void addReturnUrl(HttpSession session, HttpServletRequest request, Model model) {
-        String returnUrl = sessionService.getReturnUrlFromSession(session, request);
-        if (returnUrl != null) model.addAttribute("returnUrl", returnUrl);
-        else model.addAttribute("returnUrl", "/dashboard");
-    }
-
-    @ModelAttribute
     public void addUnreadNotificationCount(HttpSession session, HttpServletRequest request, Model model) {
         Profile profile = sessionService.getProfileFromSession(session);
         int count = 0;
