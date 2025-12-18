@@ -45,7 +45,7 @@
                                 <span th:if="${report.issuer.image != null}" class="w-12 h-12 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.issuer.image == null}" class="w-12 h-12 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span th:if="${report.issuer.image == null}" class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
                                 <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
                             </a>
                         </div>
@@ -109,7 +109,7 @@
                                 <span th:if="${report.issuer.image != null}" class="w-12 h-12 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.issuer.image == null}" class="w-12 h-12 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span th:if="${report.issuer.image == null}" class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
                                 <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
                             </a>
                         </div>
@@ -173,7 +173,7 @@
                                 <span th:if="${report.issuer.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.issuer.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
+                                <span th:if="${report.issuer.image == null}" class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.issuer.initials}"></span>
                                 <span class="text-sm font-medium group-hover:underline" th:text="${report.issuer.username}"></span>
                             </a>
                         </div>
@@ -190,7 +190,7 @@
                                 <span th:if="${report.profile.image != null}" class="w-10 h-10 rounded-full overflow-hidden mb-1">
                                     <img th:src="@{${report.profile.image.url}}" class="w-full h-full object-cover"/>
                                 </span>
-                                <span th:if="${report.profile.image == null}" class="w-10 h-10 rounded-full bg-base-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.profile.initials}"></span>
+                                <span th:if="${report.profile.image == null}" class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-xl mb-1" th:text="${report.profile.initials}"></span>
                                 <span class="font-bold text-sm group-hover:underline" th:text="${report.profile.username}"></span>
                             </a>
                         </div>
