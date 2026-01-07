@@ -27,7 +27,6 @@ public class PushSubscription {
     private String auth;
 
     @ManyToOne
-    @JoinColumn(name = "profile_id")
     private Profile profile;
 
     public PushSubscription(String endpoint, String p256dh, String auth, Profile profile) {
