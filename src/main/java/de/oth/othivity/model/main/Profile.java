@@ -7,6 +7,7 @@ import de.oth.othivity.model.helper.Phone;
 import de.oth.othivity.model.helper.Email;
 import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.model.interfaces.HasImage;
+import de.oth.othivity.model.pushnotification.PushSubscription;
 import de.oth.othivity.model.report.ProfileReport;
 import de.oth.othivity.model.helper.ClubJoinRequest;
 import de.oth.othivity.model.security.User;
@@ -67,9 +68,11 @@ public class Profile implements HasImage {
     @JoinColumn(name = "image_id")
     private Image image;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "notification_id")
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PushSubscription> subscriptions = new ArrayList<>();
     
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "phone_id")
