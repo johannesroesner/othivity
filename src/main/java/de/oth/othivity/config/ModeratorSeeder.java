@@ -51,9 +51,9 @@ public class ModeratorSeeder {
             userRepository.save(user);
 
             Profile userProfile = new Profile();
-            userProfile.setFirstName("test");
-            userProfile.setLastName("user");
-            userProfile.setUsername("testuser");
+            userProfile.setFirstName("john");
+            userProfile.setLastName("doe");
+            userProfile.setUsername("johndoe");
             Email userEmail = new Email("user@example.com");
             userEmail.setVerified(true);
             userProfile.setEmail(userEmail);
