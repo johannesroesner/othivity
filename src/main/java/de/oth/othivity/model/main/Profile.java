@@ -9,7 +9,11 @@ import de.oth.othivity.model.helper.Notification;
 import de.oth.othivity.model.interfaces.HasImage;
 import de.oth.othivity.model.pushnotification.PushSubscription;
 import de.oth.othivity.model.report.ProfileReport;
+import de.oth.othivity.model.report.ActivityReport;
+import de.oth.othivity.model.report.ClubReport;
 import de.oth.othivity.model.helper.ClubJoinRequest;
+import de.oth.othivity.model.security.ApiToken;
+import de.oth.othivity.model.helper.VerificationToken;
 import de.oth.othivity.model.security.User;
 import de.oth.othivity.model.enumeration.Language;
 import de.oth.othivity.model.enumeration.Theme;
@@ -105,6 +109,21 @@ public class Profile implements HasImage {
 
     @OneToMany(mappedBy = "profileB", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chat> chatAsB = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApiToken> apiTokens = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VerificationToken> verificationTokens = new ArrayList<>();
+
+    @OneToMany(mappedBy = "issuer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfileReport> issuedProfileReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "issuer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ActivityReport> issuedActivityReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "issuer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClubReport> issuedClubReports = new ArrayList<>();
 
     public String getInitials() {
         return (firstName.substring(0,1) + lastName.substring(0,1)).toUpperCase();
