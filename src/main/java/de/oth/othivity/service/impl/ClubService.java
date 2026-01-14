@@ -1,6 +1,7 @@
 package de.oth.othivity.service.impl;
 
 import de.oth.othivity.model.enumeration.AccessLevel;
+import de.oth.othivity.model.enumeration.Role;
 import de.oth.othivity.model.main.Activity;
 import de.oth.othivity.model.main.Club;
 import de.oth.othivity.model.main.Profile;
@@ -208,7 +209,7 @@ public class ClubService implements IClubService {
             return;
         }
 
-        if (club.getAdmins().contains(profile)) {
+        if (club.getAdmins().contains(profile) || profile.getRole().equals(Role.MODERATOR)) {
             for(Profile member : club.getMembers()) {
                 notificationService.sendNotification(club, member, "notification.club.deleted", NotificationType.PUSH_NOTIFICATION);
             }
@@ -235,7 +236,7 @@ public class ClubService implements IClubService {
             return;
         }
 
-        if (club.getAdmins().contains(currentProfile) && !club.getAdmins().contains(profile)) {
+        if ((club.getAdmins().contains(currentProfile) || currentProfile.getRole().equals(Role.MODERATOR)) && !club.getAdmins().contains(profile)) {
             club.getMembers().remove(profile);
             clubRepository.save(club);
             notificationService.sendNotification(club, profile, "notification.club.member.removed", NotificationType.PUSH_NOTIFICATION);
