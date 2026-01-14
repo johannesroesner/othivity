@@ -438,7 +438,6 @@ public class ClubIntegrationTest {
         Club club = clubRepository.findAll().getFirst();
 
         Profile joiner = testUtil.registerUser(mockMvc, "joiner", "joiner@example.com", "password");
-        testUtil.makeModerator(joiner);
         session = testUtil.loginUser(mockMvc, "joiner@example.com", "password");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/clubs/join/" + club.getId())
@@ -450,11 +449,15 @@ public class ClubIntegrationTest {
         Hibernate.initialize(club.getMembers());
         assertEquals(2, club.getMembers().size());
 
-        session = testUtil.loginUser(mockMvc, "test@example.com", "password");
-        mockMvc.perform(MockMvcRequestBuilders.post("/clubs/removeMember/" + club.getId() + "/" + profile.getId())
+        Profile moderator = testUtil.registerUser(mockMvc, "mod", "mod@example.com", "password");
+        testUtil.makeModerator(moderator);
+        session = testUtil.loginUser(mockMvc, "mod@example.com", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/clubs/removeMember/" + club.getId() + "/" + joiner.getId())
                         .session(session)
                         .with(csrf()))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/clubs/" + club.getId()));
 
         club = clubRepository.findAll().getFirst();
         Hibernate.initialize(club.getMembers());
