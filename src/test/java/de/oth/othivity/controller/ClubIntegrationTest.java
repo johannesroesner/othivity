@@ -54,7 +54,11 @@ public class ClubIntegrationTest {
                         .with(csrf())
                         .param("name", "test club")
                         .param("description", "test description")
-                        .param("accessLevel", "OPEN"))
+                        .param("accessLevel", "OPEN")
+                        .param("address.street", "test street")
+                        .param("address.houseNumber", "123")
+                        .param("address.city", "test city")
+                        .param("address.postalCode", "12345"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/clubs"));
     }
@@ -249,7 +253,11 @@ public class ClubIntegrationTest {
                         .with(csrf())
                         .param("name", "updated club")
                         .param("description", "updated description")
-                        .param("accessLevel", "ON_INVITE"))
+                        .param("accessLevel", "ON_INVITE")
+                        .param("address.street", "updated street")
+                        .param("address.houseNumber", "456")
+                        .param("address.city", "updated city")
+                        .param("address.postalCode", "54321"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/clubs/" + club.getId()));
 
@@ -290,7 +298,11 @@ public class ClubIntegrationTest {
                         .with(csrf())
                         .param("name", "updated club")
                         .param("description", "updated description")
-                        .param("accessLevel", "ON_INVITE"))
+                        .param("accessLevel", "ON_INVITE")
+                        .param("address.street", "updated street")
+                        .param("address.houseNumber", "456")
+                        .param("address.city", "updated city")
+                        .param("address.postalCode", "54321"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/clubs/" + club.getId()));
 
