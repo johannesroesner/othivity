@@ -52,7 +52,7 @@ public class SessionService implements ISessionService {
         }else if (entity instanceof Club) {
             Profile profile = getProfileFromSession(session);
             if (profile == null) return false;
-            return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(((Club) entity).getId())|| profile.getRole().equals(Role.MODERATOR));
+            return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(((Club) entity).getId())) || profile.getRole().equals(Role.MODERATOR);
         }
         return false;
     }
@@ -70,7 +70,7 @@ public class SessionService implements ISessionService {
         }else if (entity instanceof Club) {
             Profile profile = getProfileFromSession(session);
             if (profile == null) return false;
-            return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(((Club) entity).getId())|| profile.getRole().equals(Role.MODERATOR));
+            return profile.getAdminClubs().stream().anyMatch(c -> c.getId().equals(((Club) entity).getId())) || profile.getRole().equals(Role.MODERATOR);
         }
         return false;
     }
